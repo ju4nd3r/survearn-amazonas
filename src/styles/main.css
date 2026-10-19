@@ -224,6 +224,75 @@ body {
   opacity: 1;
 }
 
+/* NPC Interaction Proximity Banner with Information Symbol */
+.npc-interaction-prompt-banner {
+  align-self: center;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 15;
+}
+
+.npc-interaction-prompt-banner.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.npc-prompt-chip {
+  background: rgba(7, 27, 18, 0.96);
+  border: 1.5px solid #f1c40f;
+  color: #fef9e7;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), 0 0 10px rgba(241, 196, 15, 0.35);
+  animation: promptPulse 1.8s infinite alternate ease-in-out;
+}
+
+.npc-prompt-chip:hover {
+  background: rgba(14, 42, 28, 0.98);
+  border-color: #f7dc6f;
+  transform: scale(1.02);
+}
+
+.info-badge-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.npc-prompt-chip kbd {
+  background: #f1c40f;
+  color: #071b12;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-family: inherit;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes promptPulse {
+  0% {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55), 0 0 6px rgba(241, 196, 15, 0.25);
+  }
+  100% {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.65), 0 0 16px rgba(241, 196, 15, 0.6);
+  }
+}
+
+.btn.npc-talk-active {
+  border-color: #f1c40f !important;
+  background: #b7950b !important;
+  color: #ffffff !important;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(241, 196, 15, 0.65);
+  animation: promptPulse 1.4s infinite alternate ease-in-out;
+}
+
 /* Touch Controls Bar */
 .touch-controls-bar {
   margin-top: auto;

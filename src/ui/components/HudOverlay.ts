@@ -9,6 +9,7 @@ export class HudOverlay {
   private readonly root: HTMLElement;
   private readonly toastEl: HTMLElement;
   private readonly sleepCurtainEl: HTMLElement;
+  private readonly npcPromptEl: HTMLElement;
   private toastTimeoutId: number | null = null;
 
   private stats: SurvivalStats = SurvivalSystem.createInitialStats();
@@ -36,7 +37,18 @@ export class HudOverlay {
     this.sleepCurtainEl.setAttribute('aria-hidden', 'true');
     parent.appendChild(this.sleepCurtainEl);
 
+    this.npcPromptEl = document.createElement('div');
+    this.npcPromptEl.className = 'npc-interaction-prompt-banner';
+    this.npcPromptEl.id = 'npc-interaction-prompt';
+    this.npcPromptEl.setAttribute('role', 'region');
+    this.npcPromptEl.setAttribute('aria-label', 'NPC Interaction');
+    parent.appendChild(this.npcPromptEl);
+
     this.render();
+
+    EventBus.on('NPC_PROXIMITY_CHANGED', (payload) => {
+      this.updateNpcPrompt(payload);
+    });
 
     EventBus.on('STATS_UPDATED', (payload) => {
       this.stats = payload.stats;
@@ -249,6 +261,34 @@ export class HudOverlay {
           EventBus.emit('CONSUME_INVENTORY_ITEM', { itemId });
         }
       });
+    });
+  }
+
+  private updateNpcPrompt(payload: {
+    nearbyNpcId: string | null;
+    npcName: string | null;
+    role: string | null;
+  }): void {
+    if (!payload.nearbyNpcId || !payload.npcName) {
+      this.npcPromptEl.innerHTML = '';
+      this.npcPromptEl.classList.remove('visible');
+      return;
+    }
+
+    const isEs = i18n.getLanguage() === 'es';
+    const actionText = isEs ? 'Presiona' : 'Press';
+    const talkText = isEs ? 'para hablar con' : 'to talk with';
+
+    this.npcPromptEl.innerHTML = `
+      <button type="button" class="npc-prompt-chip" id="btn-npc-prompt-talk" title="${isEs ? 'Hablar' : 'Talk'}">
+        <span class="info-badge-icon">ℹ️</span>
+        <span class="prompt-text">${actionText} <kbd>[E]</kbd> ${talkText} <strong>${payload.npcName}</strong> <small>(${payload.role})</small></span>
+      </button>
+    `;
+    this.npcPromptEl.classList.add('visible');
+
+    this.npcPromptEl.querySelector('#btn-npc-prompt-talk')?.addEventListener('click', () => {
+      EventBus.emit('PLAYER_INPUT_ACTION', { action: 'interact' });
     });
   }
 }

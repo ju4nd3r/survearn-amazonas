@@ -44,5 +44,12 @@ test.describe('survearn — Edition: Amazonas Colombia (Selva Viva) E2E Smoke Su
     await page.getByTestId('btn-save-slot_1').click();
     await expect(page.getByTestId('save-card-slot_1')).toContainText('Wayra');
     await page.getByTestId('btn-close-saves').click();
+
+    // 8. Open Crafting / Cooking modal, verify dialog opens and pause sync
+    await page.getByTestId('btn-open-crafting').click();
+    const craftingDialog = page.locator('#modal-crafting');
+    await expect(craftingDialog).toBeVisible();
+    await page.locator('#close-crafting').click();
+    await expect(craftingDialog).not.toBeVisible();
   });
 });

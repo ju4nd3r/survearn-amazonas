@@ -1,3 +1,5 @@
+import { EventBus } from '../../core/events/EventBus';
+
 /**
  * Applies progressive enhancement and Safari fallback for light-dismiss (`closedby="any"`)
  * on native HTML5 `<dialog>` modal elements.
@@ -11,6 +13,12 @@ export function createAccessibleModalDialog(
   dialog.className = 'survearn-dialog';
   dialog.setAttribute('closedby', 'any');
   dialog.setAttribute('aria-labelledby', labelledById);
+
+  // Sync game pause state when modal dialog closes (via Esc, backdrop click, or close button)
+  dialog.addEventListener('close', () => {
+    const anyOpen = document.querySelectorAll('dialog[open]').length > 0;
+    EventBus.emit('GAME_PAUSE_CHANGED', { paused: anyOpen });
+  });
 
   // Fallback for browsers without native `closedBy` support (e.g., Safari)
   if (typeof HTMLDialogElement !== 'undefined' && !('closedBy' in HTMLDialogElement.prototype)) {
@@ -34,11 +42,14 @@ export function createAccessibleModalDialog(
 export function openModalDialog(dialog: HTMLDialogElement): void {
   if (!dialog.open) {
     dialog.showModal();
+    EventBus.emit('GAME_PAUSE_CHANGED', { paused: true });
   }
 }
 
 export function closeModalDialog(dialog: HTMLDialogElement): void {
   if (dialog.open) {
     dialog.close();
+    const anyOpen = document.querySelectorAll('dialog[open]').length > 0;
+    EventBus.emit('GAME_PAUSE_CHANGED', { paused: anyOpen });
   }
 }

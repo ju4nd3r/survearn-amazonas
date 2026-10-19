@@ -44,6 +44,12 @@ export interface GameEventMap {
     sheltered: boolean;
   };
   VICTORY_ACHIEVED: { method: 'canoe' | 'pier'; dayCount: number; discoveredCount: number };
+  GAME_PAUSE_CHANGED: { paused: boolean };
+  NPC_PROXIMITY_CHANGED: {
+    nearbyNpcId: string | null;
+    npcName: string | null;
+    role: string | null;
+  };
 }
 
 type Handler<T> = (payload: T) => void;

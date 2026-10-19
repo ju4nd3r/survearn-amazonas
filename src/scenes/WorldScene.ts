@@ -70,6 +70,8 @@ export class WorldScene extends Phaser.Scene {
   private aiAccumulatorMs = 0;
   private autosaveAccumulatorMs = 0;
   private victoryTriggered = false;
+  private isGamePaused = false;
+  private currentNearbyNpcId: string | null = null;
 
   constructor() {
     super({ key: 'WorldScene' });
@@ -114,10 +116,19 @@ export class WorldScene extends Phaser.Scene {
     });
 
     EventBus.on('LANGUAGE_CHANGED', () => {
-      const pText = i18n.getLanguage() === 'es' ? '💬 [E] Hablar' : '💬 [E] Talk';
+      const pText = i18n.getLanguage() === 'es' ? 'ℹ️ [E] Hablar' : 'ℹ️ [E] Talk';
       for (const container of this.npcPromptIndicators.values()) {
         const textObj = container.list[1] as Phaser.GameObjects.Text | undefined;
         if (textObj) textObj.setText(pText);
+      }
+    });
+
+    EventBus.on('GAME_PAUSE_CHANGED', ({ paused }) => {
+      this.isGamePaused = paused;
+      if (paused) {
+        this.anims.pauseAll();
+      } else {
+        this.anims.resumeAll();
       }
     });
   }
@@ -245,38 +256,40 @@ export class WorldScene extends Phaser.Scene {
       this.spawnStructureSprite(st);
     }
 
-    // Render Friendly NPCs with breathing idle animation & proximity talk indicator
+    // Render Friendly NPCs with breathing idle animation & prominent Information Beacon badge
     const lang = i18n.getLanguage();
-    const promptText = lang === 'es' ? '💬 [E] Hablar' : '💬 [E] Talk';
+    const promptText = lang === 'es' ? 'ℹ️ [E] Hablar' : 'ℹ️ [E] Talk';
     for (const npc of this.worldData.npcs) {
       const spr = this.add.sprite(npc.x, npc.y, 'npc_mentor').setDepth(8);
       spr.play('npc_idle');
       this.npcSprites.set(npc.id, spr);
 
-      // Create floating proximity talk badge above NPC
+      // Create floating Information Beacon & interaction prompt badge above NPC
       const badgeBg = this.add.graphics();
-      badgeBg.fillStyle(0x071b12, 0.92);
-      badgeBg.lineStyle(1, 0xf1c40f, 1);
-      badgeBg.fillRoundedRect(-30, -7, 60, 14, 3);
-      badgeBg.strokeRoundedRect(-30, -7, 60, 14, 3);
+      badgeBg.fillStyle(0x071b12, 0.95);
+      badgeBg.lineStyle(1.5, 0xf1c40f, 1);
+      badgeBg.fillRoundedRect(-32, -8, 64, 16, 4);
+      badgeBg.strokeRoundedRect(-32, -8, 64, 16, 4);
 
       const label = this.add
         .text(0, 0, promptText, {
-          fontSize: '7.5px',
+          fontSize: '8px',
           color: '#fef9e7',
-          fontStyle: 'bold'
+          fontStyle: 'bold',
+          stroke: '#071b12',
+          strokeThickness: 2
         })
         .setOrigin(0.5);
 
       const promptContainer = this.add
-        .container(npc.x, npc.y - 18, [badgeBg, label])
-        .setDepth(15)
+        .container(npc.x, npc.y - 20, [badgeBg, label])
+        .setDepth(22)
         .setAlpha(0);
 
       this.tweens.add({
         targets: promptContainer,
-        y: npc.y - 21,
-        duration: 700,
+        y: npc.y - 24,
+        duration: 650,
         yoyo: true,
         repeat: -1,
         ease: 'Sine.easeInOut'
@@ -355,7 +368,7 @@ export class WorldScene extends Phaser.Scene {
   }
 
   public override update(timeMs: number, deltaMs: number): void {
-    if (!this.playerSprite || !this.worldData || this.isSleepingTransition) return;
+    if (!this.playerSprite || !this.worldData || this.isSleepingTransition || this.isGamePaused) return;
 
     const dtSec = Math.min(0.1, deltaMs / 1000);
     const move = this.inputCtrl.getMovement();
@@ -528,13 +541,46 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    // 1b. Update proximity talk prompt badges for friendly NPCs
+    // 1b. Update proximity Information Beacon & notify HUD / Touch controls
+    let closestNpc: { id: string; npcId: string; name: string; role: string; dist: number } | null =
+      null;
     for (const npc of this.worldData.npcs) {
       const indicator = this.npcPromptIndicators.get(npc.id);
-      if (indicator) {
-        const dist = Math.hypot(npc.x - nextX, npc.y - nextY);
-        indicator.setAlpha(dist <= 42 ? 1 : 0);
+      const dist = Math.hypot(npc.x - nextX, npc.y - nextY);
+      if (dist <= 48) {
+        if (!closestNpc || dist < closestNpc.dist) {
+          const def = ContentRegistry.npcs.find((n) => n.id === npc.npcId);
+          const lang = i18n.getLanguage();
+          closestNpc = {
+            id: npc.id,
+            npcId: npc.npcId,
+            name: def?.name ?? npc.npcId,
+            role: def?.role[lang] ?? '',
+            dist
+          };
+        }
       }
+      if (indicator) {
+        indicator.setAlpha(dist <= 48 ? 1 : 0);
+      }
+    }
+
+    if (closestNpc) {
+      if (this.currentNearbyNpcId !== closestNpc.npcId) {
+        this.currentNearbyNpcId = closestNpc.npcId;
+        EventBus.emit('NPC_PROXIMITY_CHANGED', {
+          nearbyNpcId: closestNpc.npcId,
+          npcName: closestNpc.name,
+          role: closestNpc.role
+        });
+      }
+    } else if (this.currentNearbyNpcId !== null) {
+      this.currentNearbyNpcId = null;
+      EventBus.emit('NPC_PROXIMITY_CHANGED', {
+        nearbyNpcId: null,
+        npcName: null,
+        role: null
+      });
     }
 
     // 2. AI Tick (10 Hz / every 100ms) with Water vs Ground Adaptive Animations
@@ -1054,7 +1100,7 @@ export class WorldScene extends Phaser.Scene {
 
     // 1. Check nearby Friendly NPC first
     for (const npc of this.worldData.npcs) {
-      if (Math.hypot(npc.x - px, npc.y - py) <= 42) {
+      if (Math.hypot(npc.x - px, npc.y - py) <= 48) {
         this.playPlayerActionPose('action', '💬', npc.x, npc.y);
         const def = ContentRegistry.npcs.find((n) => n.id === npc.npcId);
         if (def) {

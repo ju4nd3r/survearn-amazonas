@@ -14,6 +14,18 @@ export class TouchControlsOverlay {
     EventBus.on('SETTINGS_UPDATED', ({ settings }) => {
       this.root.classList.toggle('left-handed', settings.leftHanded);
     });
+    EventBus.on('NPC_PROXIMITY_CHANGED', (payload) => {
+      const btn = this.root.querySelector<HTMLButtonElement>('#btn-touch-interact');
+      if (!btn) return;
+      const isEs = i18n.getLanguage() === 'es';
+      if (payload.nearbyNpcId) {
+        btn.classList.add('npc-talk-active');
+        btn.innerHTML = `ℹ️ ${isEs ? '[E] Hablar' : '[E] Talk'}`;
+      } else {
+        btn.classList.remove('npc-talk-active');
+        btn.innerHTML = `🖐️ ${i18n.t('hud.btnAction')}`;
+      }
+    });
   }
 
   private emitJoystick(dx: number, dy: number): void {
