@@ -517,6 +517,271 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  private playHarvestSequence(
+    kind: 'plant' | 'material' | 'water',
+    itemId: string,
+    itemDisplayName: string,
+    sourceX: number,
+    sourceY: number,
+    nodeSprite?: Phaser.GameObjects.Sprite
+  ): void {
+    const harvestStyle = ProceduralAtlasGenerator.getHarvestStyleForItem(kind, itemId);
+    const lootTexKey = ProceduralAtlasGenerator.getLootIconTextureKey(itemId);
+
+    // Lock character movement animation for 650ms so the 6-frame harvest + hold-up animation plays cleanly
+    this.playerActionBusyUntil = this.time.now + 650;
+    this.playerSprite.setFlipX(sourceX < this.playerSprite.x);
+    this.playerSprite.play(`${this.currentCharTexKey}_${harvestStyle}`, true);
+
+    // 1. Node Reaction & Biome Debris Particles according to harvest style
+    if (harvestStyle === 'pick_fruit') {
+      // Shake palm/fruit tree canopy horizontally while berries & leaves rain down, then shrink away
+      if (nodeSprite) {
+        this.tweens.add({
+          targets: nodeSprite,
+          x: { from: sourceX - 3, to: sourceX + 3 },
+          duration: 55,
+          yoyo: true,
+          repeat: 3,
+          onComplete: () => {
+            this.tweens.add({
+              targets: nodeSprite,
+              scaleX: 0.25,
+              scaleY: 0.25,
+              alpha: 0,
+              duration: 180,
+              onComplete: () => nodeSprite.destroy()
+            });
+          }
+        });
+      }
+      const particleColors = [0x2ecc71, 0x27ae60, 0x8e44ad, 0xe67e22, 0xf1c40f];
+      for (let i = 0; i < 7; i++) {
+        const pColor = particleColors[i % particleColors.length] ?? 0x2ecc71;
+        const drop = this.add
+          .rectangle(
+            sourceX + (Math.random() - 0.5) * 14,
+            sourceY - 6 + (Math.random() - 0.5) * 6,
+            2,
+            2,
+            pColor
+          )
+          .setDepth(24);
+        this.tweens.add({
+          targets: drop,
+          x: drop.x + (Math.random() - 0.5) * 12,
+          y: sourceY + 6 + Math.random() * 6,
+          alpha: 0,
+          duration: 360 + i * 35,
+          ease: 'Quad.easeIn',
+          onComplete: () => drop.destroy()
+        });
+      }
+    } else if (harvestStyle === 'chop_wood') {
+      // Machete slash flash + woodchip & bark splinters + tree topple
+      const slashArc = this.add.circle(sourceX, sourceY, 5, 0xf8fafc, 0.85).setDepth(25);
+      this.tweens.add({
+        targets: slashArc,
+        scaleX: 2.2,
+        scaleY: 0.45,
+        alpha: 0,
+        duration: 190,
+        onComplete: () => slashArc.destroy()
+      });
+
+      if (nodeSprite) {
+        nodeSprite.setTintFill(0xffffff);
+        this.time.delayedCall(80, () => {
+          if (nodeSprite.active) nodeSprite.clearTint();
+        });
+        this.tweens.add({
+          targets: nodeSprite,
+          x: sourceX + (sourceX >= this.playerSprite.x ? 4 : -4),
+          angle: sourceX >= this.playerSprite.x ? 28 : -28,
+          scaleY: 0.65,
+          alpha: 0,
+          duration: 320,
+          ease: 'Back.easeIn',
+          onComplete: () => nodeSprite.destroy()
+        });
+      }
+
+      const chipColors = [0xd35400, 0xe67e22, 0xf5cba7, 0x6e2c00];
+      for (let i = 0; i < 8; i++) {
+        const chipColor = chipColors[i % chipColors.length] ?? 0xd35400;
+        const chip = this.add
+          .rectangle(sourceX, sourceY - 2, 3, 2, chipColor)
+          .setDepth(24);
+        const angle = (Math.PI * 2 * i) / 8 + (Math.random() - 0.5) * 0.4;
+        const dist = 10 + Math.random() * 10;
+        this.tweens.add({
+          targets: chip,
+          x: sourceX + Math.cos(angle) * dist,
+          y: sourceY + Math.sin(angle) * dist + 4,
+          angle: 180,
+          alpha: 0,
+          duration: 340,
+          ease: 'Cubic.easeOut',
+          onComplete: () => chip.destroy()
+        });
+      }
+    } else if (harvestStyle === 'dig_tuber') {
+      // Uproot pop upward + flying dark Amazonian soil clods
+      if (nodeSprite) {
+        this.tweens.add({
+          targets: nodeSprite,
+          y: sourceY - 9,
+          scaleX: 1.25,
+          scaleY: 1.25,
+          duration: 160,
+          ease: 'Back.easeOut',
+          onComplete: () => {
+            this.tweens.add({
+              targets: nodeSprite,
+              scaleX: 0.1,
+              scaleY: 0.1,
+              alpha: 0,
+              duration: 150,
+              onComplete: () => nodeSprite.destroy()
+            });
+          }
+        });
+      }
+      const soilColors = [0x5d4037, 0x784212, 0x935116, 0x2ecc71];
+      for (let i = 0; i < 8; i++) {
+        const sColor = soilColors[i % soilColors.length] ?? 0x5d4037;
+        const clod = this.add.rectangle(sourceX, sourceY + 3, 2, 2, sColor).setDepth(24);
+        this.tweens.add({
+          targets: clod,
+          x: sourceX + (Math.random() - 0.5) * 22,
+          y: sourceY - 8 + Math.random() * 14,
+          alpha: 0,
+          duration: 350,
+          ease: 'Quad.easeOut',
+          onComplete: () => clod.destroy()
+        });
+      }
+    } else if (harvestStyle === 'scoop_water') {
+      // Concentric river water ripples + glistening water droplets
+      for (let r = 0; r < 2; r++) {
+        const ripple = this.add
+          .circle(sourceX, sourceY + 2, 3, 0x5dade2, 0.65)
+          .setStrokeStyle(1, 0xd6eaf8, 0.9)
+          .setDepth(23);
+        this.tweens.add({
+          targets: ripple,
+          radius: 15 + r * 6,
+          alpha: 0,
+          duration: 420 + r * 110,
+          onComplete: () => ripple.destroy()
+        });
+      }
+      for (let i = 0; i < 6; i++) {
+        const droplet = this.add.rectangle(sourceX, sourceY, 2, 2, 0xaed6f1).setDepth(24);
+        this.tweens.add({
+          targets: droplet,
+          x: sourceX + (Math.random() - 0.5) * 16,
+          y: sourceY - 10 + Math.random() * 12,
+          alpha: 0,
+          duration: 320,
+          onComplete: () => droplet.destroy()
+        });
+      }
+    } else {
+      // gather_ground: sparkle pop + leaf/dust flecks
+      if (nodeSprite) {
+        this.tweens.add({
+          targets: nodeSprite,
+          y: sourceY - 5,
+          scaleX: 1.3,
+          scaleY: 0.3,
+          alpha: 0,
+          duration: 240,
+          onComplete: () => nodeSprite.destroy()
+        });
+      }
+      for (let i = 0; i < 6; i++) {
+        const fleck = this.add
+          .rectangle(sourceX, sourceY, 2, 2, i % 2 === 0 ? 0xf7dc6f : 0x58d68d)
+          .setDepth(24);
+        this.tweens.add({
+          targets: fleck,
+          x: sourceX + (Math.random() - 0.5) * 18,
+          y: sourceY - 6 + (Math.random() - 0.5) * 14,
+          alpha: 0,
+          duration: 300,
+          onComplete: () => fleck.destroy()
+        });
+      }
+    }
+
+    // 2. Flying 16x16 Collectible Loot Icon Arc -> Explorer's Raised Hands -> Into Backpack
+    const lootSprite = this.add
+      .sprite(sourceX, sourceY - 2, lootTexKey)
+      .setDepth(27)
+      .setScale(0.55);
+
+    const glowRing = this.add
+      .circle(sourceX, sourceY - 2, 7, 0xf4d03f, 0.38)
+      .setDepth(26);
+
+    // Stage A: Pop out of harvested node up above the player's raised hands
+    this.tweens.add({
+      targets: [lootSprite, glowRing],
+      x: () => this.playerSprite.x,
+      y: () => this.playerSprite.y - 17,
+      scaleX: 1.15,
+      scaleY: 1.15,
+      duration: 280,
+      ease: 'Back.easeOut',
+      onComplete: () => {
+        // Stage B: Hold aloft briefly with golden discovery pulse, then tuck into backpack
+        this.tweens.add({
+          targets: glowRing,
+          scaleX: 1.7,
+          scaleY: 1.7,
+          alpha: 0,
+          duration: 260,
+          onComplete: () => glowRing.destroy()
+        });
+
+        this.tweens.add({
+          targets: lootSprite,
+          x: () => this.playerSprite.x,
+          y: () => this.playerSprite.y - 4,
+          scaleX: 0.2,
+          scaleY: 0.2,
+          alpha: 0,
+          delay: 150,
+          duration: 210,
+          ease: 'Cubic.easeIn',
+          onComplete: () => lootSprite.destroy()
+        });
+      }
+    });
+
+    // 3. Floating "+1 Item Name" banner rising clearly above the loot icon
+    const banner = this.add
+      .text(this.playerSprite.x, this.playerSprite.y - 24, `+1 ${itemDisplayName}`, {
+        fontSize: '9px',
+        fontStyle: 'bold',
+        color: '#fef9e7',
+        stroke: '#09170e',
+        strokeThickness: 2.5
+      })
+      .setOrigin(0.5)
+      .setDepth(28);
+
+    this.tweens.add({
+      targets: banner,
+      y: this.playerSprite.y - 40,
+      alpha: 0,
+      duration: 850,
+      ease: 'Cubic.easeOut',
+      onComplete: () => banner.destroy()
+    });
+  }
+
   private handleInteractAction(): void {
     const px = this.playerSprite.x;
     const py = this.playerSprite.y;
@@ -548,7 +813,6 @@ export class WorldScene extends Phaser.Scene {
     // 2. Check nearby Resource Node
     const nearestNode = ForagingSystem.findNearestNode(this.worldData.resourceNodes, px, py, 34);
     if (nearestNode) {
-      this.playPlayerActionPose('action', '🌿 +1', nearestNode.x, nearestNode.y);
       const res = ForagingSystem.harvestNode(
         nearestNode,
         this.inventory,
@@ -561,18 +825,19 @@ export class WorldScene extends Phaser.Scene {
       const spr = this.nodeSprites.get(nearestNode.nodeKey);
       if (spr) {
         this.nodeSprites.delete(nearestNode.nodeKey);
-        this.tweens.add({
-          targets: spr,
-          scaleX: 1.35,
-          scaleY: 0.2,
-          alpha: 0,
-          duration: 220,
-          onComplete: () => spr.destroy()
-        });
       }
 
-      AudioSynth.playChime('harvest');
       const itemName = i18n.getLanguage() === 'es' ? res.itemNameEs : res.itemNameEn;
+      this.playHarvestSequence(
+        nearestNode.kind,
+        nearestNode.itemId,
+        itemName,
+        nearestNode.x,
+        nearestNode.y,
+        spr
+      );
+
+      AudioSynth.playChime('harvest');
       EventBus.emit('TOAST_MESSAGE', {
         text: `${i18n.t('messages.harvested')} ${itemName}`,
         type: 'success'
@@ -587,7 +852,9 @@ export class WorldScene extends Phaser.Scene {
       tile &&
       (tile.biome === 'aquatic' || tile.biome === 'riverbank' || tile.biome === 'varzea')
     ) {
-      this.playPlayerActionPose('action', '💧 +1', px, py);
+      const waterMat = ContentRegistry.getMaterial('agua_rio_cruda');
+      const waterName = waterMat ? waterMat.commonName[i18n.getLanguage()] : 'Agua de Río';
+      this.playHarvestSequence('water', 'agua_rio_cruda', waterName, px, py + 4);
       this.inventory = CraftingSystem.addItem(this.inventory, 'agua_rio_cruda', 1);
       this.discoveredSpecies = FieldGuideSystem.unlockSpecies(
         this.discoveredSpecies,
