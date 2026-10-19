@@ -1,0 +1,581 @@
+[
+  {
+    "id": "euterpe_precatoria_asai",
+    "scientificName": "Euterpe precatoria",
+    "commonName": { "es": "Asaí / Huasaí", "en": "Amazonian Açaí Palm" },
+    "biomeIds": ["varzea", "riverbank", "terra_firme"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 4,
+      "hungerDelta": 16,
+      "thirstDelta": 14,
+      "staminaDelta": 12
+    },
+    "inspectionHint": {
+      "es": "Palma esbelta de un solo tallo con racimos de frutos globosos de color púrpura oscuro casi negro.",
+      "en": "Slender single-stemmed palm bearing clusters of dark purple-black globose berries."
+    },
+    "howToUse": {
+      "es": "Los frutos maduros se maceran en agua tibia para obtener una bebida energética rica en lípidos y antocianinas.",
+      "en": "Ripe berries are macerated in water to prepare a nutrient-dense, lipid-rich energy drink."
+    },
+    "funFact": {
+      "es": "A diferencia de E. oleracea del bajo Amazonas, E. precatoria crece con un tronco solitario y sus hojas sirven para techar tambos.",
+      "en": "Unlike multi-stemmed E. oleracea, E. precatoria grows as a solitary trunk and its fronds thatch traditional tambos."
+    },
+    "sources": ["Instituto SINCHI (2018) - Palmas útiles de la Amazonia colombiana"],
+    "spriteTint": "#4a1f5c"
+  },
+  {
+    "id": "manihot_esculenta_brava",
+    "scientificName": "Manihot esculenta (var. tóxica)",
+    "commonName": { "es": "Yuca Brava / Mandioca Amarga", "en": "Bitter Cassava (Yuca Brava)" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "edible_processed",
+    "requiresProcessing": "grate_press_toast",
+    "processedItemId": "casabe_tostado",
+    "effectsOnConsumeRaw": {
+      "healthDelta": -25,
+      "hungerDelta": 5,
+      "thirstDelta": -15,
+      "staminaDelta": -20,
+      "addStatusEffect": "food_poisoning"
+    },
+    "inspectionHint": {
+      "es": "Arbusto de hojas palmadas con pecíolos rojizos quebradizos; el tubérculo crudo huele ligeramente almendrado y amargo.",
+      "en": "Palmate-leaved shrub with reddish petioles; raw root smells faintly bitter and almond-like."
+    },
+    "howToUse": {
+      "es": "¡NUNCA comer cruda! Debe rallarse, exprimirse en sebucán/tipití y tostarse en budare para eliminar glucósidos cianogénicos y hacer casabe.",
+      "en": "NEVER eat raw! Must be grated, pressed in a woven tipití, and toasted on a clay griddle to remove cyanogenic glycosides and make casabe."
+    },
+    "funFact": {
+      "es": "Los pueblos indígenas amazónicos desarrollaron la ingeniería del tipití hace milenios para convertir una raíz tóxica en el pan duradero de la selva.",
+      "en": "Indigenous Amazonians engineered the woven tipití press millennia ago to turn a toxic root into shelf-stable rainforest bread."
+    },
+    "sources": ["Instituto SINCHI (2016) - La chagra indígena y el manejo de la yuca en el Amazonas"],
+    "spriteTint": "#a34832"
+  },
+  {
+    "id": "manihot_esculenta_dulce",
+    "scientificName": "Manihot esculenta (var. dulce)",
+    "commonName": { "es": "Yuca Dulce", "en": "Sweet Cassava (Yuca Dulce)" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "edible_raw",
+    "requiresProcessing": "cook",
+    "processedItemId": "yuca_asada",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 2,
+      "hungerDelta": 14,
+      "thirstDelta": 2,
+      "staminaDelta": 8
+    },
+    "inspectionHint": {
+      "es": "Tubérculo de cáscara marrón fácil de desprender y pulpa blanca suave sin olor amargo.",
+      "en": "Brown-skinned tuber whose bark peels easily, revealing mild white flesh without bitter odor."
+    },
+    "howToUse": {
+      "es": "Se consume hervida o asada en las brasas de la fogata como fuente segura de carbohidratos.",
+      "en": "Boiled or roasted in campfire embers as a reliable source of carbohydrates."
+    },
+    "funFact": {
+      "es": "En las chagras ribereñas se cultivan decenas de variedades de yuca dulce y brava adaptadas a distintos suelos.",
+      "en": "Riverine chagras cultivate dozens of sweet and bitter cassava landraces adapted to distinct soils."
+    },
+    "sources": ["Catálogo de Plantas y Líquenes de Colombia - Universidad Nacional / SINCHI"],
+    "spriteTint": "#d9b382"
+  },
+  {
+    "id": "bactris_gasipaes_chontaduro",
+    "scientificName": "Bactris gasipaes",
+    "commonName": { "es": "Chontaduro / Pijuayo", "en": "Peach Palm (Chontaduro)" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 6,
+      "hungerDelta": 22,
+      "thirstDelta": 4,
+      "staminaDelta": 18,
+      "addStatusEffect": "well_fed"
+    },
+    "inspectionHint": {
+      "es": "Palma de tronco anillado con espinas negras y racimos de frutos rojos y anaranjados carnosos.",
+      "en": "Ringed palm trunk armed with black spines bearing clusters of fleshy red-orange fruits."
+    },
+    "howToUse": {
+      "es": "Cocinar en agua o asar para ablandar su pulpa harinosa rica en betacarotenos, aceites y proteína.",
+      "en": "Boil or roast to soften its starchy flesh rich in beta-carotene, oils, and protein."
+    },
+    "funFact": {
+      "es": "La época de cosecha del chontaduro es celebrada con bailes rituales de abundancia por varios pueblos amazónicos.",
+      "en": "Peach palm harvest season is celebrated with traditional festivals of abundance across Amazonian communities."
+    },
+    "sources": ["Instituto Humboldt & SINCHI (2019) - Frutales nativos amazónicos"],
+    "spriteTint": "#e65c22"
+  },
+  {
+    "id": "theobroma_grandiflorum_copoazu",
+    "scientificName": "Theobroma grandiflorum",
+    "commonName": { "es": "Copoazú", "en": "Cupuaçu (White Cacao)" },
+    "biomeIds": ["terra_firme"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 5,
+      "hungerDelta": 15,
+      "thirstDelta": 18,
+      "staminaDelta": 10
+    },
+    "inspectionHint": {
+      "es": "Fruto grande oblongo cubierto de vello marrón aterciopelado que exhala un aroma cítrico y achocolatado.",
+      "en": "Large oblong pod covered in velvety brown fuzz emitting a citrusy chocolate aroma."
+    },
+    "howToUse": {
+      "es": "Partir la corteza leñosa para consumir su pulpa blanca cremosa e hidratante directamente.",
+      "en": "Crack the woody shell to eat the creamy, hydrating white pulp directly."
+    },
+    "funFact": {
+      "es": "Es pariente cercano del cacao (Theobroma cacao) y sus semillas producen una manteca altamente hidratante.",
+      "en": "A close relative of cacao (Theobroma cacao), its seeds yield a rich emollient butter."
+    },
+    "sources": ["Instituto SINCHI (2017) - Cadena productiva del Copoazú en la Amazonia"],
+    "spriteTint": "#8c5a32"
+  },
+  {
+    "id": "theobroma_cacao_silvestre",
+    "scientificName": "Theobroma cacao",
+    "commonName": { "es": "Cacao Silvestre Amazónico", "en": "Wild Amazonian Cacao" },
+    "biomeIds": ["terra_firme", "varzea"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 4,
+      "hungerDelta": 12,
+      "thirstDelta": 12,
+      "staminaDelta": 16
+    },
+    "inspectionHint": {
+      "es": "Mazorcas amarillas rugosas que brotan directamente del tronco del árbol bajo la sombra del dosel.",
+      "en": "Ridged yellow pods growing directly out of the shaded tree trunk (cauliflory)."
+    },
+    "howToUse": {
+      "es": "Chupar el mucílago dulce que recubre las semillas para recuperar energía e hidratación.",
+      "en": "Consume the sweet white mucilage around the beans for quick energy and hydration."
+    },
+    "funFact": {
+      "es": "La alta Amazonia colombo-ecuatoriana y peruana es el centro de origen genético del cacao en el mundo.",
+      "en": "The Upper Amazon basin is the evolutionary cradle and center of genetic diversity for world cacao."
+    },
+    "sources": ["Instituto Humboldt (2020) - Biodiversidad y origen del cacao en Colombia"],
+    "spriteTint": "#d4af37"
+  },
+  {
+    "id": "pourouma_cecropiifolia_caimarona",
+    "scientificName": "Pourouma cecropiifolia",
+    "commonName": { "es": "Uva Caimarona / Uvilla", "en": "Amazon Tree Grape (Uva Caimarona)" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 3,
+      "hungerDelta": 10,
+      "thirstDelta": 20,
+      "staminaDelta": 8
+    },
+    "inspectionHint": {
+      "es": "Árbol de hojas grandes parecidas al yarumo con racimos de frutos morados de pulpa blanca gelatinosa.",
+      "en": "Tree with large Cecropia-like leaves bearing clusters of purple fruits with sweet jelly-like pulp."
+    },
+    "howToUse": {
+      "es": "Pelar la cáscara áspera y comer la pulpa jugosa para calmar la sed rápidamente.",
+      "en": "Peel the rough skin and eat the juicy white pulp to quench thirst rapidly."
+    },
+    "funFact": {
+      "es": "Aunque sus hojas parecen de yarumo (Cecropia), sus frutos dulces son un manjar tanto para humanos como para tucanes.",
+      "en": "Though its leaves resemble Cecropia, its sweet grape-like fruits are prized by people and toucans alike."
+    },
+    "sources": ["Instituto SINCHI - Frutales promisorios de la Amazonia"],
+    "spriteTint": "#6c3483"
+  },
+  {
+    "id": "mauritia_flexuosa_moriche",
+    "scientificName": "Mauritia flexuosa",
+    "commonName": { "es": "Canangucha / Palma de Moriche", "en": "Moriche Palm (Aguaje)" },
+    "biomeIds": ["varzea", "riverbank"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 5,
+      "hungerDelta": 18,
+      "thirstDelta": 10,
+      "staminaDelta": 12
+    },
+    "inspectionHint": {
+      "es": "Palma gigante de hojas en abanico que domina los humedales; frutos cubiertos de escamas rojizas brillantes.",
+      "en": "Towering fan-leaved wetland palm with fruits covered in shiny reddish-brown scales."
+    },
+    "howToUse": {
+      "es": "Remojar los frutos para ablandar las escamas y consumir su pulpa anaranjada rica en vitamina A.",
+      "en": "Soak fruits to loosen the scales and consume the vitamin-A-rich orange mesocarp."
+    },
+    "funFact": {
+      "es": "Los cananguchales son ecosistemas clave donde se alimentan dantas, guacamayas y peces durante la creciente.",
+      "en": "Moriche palm swamps (cananguchales) are keystone ecosystems feeding tapirs, macaws, and fish during floods."
+    },
+    "sources": ["Parques Nacionales Naturales de Colombia - Ecosistemas de Cananguchal"],
+    "spriteTint": "#a93226"
+  },
+  {
+    "id": "bertholletia_excelsa_castana",
+    "scientificName": "Bertholletia excelsa",
+    "commonName": { "es": "Castaña del Amazonas / Nuez del Brasil", "en": "Brazil Nut Tree" },
+    "biomeIds": ["terra_firme"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 6,
+      "hungerDelta": 24,
+      "thirstDelta": -2,
+      "staminaDelta": 15,
+      "addStatusEffect": "well_fed"
+    },
+    "inspectionHint": {
+      "es": "Árbol emergente colosal; en el suelo caen cocos leñosos pesados llenos de semillas triangulares.",
+      "en": "Colossal emergent canopy tree dropping heavy woody capsules packed with triangular nuts."
+    },
+    "howToUse": {
+      "es": "Abrir el coco leñoso con machete o piedra dura para extraer las nueces altamente calóricas.",
+      "en": "Crack the woody capsule with a machete or heavy stone to extract high-calorie nuts."
+    },
+    "funFact": {
+      "es": "Depende de abejas grandes de las orquídeas para su polinización y del ñeque (Dasyprocta) para dispersar sus semillas.",
+      "en": "Depends on large orchid bees for pollination and agoutis (Dasyprocta) to gnaw open its capsules and disperse seeds."
+    },
+    "sources": ["IUCN Red List & Instituto SINCHI - Flora de Tierra Firme"],
+    "spriteTint": "#7e5109"
+  },
+  {
+    "id": "myrciaria_dubia_camu_camu",
+    "scientificName": "Myrciaria dubia",
+    "commonName": { "es": "Camu-Camu", "en": "Camu-Camu Berry" },
+    "biomeIds": ["varzea", "riverbank"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 10,
+      "hungerDelta": 8,
+      "thirstDelta": 16,
+      "staminaDelta": 14
+    },
+    "inspectionHint": {
+      "es": "Arbusto ribereño parcialmente sumergido con bayas rojizas ácidas a lo largo de las ramas.",
+      "en": "Partially submerged riverside shrub bearing tart reddish-purple berries along its branches."
+    },
+    "howToUse": {
+      "es": "Consumir frescas o en jugo para fortalecer las defensas y recuperar hidratación.",
+      "en": "Eat fresh or crush into water to boost vitality and hydration."
+    },
+    "funFact": {
+      "es": "Contiene hasta 30 veces más vitamina C que la naranja y sus frutos alimentan al pez gamitana (tambaquí).",
+      "en": "Contains up to 30 times more vitamin C than oranges, and falling fruits feed tambaqui fish."
+    },
+    "sources": ["Instituto SINCHI (2015) - Frutales inundables de la cuenca amazónica"],
+    "spriteTint": "#c0392b"
+  },
+  {
+    "id": "eugenia_stipitata_araza",
+    "scientificName": "Eugenia stipitata",
+    "commonName": { "es": "Arazá", "en": "Araza Fruit" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 4,
+      "hungerDelta": 10,
+      "thirstDelta": 20,
+      "staminaDelta": 10
+    },
+    "inspectionHint": {
+      "es": "Fruto globoso amarillo intenso, muy suave al tacto y de fragancia frutal penetrante.",
+      "en": "Bright yellow globose fruit, velvety-soft to the touch with an intense tropical fragrance."
+    },
+    "howToUse": {
+      "es": "Consumir directamente o mezclado con agua para rehidratarse rápido en días calurosos.",
+      "en": "Eat directly or mix with water for rapid rehydration on hot days."
+    },
+    "funFact": {
+      "es": "Domesticado ancestralmente en la Amazonia occidental, produce frutos casi todo el año.",
+      "en": "Ancestrally domesticated in western Amazonia, it fruits multiple times throughout the year."
+    },
+    "sources": ["Instituto SINCHI (2014) - El Arazá en la Amazonia Colombiana"],
+    "spriteTint": "#f1c40f"
+  },
+  {
+    "id": "musa_paradisiaca_platano",
+    "scientificName": "Musa × paradisiaca",
+    "commonName": { "es": "Plátano de Chagra / Hartón", "en": "Chagra Plantain" },
+    "biomeIds": ["riverbank", "terra_firme"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 4,
+      "hungerDelta": 20,
+      "thirstDelta": 5,
+      "staminaDelta": 15
+    },
+    "inspectionHint": {
+      "es": "Hierba gigante de hojas anchas cerca de antiguas chagras con racimos de plátanos verdes y maduros.",
+      "en": "Giant broad-leaved herb near riverside clearings bearing bunches of green and ripe plantains."
+    },
+    "howToUse": {
+      "es": "Comer maduro crudo o asar verde en la fogata; sus hojas anchas sirven para envolver alimentos.",
+      "en": "Eat ripe raw or roast green plantains over fire; broad leaves serve as clean food wraps."
+    },
+    "funFact": {
+      "es": "El tacacho (plátano asado y machacado) es uno de los alimentos más tradicionales de los viajeros amazónicos.",
+      "en": "Tacacho (roasted, mashed plantain) is a staple trail food for Amazonian river travelers."
+    },
+    "sources": ["Instituto Humboldt - Agrobiodiversidad en chagras amazónicas"],
+    "spriteTint": "#d4ac0d"
+  },
+  {
+    "id": "inga_edulis_guama",
+    "scientificName": "Inga edulis",
+    "commonName": { "es": "Guama / Guamo Churimo", "en": "Ice-Cream Bean (Guama)" },
+    "biomeIds": ["riverbank", "terra_firme"],
+    "edibility": "edible_raw",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 3,
+      "hungerDelta": 12,
+      "thirstDelta": 16,
+      "staminaDelta": 10
+    },
+    "inspectionHint": {
+      "es": "Vainas largas cilíndricas y acanaladas que cuelgan sobre la orilla de los ríos.",
+      "en": "Long cylindrical ribbed pods hanging from riverside leguminous trees."
+    },
+    "howToUse": {
+      "es": "Abrir la vaina para comer el arilo blanco algodonoso y dulce que recubre las semillas.",
+      "en": "Split the pod to eat the sweet, cottony white aril surrounding the dark seeds."
+    },
+    "funFact": {
+      "es": "Como leguminosa, fija nitrógeno en el suelo y da sombra vital a los cultivos de cacao.",
+      "en": "As a nitrogen-fixing legume tree, it enriches soil and shades cacao agroforestry plots."
+    },
+    "sources": ["Catálogo de Plantas y Líquenes de Colombia - Inga edulis"],
+    "spriteTint": "#58d68d"
+  },
+  {
+    "id": "croton_lechleri_sangre_drago",
+    "scientificName": "Croton lechleri",
+    "commonName": { "es": "Sangre de Drago / Sangregado", "en": "Dragon's Blood Tree (Sangre de Drago)" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "medicinal",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 28,
+      "hungerDelta": 0,
+      "thirstDelta": 0,
+      "staminaDelta": 5
+    },
+    "inspectionHint": {
+      "es": "Árbol de corteza grisácea moteada que al rasparse exuda un látex rojo espeso como sangre.",
+      "en": "Mottled gray-barked tree that exudes thick crimson-red latex when scored."
+    },
+    "howToUse": {
+      "es": "Aplicar el látex rojo sobre heridas para cicatrizar rápidamente o diluir gotas para aliviar infecciones.",
+      "en": "Apply the red latex onto wounds as a liquid bandage to accelerate healing."
+    },
+    "funFact": {
+      "es": "Contiene taspina y proantocianidinas con propiedades cicatrizantes ampliamente documentadas por la ciencia.",
+      "en": "Contains taspine and proanthocyanidins with clinically documented wound-healing properties."
+    },
+    "sources": ["Instituto SINCHI & Vademécum Colombiano de Plantas Medicinales"],
+    "spriteTint": "#922b21"
+  },
+  {
+    "id": "uncaria_tomentosa_una_gato",
+    "scientificName": "Uncaria tomentosa",
+    "commonName": { "es": "Uña de Gato", "en": "Cat's Claw Vine (Uña de Gato)" },
+    "biomeIds": ["terra_firme", "varzea"],
+    "edibility": "medicinal",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 18,
+      "hungerDelta": 0,
+      "thirstDelta": 8,
+      "staminaDelta": 10
+    },
+    "inspectionHint": {
+      "es": "Liana leñosa trepadora con espinas curvas en la base de las hojas que parecen garras de felino.",
+      "en": "Woody climbing liana with curved hook-like thorns at the leaf bases resembling cat claws."
+    },
+    "howToUse": {
+      "es": "Hervir trozos de corteza o beber el agua fresca contenida dentro del tallo para desinflamar y restaurar salud.",
+      "en": "Boil bark strips or drink the clear water stored inside the vine stem to reduce inflammation."
+    },
+    "funFact": {
+      "es": "Los tramos gruesos de esta liana almacenan agua potable filtrada naturalmente por la planta.",
+      "en": "Thick sections of this liana store potable water naturally filtered by the vascular system of the vine."
+    },
+    "sources": ["Vademécum Colombiano de Plantas Medicinales - Ministerio de Salud / SINCHI"],
+    "spriteTint": "#b7950b"
+  },
+  {
+    "id": "cinchona_pubescens_quina",
+    "scientificName": "Cinchona pubescens",
+    "commonName": { "es": "Quina / Cascarilla", "en": "Cinchona (Fever Bark Tree)" },
+    "biomeIds": ["terra_firme"],
+    "edibility": "medicinal",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 14,
+      "hungerDelta": 0,
+      "thirstDelta": 4,
+      "staminaDelta": 8,
+      "cureStatusEffect": "malaria_fever"
+    },
+    "inspectionHint": {
+      "es": "Árbol de hojas opuestas con nervaduras rojizas y corteza extremadamente amarga.",
+      "en": "Opposite-leaved tree with reddish veins and intensely bitter inner bark."
+    },
+    "howToUse": {
+      "es": "Preparar infusión de su corteza para combatir la fiebre transmitida por mosquitos.",
+      "en": "Steep the bitter bark into a decoction to relieve mosquito-borne fevers."
+    },
+    "funFact": {
+      "es": "De su corteza se aisló la quinina, el alcaloide histórico contra la malaria estudiado en la Expedición Botánica.",
+      "en": "Its bark yielded quinine, the historic antimalarial alkaloid studied during the Royal Botanical Expedition."
+    },
+    "sources": ["Instituto Humboldt - Historia natural de la Quina en Colombia"],
+    "spriteTint": "#784212"
+  },
+  {
+    "id": "mansoa_alliacea_ajo_monte",
+    "scientificName": "Mansoa alliacea",
+    "commonName": { "es": "Ajo de Monte / Sacha Ajo", "en": "Wild Forest Garlic (Ajo de Monte)" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "medicinal",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 12,
+      "hungerDelta": 2,
+      "thirstDelta": 0,
+      "staminaDelta": 6,
+      "cureStatusEffect": "parasites"
+    },
+    "inspectionHint": {
+      "es": "Bejuco de flores violetas cuyas hojas desprenden un fuerte olor a ajo al frotarlas.",
+      "en": "Violet-flowered vine whose crushed leaves release an unmistakable pungent garlic aroma."
+    },
+    "howToUse": {
+      "es": "Macerar las hojas en agua para aliviar parásitos intestinales y ahuyentar insectos.",
+      "en": "Steep crushed leaves in water to purge intestinal parasites and deter biting insects."
+    },
+    "funFact": {
+      "es": "Compuestos organosulfurados similares al ajo común le confieren propiedades antiparasitarias y repelentes.",
+      "en": "Organosulfur compounds similar to culinary garlic give it natural antiparasitic and insect-repellent properties."
+    },
+    "sources": ["Instituto SINCHI - Plantas medicinales de comunidades ribereñas"],
+    "spriteTint": "#884ea0"
+  },
+  {
+    "id": "genipa_americana_huito",
+    "scientificName": "Genipa americana",
+    "commonName": { "es": "Huito / Jagua / Caruto", "en": "Genipapo (Jagua / Huito)" },
+    "biomeIds": ["varzea", "riverbank"],
+    "edibility": "medicinal",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 8,
+      "hungerDelta": 8,
+      "thirstDelta": 6,
+      "staminaDelta": 10,
+      "cureStatusEffect": "malaria_fever"
+    },
+    "inspectionHint": {
+      "es": "Árbol ribereño de frutos ovoides grisáceos cuyo jugo transparente se vuelve azul-negro al contacto con el aire.",
+      "en": "Riverside tree with grayish ovoid fruits whose clear juice oxidizes dark blue-black upon exposure to air."
+    },
+    "howToUse": {
+      "es": "El fruto maduro es comestible y el extracto del fruto verde protege la piel contra picaduras de zancudos y jejenes.",
+      "en": "Ripe fruit is edible, while unripe fruit juice coats the skin to protect against mosquitoes and biting midges."
+    },
+    "funFact": {
+      "es": "La genipina del huito se une a los aminoácidos de la piel creando pintura corporal ceremonial y protectora que dura dos semanas.",
+      "en": "Genipin in the fruit binds to skin amino acids, creating protective and ceremonial body art lasting two weeks."
+    },
+    "sources": ["Instituto SINCHI & Humboldt - Etnobotánica de Genipa americana"],
+    "spriteTint": "#1f618d"
+  },
+  {
+    "id": "cecropia_peltata_yarumo",
+    "scientificName": "Cecropia sciadophylla",
+    "commonName": { "es": "Yarumo Amazónico / Cetico", "en": "Amazonian Cecropia (Yarumo)" },
+    "biomeIds": ["riverbank", "terra_firme"],
+    "edibility": "medicinal",
+    "effectsOnConsumeRaw": {
+      "healthDelta": 6,
+      "hungerDelta": 6,
+      "thirstDelta": 4,
+      "staminaDelta": 8
+    },
+    "inspectionHint": {
+      "es": "Árbol pionero de tronco hueco anillado y grandes hojas palmadas blanquecinas por el envés.",
+      "en": "Pioneer tree with hollow ringed trunk and large palmate leaves silvery-white underneath."
+    },
+    "howToUse": {
+      "es": "Sus inflorescencias dulces son comestibles y su madera seca hueca es excelente para iniciar fuego por fricción.",
+      "en": "Sweet finger-like catkins are edible, and its dry hollow wood excels as a friction-fire hearth."
+    },
+    "funFact": {
+      "es": "Vive en simbiosis con hormigas Azteca que defienden el árbol y sus hojas son el alimento favorito de los perezosos.",
+      "en": "Lives in symbiosis with Azteca ants that defend the trunk, while its canopy feeds three-toed sloths."
+    },
+    "sources": ["Catálogo de Plantas y Líquenes de Colombia - Cecropia"],
+    "spriteTint": "#7fb3d5"
+  },
+  {
+    "id": "chondrodendron_tomentosum_curare",
+    "scientificName": "Chondrodendron tomentosum",
+    "commonName": { "es": "Bejuco de Curare / Ampihuasca", "en": "Curare Poison Vine" },
+    "biomeIds": ["terra_firme"],
+    "edibility": "toxic",
+    "effectsOnConsumeRaw": {
+      "healthDelta": -35,
+      "hungerDelta": 0,
+      "thirstDelta": -10,
+      "staminaDelta": -40,
+      "addStatusEffect": "food_poisoning"
+    },
+    "inspectionHint": {
+      "es": "Liana gruesa de corteza negra rugosa y hojas acorazonadas con envés densamente velloso blanco.",
+      "en": "Thick woody vine with rough black bark and heart-shaped leaves densely white-woolly beneath."
+    },
+    "howToUse": {
+      "es": "¡TÓXICO! No ingerir. Contiene alcaloides relajantes musculares; útil únicamente para estudio botánico en la Bitácora.",
+      "en": "TOXIC! Do not ingest. Contains neuromuscular blocking alkaloids; observe only for the Field Guide."
+    },
+    "funFact": {
+      "es": "Su alcaloide d-tubocurarina revolucionó la anestesiología moderna en cirugías de todo el mundo.",
+      "en": "Its alkaloid d-tubocurarine revolutionized modern surgical anesthesiology worldwide."
+    },
+    "sources": ["Instituto Humboldt - Plantas bioactivas de la Amazonia"],
+    "spriteTint": "#4a235a"
+  },
+  {
+    "id": "dieffenbachia_seguine_chonque",
+    "scientificName": "Dieffenbachia parlatorei",
+    "commonName": { "es": "Caña Muda / Chonque Silvestre", "en": "Dumbcane (Wild Dieffenbachia)" },
+    "biomeIds": ["varzea", "terra_firme"],
+    "edibility": "toxic",
+    "effectsOnConsumeRaw": {
+      "healthDelta": -20,
+      "hungerDelta": 0,
+      "thirstDelta": -20,
+      "staminaDelta": -15,
+      "addStatusEffect": "food_poisoning"
+    },
+    "inspectionHint": {
+      "es": "Hierba de sotobosque húmedo con hojas anchas moteadas de manchas crema y savia cáustica.",
+      "en": "Humid understory herb with broad leaves variegated in cream flecks and caustic sap."
+    },
+    "howToUse": {
+      "es": "¡PELIGROSO! No masticar bajo ninguna circunstancia. Sus cristales de oxalato de calcio inflaman la garganta.",
+      "en": "DANGEROUS! Never chew or ingest. Needle-like calcium oxalate raphides cause severe throat swelling."
+    },
+    "funFact": {
+      "es": "Su nombre común 'caña muda' proviene de la inflamación temporal de las cuerdas vocales si se muerde por error.",
+      "en": "Named 'dumbcane' because chewing the stem causes temporary swelling and loss of speech."
+    },
+    "sources": ["Instituto SINCHI - Flora herbácea del sotobosque amazónico"],
+    "spriteTint": "#196f3d"
+  }
+]

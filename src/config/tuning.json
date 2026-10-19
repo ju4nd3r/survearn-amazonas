@@ -1,0 +1,58 @@
+{
+  "simulation": {
+    "inGameMinutesPerRealSecond": 1.2,
+    "baseHungerDecayPerSec": 0.14,
+    "baseThirstDecayPerSec": 0.22,
+    "sprintStaminaDrainPerSec": 12.0,
+    "swimStaminaDrainPerSec": 9.5,
+    "staminaRegenPerSec": 8.0,
+    "starvationHealthDrainPerSec": 0.9,
+    "dehydrationHealthDrainPerSec": 1.5,
+    "hypothermiaTempThreshold": 35.5,
+    "feverTempThreshold": 38.5,
+    "normalBodyTemp": 37.0,
+    "campfireSafeRadiusPx": 110,
+    "rescueCommunityDistanceTiles": 28
+  },
+  "difficultyMultipliers": {
+    "explorer": {
+      "decayMultiplier": 0.7,
+      "threatDamageMultiplier": 0.65
+    },
+    "survivalist": {
+      "decayMultiplier": 1.0,
+      "threatDamageMultiplier": 1.0
+    },
+    "amazon_realist": {
+      "decayMultiplier": 1.35,
+      "threatDamageMultiplier": 1.35
+    }
+  },
+  "statusEffects": {
+    "food_poisoning": {
+      "defaultDurationSec": 45,
+      "healthDrainPerSec": 1.4,
+      "thirstDrainPerSec": 1.1
+    },
+    "parasites": {
+      "defaultDurationSec": 90,
+      "healthDrainPerSec": 0.3,
+      "thirstDrainPerSec": 1.2
+    },
+    "malaria_fever": {
+      "defaultDurationSec": 120,
+      "healthDrainPerSec": 0.5,
+      "thirstDrainPerSec": 0.8
+    },
+    "venom_bite": {
+      "defaultDurationSec": 60,
+      "healthDrainPerSec": 1.8,
+      "thirstDrainPerSec": 0.6
+    },
+    "well_fed": {
+      "defaultDurationSec": 120,
+      "healthDrainPerSec": -0.25,
+      "thirstDrainPerSec": 0.0
+    }
+  }
+}

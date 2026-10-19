@@ -1,0 +1,46 @@
+[
+  {
+    "id": "terra_firme",
+    "name": { "es": "Bosque de Tierra Firme", "en": "Terra Firme Upland Forest" },
+    "description": {
+      "es": "Suelos altos que no se inundan durante la creciente; hogar de grandes árboles emergentes como la castaña, el copoazú y el jaguar.",
+      "en": "High ground above seasonal floodwaters; home to towering emergent trees like Brazil nut, cupuaçu, and the jaguar."
+    },
+    "groundColor": "#1e4d2b",
+    "movementMultiplier": 1.0,
+    "moistureBase": 65
+  },
+  {
+    "id": "varzea",
+    "name": { "es": "Bosque Inundable de Várzea / Cananguchal", "en": "Várzea Flooded Forest & Palm Swamp" },
+    "description": {
+      "es": "Llanura aluvial inundada estacionalmente por aguas blancas ricas en nutrientes; abundan palmas de moriche, asaí y camu-camu.",
+      "en": "Alluvial forest seasonally flooded by nutrient-rich whitewaters; rich in moriche palms, açaí, and camu-camu."
+    },
+    "groundColor": "#285943",
+    "movementMultiplier": 0.78,
+    "moistureBase": 85
+  },
+  {
+    "id": "riverbank",
+    "name": { "es": "Orilla Ribereña y Playón de Quebrada", "en": "Riverbank & Stream Gravel Bar" },
+    "description": {
+      "es": "Transición entre la selva y el río donde crecen bijao, guadua, yarumo y las chagras comunitarias.",
+      "en": "Transition zone between forest and river where bijao, bamboo, cecropia, and community chagras thrive."
+    },
+    "groundColor": "#6e583f",
+    "movementMultiplier": 0.92,
+    "moistureBase": 75
+  },
+  {
+    "id": "aquatic",
+    "name": { "es": "Río Amazonas y Cochas (Aguas Abiertas)", "en": "Amazon River & Oxbow Lakes (Cochas)" },
+    "description": {
+      "es": "Canales fluviales con corriente y lagos en herradura donde habitan el pirarucú, el tucunaré, el bocachico y el caimán negro.",
+      "en": "Flowing river channels and oxbow lakes inhabited by arapaima, peacock bass, bocachico, and black caiman."
+    },
+    "groundColor": "#1b4f72",
+    "movementMultiplier": 0.55,
+    "moistureBase": 100
+  }
+]

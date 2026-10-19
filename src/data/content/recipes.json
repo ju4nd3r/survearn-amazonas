@@ -1,0 +1,213 @@
+[
+  {
+    "id": "fogata_campamento",
+    "name": { "es": "Fogata de Capirona", "en": "Capirona Campfire" },
+    "category": "camp",
+    "ingredients": [
+      { "itemId": "madera_capirona", "count": 2 },
+      { "itemId": "piedra_rio_silex", "count": 1 }
+    ],
+    "requiredStation": "none",
+    "outputItemId": "fogata_campamento",
+    "outputCount": 1,
+    "placesStructure": true,
+    "description": {
+      "es": "Enciende una fogata que ilumina la noche, seca la ropa húmeda, ahuyenta jaguares/caimanes y permite hervir agua o cocinar.",
+      "en": "Builds a campfire that lights the night, dries wetness, deters jaguars/caimans, and enables water boiling and cooking."
+    },
+    "culturalNote": {
+      "es": "El fogón tradicional de tres tulpas conserva el calor y mantiene el humo que aleja a los zancudos al anochecer.",
+      "en": "The traditional three-log hearth retains heat and produces smoke that keeps mosquitoes at bay at dusk."
+    }
+  },
+  {
+    "id": "hervir_agua_totuma",
+    "name": { "es": "Purificar Agua en Totuma (Hervir)", "en": "Boil Safe Water in Gourd" },
+    "category": "processing",
+    "ingredients": [{ "itemId": "agua_rio_cruda", "count": 1 }],
+    "requiredStation": "campfire",
+    "outputItemId": "agua_hervida_segura",
+    "outputCount": 1,
+    "placesStructure": false,
+    "description": {
+      "es": "Hierve el agua cruda del río sobre la fogata para eliminar parásitos y bacterias.",
+      "en": "Boils raw river water over a campfire to eliminate parasites and waterborne bacteria."
+    },
+    "culturalNote": {
+      "es": "Hervir el agua o recoger agua lluvia sobre hojas limpias de bijao es esencial para prevenir enfermedades hídricas.",
+      "en": "Boiling water or catching clean rainwater on bijao leaves is essential to prevent waterborne illness."
+    }
+  },
+  {
+    "id": "procesar_casabe_yuca",
+    "name": { "es": "Procesar Yuca Brava en Casabe (Tipití + Budare)", "en": "Detoxify Bitter Cassava into Casabe" },
+    "category": "processing",
+    "ingredients": [
+      { "itemId": "manihot_esculenta_brava", "count": 1 },
+      { "itemId": "fibra_chambira", "count": 1 }
+    ],
+    "requiredStation": "campfire",
+    "outputItemId": "casabe_tostado",
+    "outputCount": 2,
+    "placesStructure": false,
+    "description": {
+      "es": "Ralla la yuca brava, exprime el líquido venenoso (yare) con fibra de cumare y tuesta dos tortas de casabe nutritivo.",
+      "en": "Grates bitter cassava, presses out the toxic cyanogenic liquid using chambira fiber, and toasts two nourishing casabe flatbreads."
+    },
+    "culturalNote": {
+      "es": "Técnica maestra de la ciencia indígena amazónica (Uitoto, Tikuna, Bora, Yukuna) para transformar una planta letal en el pan de cada día.",
+      "en": "Masterpiece of Indigenous Amazonian food science (Uitoto, Tikuna, Bora, Yukuna) turning a lethal tuber into daily bread."
+    }
+  },
+  {
+    "id": "asar_patarasca_pescado",
+    "name": { "es": "Asar Patarasca de Pescado en Bijao", "en": "Roast Fish Patarasca in Bijao Leaf" },
+    "category": "processing",
+    "ingredients": [
+      { "itemId": "pescado_crudo", "count": 1 },
+      { "itemId": "hoja_bijao", "count": 1 }
+    ],
+    "requiredStation": "campfire",
+    "outputItemId": "pescado_asado_patarasca",
+    "outputCount": 1,
+    "placesStructure": false,
+    "description": {
+      "es": "Envuelve pescado fresco en hoja impermeable de bijao y ásalo sobre las brasas para obtener una comida reconfortante.",
+      "en": "Wraps fresh river fish in a waterproof bijao leaf and roasts it over embers for a restorative meal."
+    },
+    "culturalNote": {
+      "es": "La patarasca es el plato ribereño por excelencia en Leticia y Puerto Nariño.",
+      "en": "Patarasca is the iconic riverine dish across Leticia and Puerto Nariño."
+    }
+  },
+  {
+    "id": "lanza_pesca_bambu",
+    "name": { "es": "Chuzo / Lanza de Pesca de Guadua", "en": "Bamboo Fishing & Defense Spear" },
+    "category": "tool",
+    "ingredients": [
+      { "itemId": "bambu_guadua_amaz", "count": 1 },
+      { "itemId": "fibra_chambira", "count": 1 }
+    ],
+    "requiredStation": "none",
+    "outputItemId": "lanza_pesca_bambu",
+    "outputCount": 1,
+    "placesStructure": false,
+    "description": {
+      "es": "Lanza ligera de bambú templado al calor; facilita la pesca en las orillas y mantiene a raya a los depredadores.",
+      "en": "Fire-hardened bamboo spear that aids shallow-water fishing and deters stalking predators."
+    },
+    "culturalNote": {
+      "es": "Las puntas de guadua o chonta endurecidas al fuego son herramientas tradicionales de pesca selectiva.",
+      "en": "Fire-hardened bamboo or palm-wood points are traditional tools for selective river fishing."
+    }
+  },
+  {
+    "id": "machete_piedra_monte",
+    "name": { "es": "Cuchillo / Machete de Monte Afilado", "en": "Knapped River-Stone Bush Knife" },
+    "category": "tool",
+    "ingredients": [
+      { "itemId": "piedra_rio_silex", "count": 1 },
+      { "itemId": "madera_capirona", "count": 1 },
+      { "itemId": "fibra_chambira", "count": 1 }
+    ],
+    "requiredStation": "none",
+    "outputItemId": "machete_piedra_monte",
+    "outputCount": 1,
+    "placesStructure": false,
+    "description": {
+      "es": "Herramienta de corte firme para abrir cocos de castaña, despejar rastrojo y recolectar cortezas medicinales.",
+      "en": "Sturdy cutting tool for cracking Brazil nut pods, clearing brush, and harvesting medicinal bark."
+    },
+    "culturalNote": {
+      "es": "Despejar con cuidado la hojarasca antes de pisar evita encuentros accidentales con la serpiente talla equis.",
+      "en": "Carefully parting leaf litter before stepping prevents accidental encounters with lancehead vipers."
+    }
+  },
+  {
+    "id": "trampa_nasa_fibra",
+    "name": { "es": "Nasa / Trampa Tejida de Pesca", "en": "Woven Chambira Fish Trap (Nasa)" },
+    "category": "tool",
+    "ingredients": [
+      { "itemId": "fibra_chambira", "count": 2 },
+      { "itemId": "bambu_guadua_amaz", "count": 1 }
+    ],
+    "requiredStation": "none",
+    "outputItemId": "pescado_crudo",
+    "outputCount": 2,
+    "placesStructure": false,
+    "description": {
+      "es": "Cesta cónica tejida que captura bocachicos y tucunarés en las orillas del río.",
+      "en": "Conical woven basket trap that catches bocachico and peacock bass along river margins."
+    },
+    "culturalNote": {
+      "es": "Las nasas de fibra vegetal permiten pescar sin dañar a los peces juveniles que escapan por el tejido.",
+      "en": "Woven vegetal traps allow sustainable fishing by letting juvenile fish slip through the mesh."
+    }
+  },
+  {
+    "id": "hamaca_cumare",
+    "name": { "es": "Hamaca Tejida de Cumare", "en": "Woven Chambira Hammock" },
+    "category": "camp",
+    "ingredients": [
+      { "itemId": "fibra_chambira", "count": 3 },
+      { "itemId": "madera_capirona", "count": 1 }
+    ],
+    "requiredStation": "none",
+    "outputItemId": "hamaca_cumare",
+    "outputCount": 1,
+    "placesStructure": false,
+    "description": {
+      "es": "Permite descansar suspendido sobre el suelo húmedo, lejos de hormigas, escorpiones y serpientes.",
+      "en": "Allows resting suspended above the damp forest floor, safe from ants, scorpions, and snakes."
+    },
+    "culturalNote": {
+      "es": "Dormir elevado en hamaca de cumare es la adaptación más inteligente al suelo húmedo del bosque tropical.",
+      "en": "Sleeping suspended in a chambira hammock is the premier adaptation to the humid rainforest floor."
+    }
+  },
+  {
+    "id": "tambo_palafito_refugio",
+    "name": { "es": "Tambo / Palafito con Techo de Palma", "en": "Elevated Tambo Shelter" },
+    "category": "camp",
+    "ingredients": [
+      { "itemId": "madera_capirona", "count": 3 },
+      { "itemId": "hoja_bijao", "count": 2 },
+      { "itemId": "fibra_chambira", "count": 2 }
+    ],
+    "requiredStation": "none",
+    "outputItemId": "tambo_palafito_refugio",
+    "outputCount": 1,
+    "placesStructure": true,
+    "description": {
+      "es": "Construye un refugio elevado con techo impermeable que protege del aguacero, el frío nocturno, los zancudos y los depredadores.",
+      "en": "Constructs an elevated palm-thatched shelter that protects against heavy rain, night chill, mosquitoes, and predators."
+    },
+    "culturalNote": {
+      "es": "La arquitectura de palafitos se adapta al pulso anual de inundación (creciente y vaciante) del río Amazonas.",
+      "en": "Stilt-house (palafito) architecture adapts harmoniously to the seasonal flood pulse of the Amazon River."
+    }
+  },
+  {
+    "id": "curiara_canoa_rescate",
+    "name": { "es": "Balsa / Curiara de Navegación Fluvial", "en": "River Rescue Canoe (Curiara)" },
+    "category": "transport",
+    "ingredients": [
+      { "itemId": "madera_capirona", "count": 3 },
+      { "itemId": "bambu_guadua_amaz", "count": 2 },
+      { "itemId": "resina_copal_brea", "count": 1 },
+      { "itemId": "fibra_chambira", "count": 2 }
+    ],
+    "requiredStation": "campfire",
+    "outputItemId": "curiara_canoa_rescate",
+    "outputCount": 1,
+    "placesStructure": true,
+    "description": {
+      "es": "Embarcación sellada con resina de copal que permite navegar las corrientes profundas del río y llegar a Puerto Esperanza.",
+      "en": "Watercraft caulked with copal resin that lets you navigate deep river currents and reach Puerto Esperanza."
+    },
+    "culturalNote": {
+      "es": "En la Amazonia los ríos son las carreteras; una curiara bien calafateada con brea de copal es sinónimo de vida y comunicación.",
+      "en": "In the Amazon, rivers are the highways; a canoe well-caulked with copal resin means life and community connection."
+    }
+  }
+]

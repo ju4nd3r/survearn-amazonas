@@ -1,0 +1,441 @@
+[
+  {
+    "id": "panthera_onca_jaguar",
+    "scientificName": "Panthera onca",
+    "commonName": { "es": "Jaguar / Tigre Mariposo", "en": "Amazonian Jaguar" },
+    "biomeIds": ["terra_firme", "riverbank", "varzea"],
+    "threatLevel": "ambush_predator",
+    "aiProfile": {
+      "moveSpeed": 72,
+      "aggroRadius": 128,
+      "fleeRadius": 48,
+      "attackDamage": 24,
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Huellas anchas sin marcas de uñas en el barro ribereño y pelaje dorado con rosetas negras.",
+      "en": "Broad pugmarks without claw imprints in the riverbank mud and golden coat with black rosettes."
+    },
+    "behaviorNote": {
+      "es": "Depredador de emboscada. Acecha en silencio pero respeta el fuego encendido, los tambos y las lanzas en alto.",
+      "en": "Apex ambush predator. Stalks quietly through brush but avoids lit campfires, shelters, and raised spears."
+    },
+    "funFact": {
+      "es": "Tiene la mordida más potente entre todos los grandes felinos en proporción a su tamaño y es un excelente nadador.",
+      "en": "Possesses the strongest bite force relative to size of any big cat and swims effortlessly across wide rivers."
+    },
+    "sources": ["IUCN Red List & Instituto Humboldt - Mamíferos de Colombia (Panthera onca)"],
+    "spriteTint": "#e59866"
+  },
+  {
+    "id": "melanosuchus_niger_caiman_negro",
+    "scientificName": "Melanosuchus niger",
+    "commonName": { "es": "Caimán Negro", "en": "Black Caiman" },
+    "biomeIds": ["riverbank", "varzea", "aquatic"],
+    "threatLevel": "ambush_predator",
+    "aiProfile": {
+      "moveSpeed": 56,
+      "aggroRadius": 96,
+      "fleeRadius": 36,
+      "attackDamage": 22,
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Ojos amarillos y dorso oscuro acorazado asomando apenas sobre el agua tranquila de la cocha.",
+      "en": "Yellow eyes and dark armored ridges barely breaking the surface of calm oxbow waters."
+    },
+    "behaviorNote": {
+      "es": "Muy rápido en el agua y las orillas inundadas; lento en tierra firme alta. Evita acercarte a la orilla de noche sin antorcha.",
+      "en": "Fast in water and flooded shallows; sluggish on high dry ground. Avoid dark water edges without firelight."
+    },
+    "funFact": {
+      "es": "Es el mayor depredador reptil de la cuenca amazónica y regula las poblaciones de pirañas y capibaras.",
+      "en": "The largest reptile predator in the Amazon basin, playing a vital role regulating piranha and capybara populations."
+    },
+    "sources": ["Instituto SINCHI & Parques Nacionales Naturales (PNN Amacayacu) - Reptiles Acuáticos"],
+    "spriteTint": "#2c3e50"
+  },
+  {
+    "id": "eunectes_murinus_anaconda",
+    "scientificName": "Eunectes murinus",
+    "commonName": { "es": "Anaconda Verde / Güío Negro", "en": "Green Anaconda" },
+    "biomeIds": ["varzea", "aquatic", "riverbank"],
+    "threatLevel": "ambush_predator",
+    "aiProfile": {
+      "moveSpeed": 48,
+      "aggroRadius": 84,
+      "fleeRadius": 32,
+      "attackDamage": 20,
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Cuerpo musculoso verde oliva con manchas ovaladas negras sumergido entre raíces de várzea.",
+      "en": "Massive olive-green body patterned with black oval spots submerged among flooded roots."
+    },
+    "behaviorNote": {
+      "es": "Caza por constricción en aguas someras. Rodea los humedales densos o navega en canoa.",
+      "en": "Constrictor hunting in shallow flooded forest. Skirt dense swamps on foot or cross by canoe."
+    },
+    "funFact": {
+      "es": "Es la serpiente más pesada del planeta; sus ojos y fosas nasales están en lo alto de la cabeza para vigilar sumergida.",
+      "en": "The heaviest snake on Earth; its eyes and nostrils sit atop its head so it can breathe while submerged."
+    },
+    "sources": ["Instituto Humboldt - Anfibios y Reptiles de la Amazonia Colombiana"],
+    "spriteTint": "#27ae60"
+  },
+  {
+    "id": "bothrops_atrox_talla_equis",
+    "scientificName": "Bothrops atrox",
+    "commonName": { "es": "Talla Equis / Mapana / Pelo de Gato", "en": "Common Lancehead (Fer-de-Lance)" },
+    "biomeIds": ["terra_firme", "riverbank"],
+    "threatLevel": "defensive_hazard",
+    "aiProfile": {
+      "moveSpeed": 40,
+      "aggroRadius": 52,
+      "fleeRadius": 40,
+      "attackDamage": 18,
+      "inflictsStatus": "venom_bite",
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Serpiente enrollada entre la hojarasca seca con diseño geométrico en forma de 'X' y cabeza triangular.",
+      "en": "Pit viper coiled in dry leaf litter with geometric 'X' markings and a lance-shaped head."
+    },
+    "behaviorNote": {
+      "es": "No persigue a largas distancias: solo muerde en defensa si la pisas sin mirar. Usa el botón Inspeccionar en la hojarasca.",
+      "en": "Does not chase far: strikes defensively only when stepped near. Inspect leaf litter and clear brush carefully."
+    },
+    "funFact": {
+      "es": "Sus fosetas loreales detectan variaciones térmicas minúsculas de presas de sangre caliente en total oscuridad.",
+      "en": "Heat-sensing loreal pits detect tiny infrared temperature differences of warm-blooded prey in total darkness."
+    },
+    "sources": ["Instituto Nacional de Salud (INS Colombia) & Humboldt - Ofidismo y Bothrops atrox"],
+    "spriteTint": "#935116"
+  },
+  {
+    "id": "lachesis_muta_verrugosa",
+    "scientificName": "Lachesis muta",
+    "commonName": { "es": "Verrugosa / Rieca / Surucucú", "en": "South American Bushmaster" },
+    "biomeIds": ["terra_firme"],
+    "threatLevel": "defensive_hazard",
+    "aiProfile": {
+      "moveSpeed": 38,
+      "aggroRadius": 58,
+      "fleeRadius": 36,
+      "attackDamage": 22,
+      "inflictsStatus": "venom_bite",
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Gran víbora de escamas granulares ásperas como verrugas y rombos negros sobre fondo rosado-canela.",
+      "en": "Large pit viper with beaded wart-like scales and black diamond markings over tan-pink skin."
+    },
+    "behaviorNote": {
+      "es": "Habita bosques primarios de tierra firme; hace vibrar la cola contra las hojas secas como advertencia antes de defenderse.",
+      "en": "Inhabits undisturbed upland forest; vibrates its tail against dry leaves as a warning before striking."
+    },
+    "funFact": {
+      "es": "Es la víbora venenosa más larga de América y la única de su grupo en el continente que pone huevos en vez de parir crías vivas.",
+      "en": "The longest venomous pit viper in the Americas and the only New World pit viper that lays eggs."
+    },
+    "sources": ["Instituto Humboldt & Catálogo de Biodiversidad de Colombia (Lachesis muta)"],
+    "spriteTint": "#b9770e"
+  },
+  {
+    "id": "pygocentrus_nattereri_pirana",
+    "scientificName": "Pygocentrus nattereri",
+    "commonName": { "es": "Piraña Roja / Caribe", "en": "Red-Bellied Piranha" },
+    "biomeIds": ["aquatic", "varzea"],
+    "threatLevel": "defensive_hazard",
+    "aiProfile": {
+      "moveSpeed": 68,
+      "aggroRadius": 72,
+      "fleeRadius": 24,
+      "attackDamage": 12,
+      "fearedByFire": false
+    },
+    "yieldItems": [{ "itemId": "pescado_crudo", "count": 1 }],
+    "inspectionHint": {
+      "es": "Cardumen plateado de vientre rojizo y mandíbula prominente en aguas estancadas o cochas.",
+      "en": "Silver-scaled shoal with bright red bellies and strong jaws in warm backwaters."
+    },
+    "behaviorNote": {
+      "es": "Rara vez atacan a nadadores sanos en ríos abiertos, pero se vuelven agresivas en aguas bajas estancadas. Excelentes para pescar.",
+      "en": "Rarely bite healthy swimmers in flowing rivers, but grow defensive in low stagnant pools. Can be caught for food."
+    },
+    "funFact": {
+      "es": "Emiten sonidos parecidos a ladridos mediante su vejiga natatoria para comunicarse dentro del cardumen.",
+      "en": "Produce bark-like acoustic signals using muscles attached to their swim bladder to communicate."
+    },
+    "sources": ["Instituto SINCHI - Peces de la Cuenca Amazónica Colombiana"],
+    "spriteTint": "#cb4335"
+  },
+  {
+    "id": "dendrobates_tinctorius_rana_dardo",
+    "scientificName": "Ranitomeya amazonica",
+    "commonName": { "es": "Rana Dardo Venenosa Amazónica", "en": "Amazonian Poison Dart Frog" },
+    "biomeIds": ["terra_firme", "varzea"],
+    "threatLevel": "defensive_hazard",
+    "aiProfile": {
+      "moveSpeed": 30,
+      "aggroRadius": 24,
+      "fleeRadius": 45,
+      "attackDamage": 15,
+      "inflictsStatus": "food_poisoning",
+      "fearedByFire": false
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Diminuta rana diurna de colores rojo fuego y azul metálico sobre bromelias húmedas.",
+      "en": "Tiny diurnal amphibian patterned in fiery orange-red and metallic blue on damp bromeliads."
+    },
+    "behaviorNote": {
+      "es": "Inofensiva si solo la observas para la Bitácora; nunca la manipules con manos heridas ni intentes comerla.",
+      "en": "Harmless when observed for your Field Guide; never handle with bare cuts or attempt to consume."
+    },
+    "funFact": {
+      "es": "Sus colores aposemáticos advierten a los depredadores; obtiene sus alcaloides de las hormigas y ácaros que consume.",
+      "en": "Its aposematic colors warn predators; it sequesters skin alkaloids directly from its diet of forest ants and mites."
+    },
+    "sources": ["Instituto Humboldt - Anfibios de Colombia (Ranitomeya / Dendrobatidae)"],
+    "spriteTint": "#e74c3c"
+  },
+  {
+    "id": "anopheles_darlingi_zancudo",
+    "scientificName": "Anopheles darlingi",
+    "commonName": { "es": "Zancudo Anófeles", "en": "Amazonian Malaria Mosquito" },
+    "biomeIds": ["varzea", "riverbank"],
+    "threatLevel": "disease_vector",
+    "aiProfile": {
+      "moveSpeed": 54,
+      "aggroRadius": 88,
+      "fleeRadius": 64,
+      "attackDamage": 3,
+      "inflictsStatus": "malaria_fever",
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Nube de zancudos finos que se posan en ángulo inclinado al atardecer cerca de aguas quietas.",
+      "en": "Cloud of slender mosquitoes resting at a steep angle at dusk near still waters."
+    },
+    "behaviorNote": {
+      "es": "Activos al anochecer. Se ahuyentan con el humo de la fogata, durmiendo bajo tambo o aplicando pintura de Huito (Genipa).",
+      "en": "Most active at dusk and night. Deterred by campfire smoke, sleeping in a Tambo shelter, or applying Huito skin dye."
+    },
+    "funFact": {
+      "es": "Solo las hembras pican porque necesitan proteínas sanguíneas para madurar sus huevos en las orillas sombreadas.",
+      "en": "Only females bite, requiring blood proteins to mature their eggs along shaded water margins."
+    },
+    "sources": ["Instituto Nacional de Salud (INS) - Vectores de la Amazonia Colombiana"],
+    "spriteTint": "#5d6d7e"
+  },
+  {
+    "id": "eciton_burchellii_hormiga_ronda",
+    "scientificName": "Eciton burchellii",
+    "commonName": { "es": "Hormiga Conga / Hormiga Arriera de Ronda", "en": "Amazonian Army Ant Swarm" },
+    "biomeIds": ["terra_firme"],
+    "threatLevel": "defensive_hazard",
+    "aiProfile": {
+      "moveSpeed": 42,
+      "aggroRadius": 60,
+      "fleeRadius": 48,
+      "attackDamage": 10,
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "Columna densa y rumorosa de miles de hormigas rojizas con soldados de grandes mandíbulas en los flancos.",
+      "en": "Rustling carpet of thousands of reddish ants flanked by big-jawed soldiers."
+    },
+    "behaviorNote": {
+      "es": "Marchan limpiando el suelo del bosque; basta con dar un rodeo y no quedarse parado sobre su columna.",
+      "en": "Forage in moving columns across the forest floor; simply step aside and avoid standing in their path."
+    },
+    "funFact": {
+      "es": "No construyen hormigueros permanentes: forman un 'vivac' viviente entrelazando sus propios cuerpos cada noche.",
+      "en": "They build no permanent nests, instead weaving a living 'bivouac' out of their own interlocked bodies each night."
+    },
+    "sources": ["Instituto Humboldt - Insectos Sociales de los Bosques Húmedos Tropicales"],
+    "spriteTint": "#a04000"
+  },
+  {
+    "id": "arapaima_gigas_pirarucu",
+    "scientificName": "Arapaima gigas",
+    "commonName": { "es": "Pirarucú / Paiche", "en": "Arapaima (Pirarucú)" },
+    "biomeIds": ["aquatic", "varzea"],
+    "threatLevel": "harmless_prey",
+    "aiProfile": {
+      "moveSpeed": 50,
+      "aggroRadius": 0,
+      "fleeRadius": 80,
+      "attackDamage": 0,
+      "fearedByFire": false
+    },
+    "yieldItems": [{ "itemId": "pescado_crudo", "count": 3 }],
+    "inspectionHint": {
+      "es": "Pez colosal de escamas plateadas bordeadas de rojo escarlata que sube a la superficie a tomar aire.",
+      "en": "Colossal fish with armor-like scales edged in scarlet red surfacing to gulp air."
+    },
+    "behaviorNote": {
+      "es": "Pacífico gigante de los lagos amazónicos. Requiere arpón/lanza o trampa de pesca; su pesca comunitaria tiene tallas mínimas de conservación.",
+      "en": "Gentle giant of oxbow lakes. Requires a spear or fishing trap; riverine communities enforce strict conservation size limits."
+    },
+    "funFact": {
+      "es": "Su vejiga natatoria modificada funciona como un pulmón, permitiéndole respirar aire atmosférico cada 15 a 20 minutos.",
+      "en": "Its modified swim bladder acts like a lung, requiring it to surface for atmospheric air every 15–20 minutes."
+    },
+    "sources": ["Instituto SINCHI & Humedales de Tarapoto - Manejo comunitario del Pirarucú"],
+    "spriteTint": "#c0392b"
+  },
+  {
+    "id": "cichla_monoculus_tucunare",
+    "scientificName": "Cichla monoculus",
+    "commonName": { "es": "Tucunaré / Pavón Amazónico", "en": "Amazon Peacock Bass (Tucunaré)" },
+    "biomeIds": ["aquatic", "riverbank"],
+    "threatLevel": "harmless_prey",
+    "aiProfile": {
+      "moveSpeed": 60,
+      "aggroRadius": 0,
+      "fleeRadius": 75,
+      "attackDamage": 0,
+      "fearedByFire": false
+    },
+    "yieldItems": [{ "itemId": "pescado_crudo", "count": 2 }],
+    "inspectionHint": {
+      "es": "Pez amarillo verdoso con tres barras verticales oscuras y un ocelo brillante en la aleta caudal.",
+      "en": "Golden-green fish marked with three dark vertical bars and a striking eyespot on its tail fin."
+    },
+    "behaviorNote": {
+      "es": "Caza cerca de troncos sumergidos durante el día; excelente fuente de proteína asado en fogata.",
+      "en": "Hunts near submerged logs during daylight; prized food fish when roasted over a campfire."
+    },
+    "funFact": {
+      "es": "El ocelo o 'falso ojo' en su cola confunde a las pirañas y otros depredadores sobre la dirección en que nada.",
+      "en": "The false eyespot on its tail confuses piranhas and predators about which way the fish will dart."
+    },
+    "sources": ["Instituto SINCHI - Catálogo de Peces Ornamentales y de Consumo del Amazonas"],
+    "spriteTint": "#f39c12"
+  },
+  {
+    "id": "prochilodus_nigricans_bocachico",
+    "scientificName": "Prochilodus nigricans",
+    "commonName": { "es": "Bocachico Amazónico / Boquichico", "en": "Black Prochilodus (Bocachico)" },
+    "biomeIds": ["aquatic", "varzea", "riverbank"],
+    "threatLevel": "harmless_prey",
+    "aiProfile": {
+      "moveSpeed": 55,
+      "aggroRadius": 0,
+      "fleeRadius": 70,
+      "attackDamage": 0,
+      "fearedByFire": false
+    },
+    "yieldItems": [{ "itemId": "pescado_crudo", "count": 1 }],
+    "inspectionHint": {
+      "es": "Pez plateado de boca pequeña carnosa adaptada para raspar algas y detritos de troncos inundados.",
+      "en": "Silvery schooling fish with small fleshy lips adapted for scraping algae off flooded wood."
+    },
+    "behaviorNote": {
+      "es": "Abundante en las orillas y bosques inundados; fácil de capturar con trampa nasa de fibra o lanza.",
+      "en": "Abundant along river margins and flooded forests; readily caught with a woven fiber trap or spear."
+    },
+    "funFact": {
+      "es": "Realiza grandes migraciones llamadas 'subiendas' o 'mijanos' que sostienen la seguridad alimentaria ribereña.",
+      "en": "Undertakes massive seasonal migrations ('mijanos') that underpin riverine food security."
+    },
+    "sources": ["Instituto SINCHI - Pesquerías de consumo en el trapecio amazónico"],
+    "spriteTint": "#95a5a6"
+  },
+  {
+    "id": "colossoma_macropomum_gamitana",
+    "scientificName": "Colossoma macropomum",
+    "commonName": { "es": "Gamitana / Cachama Negra / Tambaquí", "en": "Tambaqui (Black Pacu / Gamitana)" },
+    "biomeIds": ["varzea", "aquatic"],
+    "threatLevel": "harmless_prey",
+    "aiProfile": {
+      "moveSpeed": 48,
+      "aggroRadius": 0,
+      "fleeRadius": 70,
+      "attackDamage": 0,
+      "fearedByFire": false
+    },
+    "yieldItems": [{ "itemId": "pescado_crudo", "count": 2 }],
+    "inspectionHint": {
+      "es": "Pez robusto de cuerpo alto que espera bajo los árboles de la várzea la caída de frutos y semillas.",
+      "en": "Deep-bodied fish waiting beneath flooded forest trees for falling fruits and seeds."
+    },
+    "behaviorNote": {
+      "es": "Se acerca a las zonas inundadas donde hay palmas de moriche y camu-camu.",
+      "en": "Gathers in flooded várzea zones beneath fruiting palms and camu-camu shrubs."
+    },
+    "funFact": {
+      "es": "Sus dientes molares parecen los de un herbívoro terrestre: tritura nueces pero también dispersa semillas intactas por el río.",
+      "en": "Its molar-like teeth crush hard nuts while dispersing intact tree seeds miles upstream and downstream."
+    },
+    "sources": ["Instituto Humboldt & SINCHI - Ecología de peces frugívoros amazónicos"],
+    "spriteTint": "#34495e"
+  },
+  {
+    "id": "hydrochoerus_hydrochaeris_chiguiro",
+    "scientificName": "Hydrochoerus hydrochaeris",
+    "commonName": { "es": "Capibara / Chigüiro / Ronsoco", "en": "Capybara" },
+    "biomeIds": ["riverbank", "varzea"],
+    "threatLevel": "harmless_prey",
+    "aiProfile": {
+      "moveSpeed": 52,
+      "aggroRadius": 0,
+      "fleeRadius": 85,
+      "attackDamage": 0,
+      "fearedByFire": true
+    },
+    "yieldItems": [],
+    "inspectionHint": {
+      "es": "El roedor más grande del mundo; pasta tranquilo en grupos cerca de las orillas y se zambulle al menor peligro.",
+      "en": "The world's largest rodent; grazes peacefully in family groups along riverbanks and dives when startled."
+    },
+    "behaviorNote": {
+      "es": "Si un grupo de capibaras ladra y salta al agua de golpe, es señal de que un jaguar o caimán acecha cerca.",
+      "en": "If capybaras bark an alarm and plunge into the river, a jaguar or caiman is likely stalking nearby."
+    },
+    "funFact": {
+      "es": "Sus dedos parcialmente palmeados le permiten caminar en el barro blando y nadar como un mamífero semiacuático.",
+      "en": "Partially webbed toes allow it to walk across soft mudbanks and swim like a semi-aquatic mammal."
+    },
+    "sources": ["Instituto Humboldt - Mamíferos Acuáticos y Semiacuáticos de Colombia"],
+    "spriteTint": "#a67c52"
+  },
+  {
+    "id": "rhynchophorus_palmarum_mojojoy",
+    "scientificName": "Rhynchophorus palmarum",
+    "commonName": { "es": "Mojojoy / Chiza de Palma", "en": "Palm Weevil Larva (Mojojoy)" },
+    "biomeIds": ["varzea", "terra_firme"],
+    "threatLevel": "harmless_prey",
+    "aiProfile": {
+      "moveSpeed": 12,
+      "aggroRadius": 0,
+      "fleeRadius": 20,
+      "attackDamage": 0,
+      "fearedByFire": false
+    },
+    "yieldItems": [{ "itemId": "pescado_crudo", "count": 1 }],
+    "inspectionHint": {
+      "es": "Larva blanca rolliza que habita dentro de troncos caídos de palmas de moriche y asaí.",
+      "en": "Plump white grub living inside fallen moriche and açaí palm trunks."
+    },
+    "behaviorNote": {
+      "es": "Fuente tradicional y sostenible de proteínas y grasas saludables; se asa en pincho sobre las brasas.",
+      "en": "Traditional, sustainable source of protein and healthy fats; roasted on skewers over campfire embers."
+    },
+    "funFact": {
+      "es": "En Leticia y las comunidades indígenas del Amazonas, el mojojoy asado o relleno es una joya gastronómica nutritiva.",
+      "en": "Across Leticia and Amazonian Indigenous communities, roasted mojojoy is a celebrated, nutrient-rich delicacy."
+    },
+    "sources": ["Instituto SINCHI (2019) - Insectos comestibles y soberanía alimentaria amazónica"],
+    "spriteTint": "#f5cba7"
+  }
+]

@@ -1,0 +1,270 @@
+[
+  {
+    "id": "fibra_chambira",
+    "scientificName": "Astrocaryum chambira",
+    "commonName": { "es": "Fibra de Cumare / Chambira", "en": "Chambira Palm Fiber" },
+    "category": "material",
+    "biomeIds": ["terra_firme", "riverbank"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Hilos vegetales ultra resistentes extraídos de los cogollos jóvenes de la palma de cumare.",
+      "en": "Ultra-strong vegetal cordage twisted from the young spear leaves of the chambira palm."
+    },
+    "funFact": {
+      "es": "Con la fibra de cumare los pueblos Tikuna y Yagua tejen hamacas, mochilas (jicras) y redes de pesca muy duraderas.",
+      "en": "Tikuna and Yagua artisans twist chambira fiber into hammocks, woven bags (jicras), and durable fishing nets."
+    },
+    "sources": ["Instituto SINCHI (2017) - Artesanías y manejo de Astrocaryum chambira"],
+    "spriteTint": "#e5d8b0"
+  },
+  {
+    "id": "madera_capirona",
+    "scientificName": "Calycophyllum spruceanum",
+    "commonName": { "es": "Madera de Capirona / Palo Mulato", "en": "Capirona Hardwood" },
+    "category": "material",
+    "biomeIds": ["riverbank", "varzea", "terra_firme"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Ramas y troncos de corteza lisa verdosa que arden con excelente poder calorífico y resisten la humedad.",
+      "en": "Smooth greenish-barked timber that burns hot for campfires and resists rot in flood-prone shelters."
+    },
+    "funFact": {
+      "es": "La capirona muda su corteza exterior cada año para liberarse de lianas trepadoras, musgos y epífitas.",
+      "en": "Capirona sheds its outer bark annually to slough off climbing vines, mosses, and epiphytes."
+    },
+    "sources": ["Catálogo de Plantas y Líquenes de Colombia - Calycophyllum spruceanum"],
+    "spriteTint": "#8d6e63"
+  },
+  {
+    "id": "hoja_bijao",
+    "scientificName": "Calathea lutea",
+    "commonName": { "es": "Hojas de Bijao / Platanillo", "en": "Bijao Waterproof Leaves" },
+    "category": "material",
+    "biomeIds": ["riverbank", "varzea"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Hojas anchas recubiertas de una cera natural impermeable; sirven para techar tambos, recoger lluvia y envolver comida.",
+      "en": "Broad leaves coated in natural waterproof wax, ideal for thatching tambos, catching rain, and wrapping food."
+    },
+    "funFact": {
+      "es": "El envés blanquecino del bijao contiene una cera llamada cauassú que repele el agua torrencial.",
+      "en": "The whitish underside of bijao leaves carries a natural wax (cauassú) that sheds torrential rain."
+    },
+    "sources": ["Instituto Humboldt - Plantas útiles en la arquitectura tradicional colombiana"],
+    "spriteTint": "#2ecc71"
+  },
+  {
+    "id": "piedra_rio_silex",
+    "scientificName": "SiO2 (Cuarcita / Sílex fluvial)",
+    "commonName": { "es": "Piedra de Quebrada / Canto Rodado", "en": "River Quartzite & Flint Cobble" },
+    "category": "material",
+    "biomeIds": ["riverbank"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Cantos rodados duros hallados en los playones bajos de las quebradas; útiles para afilar herramientas o iniciar chispas.",
+      "en": "Hard river cobbles exposed on low-water gravel bars; used for knapping edges, cracking nuts, and striking sparks."
+    },
+    "funFact": {
+      "es": "En la llanura aluvial amazónica las piedras son escasas y muy valoradas por las comunidades ribereñas.",
+      "en": "Across the deep alluvial soils of the Amazon plain, hard stones are scarce and prized along rocky rapids."
+    },
+    "sources": ["Servicio Geológico Colombiano & SINCHI - Geomorfología Amazónica"],
+    "spriteTint": "#7f8c8d"
+  },
+  {
+    "id": "resina_copal_brea",
+    "scientificName": "Protium heptaphyllum",
+    "commonName": { "es": "Resina de Copal / Anime Blanco", "en": "Amazonian Copal Tree Resin" },
+    "category": "material",
+    "biomeIds": ["terra_firme"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Resina aromática inflamable que brota de la corteza de los árboles de copal; sella canoas y mantiene antorchas encendidas bajo la lluvia.",
+      "en": "Fragrant flammable resin exuded from Protium bark; caulks dugout canoes and keeps torches burning in damp air."
+    },
+    "funFact": {
+      "es": "Al secarse forma bloques blancos aromáticos usados para impermeabilizar las uniones de las curiaras.",
+      "en": "Hardens into aromatic white lumps used traditionally to waterproof seams in wooden canoes."
+    },
+    "sources": ["Instituto SINCHI - Resinas y aceites esenciales del bosque amazónico"],
+    "spriteTint": "#f9e79f"
+  },
+  {
+    "id": "arcilla_greda_blanca",
+    "scientificName": "Al2Si2O5(OH)4 (Caolinita fluvial)",
+    "commonName": { "es": "Arcilla de Barranco / Greda", "en": "Riverbank Kaolin Clay" },
+    "category": "material",
+    "biomeIds": ["riverbank", "varzea"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Arcilla plástica de los barrancos del río, indispensable para moldear budares de tostar casabe y filtros de agua.",
+      "en": "Plastic riverbank clay essential for shaping cassava griddles (budares) and ceramic water vessels."
+    },
+    "funFact": {
+      "es": "Las alfareras indígenas mezclan la arcilla con ceniza de corteza de árbol apacharama (Licania) rica en sílice para que no se quiebre al fuego.",
+      "en": "Indigenous potters temper river clay with silica-rich apacharama bark ash so vessels resist thermal shock."
+    },
+    "sources": ["Museo Etnográfico del Banco de la República (Leticia) - Cerámica Amazónica"],
+    "spriteTint": "#bdc3c7"
+  },
+  {
+    "id": "bambu_guadua_amaz",
+    "scientificName": "Guadua weberbaueri",
+    "commonName": { "es": "Bambú Amazónico / Marona", "en": "Amazonian Guadua Bamboo" },
+    "category": "material",
+    "biomeIds": ["riverbank", "varzea"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Cañas huecas livianas y resistentes; sus entrenudos sirven como cantimploras naturales y puntas de lanza.",
+      "en": "Strong hollow culms whose internodes form natural water canteens, blowgun tubes, and spear shafts."
+    },
+    "funFact": {
+      "es": "Los bosques de bambú (pacales) del suroccidente amazónico albergan especies de aves únicas en el planeta.",
+      "en": "Amazonian bamboo thickets (pacales) harbor specialist bird species found nowhere else on Earth."
+    },
+    "sources": ["Catálogo de Plantas y Líquenes de Colombia - Guadua weberbaueri"],
+    "spriteTint": "#82e0aa"
+  },
+  {
+    "id": "totumo_crescencia",
+    "scientificName": "Crescentia cujete",
+    "commonName": { "es": "Totumo / Cuyabra /Pate", "en": "Calabash Gourd (Totumo)" },
+    "category": "material",
+    "biomeIds": ["riverbank", "terra_firme"],
+    "edibility": "non_edible",
+    "description": {
+      "es": "Fruto de cáscara leñosa esférica que una vez seco y vaciado sirve como vasija para hervir o transportar agua segura.",
+      "en": "Hard-shelled spherical gourd that, once hollowed and dried, serves as a durable bowl and water container."
+    },
+    "funFact": {
+      "es": "Las totumas labradas son el utensilio tradicional para compartir chive (fariña con agua) y bebidas de frutas.",
+      "en": "Carved totuma gourds are the traditional vessel for sharing chive (toasted cassava meal in water) and fruit drinks."
+    },
+    "sources": ["Instituto Humboldt - Etnobotánica de utensilios domésticos en Colombia"],
+    "spriteTint": "#ca6f1e"
+  },
+  {
+    "id": "agua_rio_cruda",
+    "scientificName": "H2O (Aguas blancas / negras sin tratar)",
+    "commonName": { "es": "Agua de Río Cruda (Sin Hervir)", "en": "Raw River Water (Unboiled)" },
+    "category": "water",
+    "biomeIds": ["riverbank", "aquatic", "varzea"],
+    "edibility": "edible_safe",
+    "effectsOnConsume": {
+      "healthDelta": -6,
+      "hungerDelta": 0,
+      "thirstDelta": 22,
+      "staminaDelta": -5,
+      "addStatusEffect": "parasites"
+    },
+    "description": {
+      "es": "Agua recogida directamente del río o quebrada. Calma la sed en una emergencia, pero puede transmitir parásitos si no se hierve.",
+      "en": "Water scooped directly from the river. Quenches thirst in an emergency but risks waterborne parasites unless boiled."
+    },
+    "funFact": {
+      "es": "En la Amazonia existen ríos de 'aguas blancas' (ricos en sedimentos andinos) y 'aguas negras' (ácidos húmicos del bosque).",
+      "en": "Amazonian rivers are classified into sediment-rich 'whitewaters' and tannin-stained acidic 'blackwaters'."
+    },
+    "sources": ["Instituto SINCHI - Limnología y tipos de aguas de la Amazonia Colombiana"],
+    "spriteTint": "#5dade2"
+  },
+  {
+    "id": "agua_hervida_segura",
+    "scientificName": "H2O (Agua potable hervida / filtrada)",
+    "commonName": { "es": "Agua Purificada en Totuma", "en": "Boiled Safe Water in Gourd" },
+    "category": "water",
+    "biomeIds": [],
+    "edibility": "edible_safe",
+    "effectsOnConsume": {
+      "healthDelta": 6,
+      "hungerDelta": 0,
+      "thirstDelta": 38,
+      "staminaDelta": 15
+    },
+    "description": {
+      "es": "Agua hervida sobre la fogata o recolectada limpia de lluvia en hojas de bijao. Hidrata sin ningún riesgo de enfermedad.",
+      "en": "Water boiled over a campfire or collected cleanly from rain on bijao leaves. Hydrates with zero illness risk."
+    },
+    "funFact": {
+      "es": "Un minuto de hervor vigoroso inactiva protozoos, bacterias y virus presentes en aguas superficiales.",
+      "en": "A rolling boil for one minute inactivates waterborne protozoa, bacteria, and viruses."
+    },
+    "sources": ["Organización Panamericana de la Salud (OPS) - Agua segura en comunidades rurales"],
+    "spriteTint": "#3498db"
+  },
+  {
+    "id": "casabe_tostado",
+    "scientificName": "Manihot esculenta (Procesada sin cianuro)",
+    "commonName": { "es": "Casabe de Yuca (Torta Tostada)", "en": "Toasted Casabe Flatbread" },
+    "category": "processed_food",
+    "biomeIds": [],
+    "edibility": "edible_safe",
+    "effectsOnConsume": {
+      "healthDelta": 10,
+      "hungerDelta": 36,
+      "thirstDelta": 2,
+      "staminaDelta": 25,
+      "addStatusEffect": "well_fed"
+    },
+    "description": {
+      "es": "Torta blanca crujiente elaborada tras rallar, exprimir y tostar la yuca brava. Libre de toxinas y sumamente nutritiva.",
+      "en": "Crisp flatbread made after grating, pressing, and toasting bitter cassava. Completely detoxified and deeply nourishing."
+    },
+    "funFact": {
+      "es": "El casabe bien seco no se pudre en la humedad de la selva y ha sido el sustento de expediciones durante siglos.",
+      "en": "Properly dried casabe resists molding in rainforest humidity and has sustained river expeditions for centuries."
+    },
+    "sources": ["Instituto SINCHI (2016) - El Casabe y la Fariña en la cultura amazónica"],
+    "spriteTint": "#fdfefe"
+  },
+  {
+    "id": "pescado_crudo",
+    "scientificName": "Actinopterygii spp. (Fresco)",
+    "commonName": { "es": "Pescado de Río Crudo", "en": "Raw River Fish" },
+    "category": "processed_food",
+    "biomeIds": ["aquatic"],
+    "edibility": "edible_safe",
+    "effectsOnConsume": {
+      "healthDelta": -8,
+      "hungerDelta": 12,
+      "thirstDelta": -5,
+      "staminaDelta": 0,
+      "addStatusEffect": "parasites"
+    },
+    "description": {
+      "es": "Pescado fresco recién capturado. Debe asarse en la fogata (patarasca) antes de comerlo para evitar parásitos.",
+      "en": "Freshly caught river fish. Should be roasted over a campfire (patarasca) before eating to avoid parasites."
+    },
+    "funFact": {
+      "es": "La cuenca del Amazonas alberga más de 2.500 especies de peces, la mayor diversidad fluvial de la Tierra.",
+      "en": "The Amazon basin harbors over 2,500 fish species—the richest freshwater鱼 fauna on Earth."
+    },
+    "sources": ["Instituto Humboldt & SINCHI - Peces Dulceacuícolas de Colombia"],
+    "spriteTint": "#85929e"
+  },
+  {
+    "id": "pescado_asado_patarasca",
+    "scientificName": "Actinopterygii spp. (En hoja de Bijao)",
+    "commonName": { "es": "Patarasca de Pescado Asado", "en": "Patarasca Leaf-Roasted Fish" },
+    "category": "processed_food",
+    "biomeIds": [],
+    "edibility": "edible_safe",
+    "effectsOnConsume": {
+      "healthDelta": 16,
+      "hungerDelta": 40,
+      "thirstDelta": 6,
+      "staminaDelta": 30,
+      "addStatusEffect": "well_fed"
+    },
+    "description": {
+      "es": "Pescado sazonado y asado lentamente envuelto en hojas aromáticas de bijao sobre las brasas.",
+      "en": "Fish seasoned and slow-roasted wrapped inside aromatic bijao leaves over hot embers."
+    },
+    "funFact": {
+      "es": "La patarasca conserva todos los jugos del pescado y es la técnica culinaria emblemática del río Amazonas.",
+      "en": "Cooking inside bijao leaves seals in moisture and flavor, making patarasca the signature dish of the Amazon River."
+    },
+    "sources": ["Ministerio de Cultura de Colombia - Biblioteca Básica de Cocinas Tradicionales"],
+    "spriteTint": "#e67e22"
+  }
+]

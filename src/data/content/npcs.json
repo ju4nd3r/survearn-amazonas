@@ -1,0 +1,157 @@
+[
+  {
+    "id": "abuela_sabina",
+    "name": "Sabina Jitoma",
+    "role": {
+      "es": "Sabedora Etnobotánica y Guardiana de la Chagra",
+      "en": "Ethnobotanist Elder & Chagra Steward"
+    },
+    "community": "Comunidad Ribereña Puerto Esperanza (Tradición Uitoto / Tikuna)",
+    "biomeId": "riverbank",
+    "greeting": {
+      "es": "Bienvenido a la orilla, caminante. El monte no es enemigo si sabes mirar sus hojas con respeto. ¿Vienes a aprender qué alimenta y qué enferma?",
+      "en": "Welcome to the riverbank, traveler. The rainforest is no enemy if you read its leaves with respect. Do you seek to learn what nourishes and what harms?"
+    },
+    "unlocksSpeciesIds": [
+      "manihot_esculenta_brava",
+      "manihot_esculenta_dulce",
+      "croton_lechleri_sangre_drago",
+      "cinchona_pubescens_quina"
+    ],
+    "trades": [
+      {
+        "giveItemId": "resina_copal_brea",
+        "giveCount": 1,
+        "receiveItemId": "casabe_tostado",
+        "receiveCount": 2
+      },
+      {
+        "giveItemId": "euterpe_precatoria_asai",
+        "giveCount": 2,
+        "receiveItemId": "agua_hervida_segura",
+        "receiveCount": 2
+      }
+    ],
+    "dialogueNodes": [
+      {
+        "id": "ask_yuca",
+        "prompt": {
+          "es": "¿Cómo distingo la Yuca Brava de la Yuca Dulce?",
+          "en": "How do I tell Bitter Cassava apart from Sweet Cassava?"
+        },
+        "response": {
+          "es": "Mira el pecíolo rojizo y huele la raíz: la Yuca Brava tiene veneno (cianuro) si la comes cruda. Pero si la rallas, la exprimes con fibra de cumare y la tuestas en la fogata, obtienes el Casabe más nutritivo de la selva.",
+          "en": "Check the reddish leaf stalk and smell the root: Bitter Cassava contains cyanide if eaten raw. Yet if you grate it, press it with chambira fiber, and toast it at a campfire, you get Casabe—the most sustaining bread in the forest."
+        },
+        "unlocksSpeciesId": "manihot_esculenta_brava"
+      },
+      {
+        "id": "ask_fever",
+        "prompt": {
+          "es": "¿Qué plantas ayudan contra las heridas, los parásitos y la fiebre?",
+          "en": "Which plants help with wounds, parasites, and fever?"
+        },
+        "response": {
+          "es": "El látex rojo de la Sangre de Drago (Croton lechleri) cierra heridas; la corteza amarga de la Quina (Cinchona pubescens) y la pintura de Huito protegen de la fiebre del zancudo; y el Ajo de Monte limpia los parásitos del agua cruda.",
+          "en": "The red sap of Dragon's Blood (Croton lechleri) seals wounds; bitter Cinchona bark and Huito fruit protect against mosquito fever; and Wild Forest Garlic clears parasites from raw water."
+        },
+        "unlocksSpeciesId": "croton_lechleri_sangre_drago"
+      }
+    ]
+  },
+  {
+    "id": "mateo_pescador",
+    "name": "Mateo Ahuanari",
+    "role": {
+      "es": "Pescador Ribereño y Navegante de Curiara",
+      "en": "Riverine Fisher & Canoe Navigator"
+    },
+    "community": "Asociación de Pescadores Artesanales de Tarapoto",
+    "biomeId": "varzea",
+    "greeting": {
+      "es": "¡Buenas! El río está subiendo con la creciente. Si quieres llegar a Puerto Esperanza, necesitarás construir una Curiara sellada con resina de copal o caminar hacia el faro comunitario al oriente.",
+      "en": "Greetings! The river is rising with the seasonal flood. To reach Puerto Esperanza safely, either craft a Curiara canoe sealed with copal resin or trek east to the community beacon."
+    },
+    "unlocksSpeciesIds": [
+      "arapaima_gigas_pirarucu",
+      "cichla_monoculus_tucunare",
+      "melanosuchus_niger_caiman_negro",
+      "panthera_onca_jaguar"
+    ],
+    "trades": [
+      {
+        "giveItemId": "fibra_chambira",
+        "giveCount": 2,
+        "receiveItemId": "pescado_asado_patarasca",
+        "receiveCount": 1
+      }
+    ],
+    "dialogueNodes": [
+      {
+        "id": "ask_predators",
+        "prompt": {
+          "es": "¿Cómo evito al jaguar y al caimán negro por la noche?",
+          "en": "How do I avoid the jaguar and black caiman at night?"
+        },
+        "response": {
+          "es": "Ni el jaguar ni el caimán buscan pelear si mantienes una Fogata de Capirona encendida o descansas bajo un Tambo. Enciende fuego antes de que caiga la noche.",
+          "en": "Neither the jaguar nor the caiman wants a fight if you keep a Capirona Campfire burning or shelter inside a Tambo. Light your fire before dusk falls."
+        },
+        "unlocksSpeciesId": "panthera_onca_jaguar"
+      },
+      {
+        "id": "ask_rescue",
+        "prompt": {
+          "es": "¿Cómo llego a la comunidad de Puerto Esperanza?",
+          "en": "How do I reach the community of Puerto Esperanza?"
+        },
+        "response": {
+          "es": "Tienes dos caminos: reúne madera de capirona, guadua, fibra de cumare y resina de copal para armar una Curiara de rescate, o avanza hasta el Muelle de Puerto Esperanza en el extremo oriental del mapa.",
+          "en": "You have two paths: gather capirona wood, bamboo, chambira fiber, and copal resin to build a Rescue Canoe, or trek to the Puerto Esperanza Pier on the eastern edge of the map."
+        },
+        "unlocksSpeciesId": "arapaima_gigas_pirarucu"
+      }
+    ]
+  },
+  {
+    "id": "dra_valentina_sinchi",
+    "name": "Dra. Valentina Ruiz",
+    "role": {
+      "es": "Investigadora de Campo — Ecosistemas Acuáticos y Anfibios",
+      "en": "Field Biologist — Aquatic Ecosystems & Amphibians"
+    },
+    "community": "Estación Científica Amazónica",
+    "biomeId": "terra_firme",
+    "greeting": {
+      "es": "¡Qué alegría encontrarte! Estoy registrando especies en la Bitácora científica. Cada planta o animal que inspecciones con la lupa suma conocimiento vital para conservar nuestra selva.",
+      "en": "So glad to find you! I'm cataloging species in the scientific Field Guide. Every plant or animal you inspect adds vital knowledge to conserve our rainforest."
+    },
+    "unlocksSpeciesIds": [
+      "dendrobates_tinctorius_rana_dardo",
+      "bothrops_atrox_talla_equis",
+      "bertholletia_excelsa_castana"
+    ],
+    "trades": [
+      {
+        "giveItemId": "bactris_gasipaes_chontaduro",
+        "giveCount": 2,
+        "receiveItemId": "agua_hervida_segura",
+        "receiveCount": 2
+      }
+    ],
+    "dialogueNodes": [
+      {
+        "id": "ask_snakes",
+        "prompt": {
+          "es": "¿Qué debo hacer si veo una serpiente Talla Equis o una rana dardo?",
+          "en": "What should I do if I spot a Fer-de-Lance viper or poison dart frog?"
+        },
+        "response": {
+          "es": "Obsérvalas a distancia con el botón Inspeccionar (I) para registrar sus datos científicos en tu Bitácora. Las serpientes solo se defienden si las pisas.",
+          "en": "Observe them from a safe distance using Inspect (I) to log their scientific data in your Field Guide. Pit vipers only strike defensively if stepped on."
+        },
+        "unlocksSpeciesId": "bothrops_atrox_talla_equis"
+      }
+    ]
+  }
+]

@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+npm run validate:content && npm run typecheck && npm run lint

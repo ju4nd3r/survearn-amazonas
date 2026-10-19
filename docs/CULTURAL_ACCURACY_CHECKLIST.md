@@ -1,0 +1,17 @@
+# Cultural Sensitivity & Biological Accuracy Review Checklist
+**Project:** "survearn" — Edition: Amazonas Colombia (*Selva Viva*)
+
+> **Important Note:** All ethnobotanical, zoological, and cultural content in this repository is designed for educational entertainment and should ideally undergo formal validation by Colombian Amazonian cultural elders, ethnobotanists, and biologists (e.g., specialists from **Instituto Amazónico de Investigaciones Científicas SINCHI**, **Instituto de Investigación de Recursos Biológicos Alexander von Humboldt**, **Universidad Nacional de Colombia — Sede Amazonia**, and Indigenous organizations of the Colombian Amazon) before formal classroom or public distribution.
+
+## 1. Indigenous & Local Riverine (*Ribereño*) Representation Checklist
+- [x] **Respectful Portrayal of Knowledge Systems:** Indigenous peoples (such as the Uitoto/Murui-Muina, Tikuna/Magüta, Cocama, Yagua, Bora, and Yukuna peoples of the Amazonas department) and local riverine communities are portrayed as empirical scientists, agroforestry stewards (*chagras*), healers, and skilled navigators—never as primitive, mystical, or monolithic caricatures.
+- [x] **Explicit Attribution of Traditional Technologies:** Technologies such as the *tipití* / *matapí* (woven elastic press used to detoxify cyanogenic glycosides from *Manihot esculenta* / bitter cassava), *budare* clay griddles for *casabe*, and elevated *tambo* / *palafito* flood-adapted architecture are explicitly credited to Amazonian Indigenous ingenuity in the Bitácora.
+- [x] **Non-Exploitative Hostile Encounters:** Hostile human threats in the game represent illegal extractive operations (illegal loggers, poachers, or wildlife traffickers) rather than Indigenous or local communities. Mechanics emphasize stealth, avoidance, and non-graphic deterrence.
+- [x] **Authentic Regional Voice (`es-CO`):** Spanish localization uses respectful, accurate Colombian Amazonian terminology (*bitácora, chagra, tambo, várzea, tierra firme, quebrada, cocha, curiara, casabe, fariña*).
+
+## 2. Botanical & Zoological Accuracy Checklist
+- [x] **Binomial Nomenclature:** Every plant and animal entry includes its accepted Latin scientific name (e.g., *Euterpe precatoria*, *Bactris gasipaes*, *Theobroma grandiflorum*, *Manihot esculenta*, *Arapaima gigas*, *Panthera onca*, *Bothrops atrox*).
+- [x] **Credible Scientific Citations:** Every entry in `src/data/content/plants.json` and `src/data/content/animals.json` cites at least one authoritative scientific source (Instituto SINCHI, Instituto Humboldt, Catálogo de Plantas y Líquenes de Colombia, Parques Nacionales Naturales de Colombia, or IUCN Red List).
+- [x] **Preparation & Toxicity Nuance:** Distinguishes clearly between safe raw fruits (*asaí*, *uva caimarona*, *copoazú*), foods requiring cooking (*chontaduro*), foods requiring specialized detoxification (*yuca brava*), medicinal plants (*sangre de drago*, *quina*, *uña de gato*), and lethal toxins (*curare* / *Chondrodendron tomentosum*, *Phyllobates* / *Dendrobates* alkaloids).
+- [x] **Realistic Wildlife Behavior:** Animals are not mindless monsters; predators like *Panthera onca* stalk and respect fire deterrents, venomous snakes (*Bothrops atrox*) strike defensively when stepped on, and *Arapaima gigas* (*pirarucú*) surfaces to breathe air in oxbow lakes (*cochas*).
+- [x] **Prominent Safety Disclaimer:** Clear bilingual warnings state that players must never consume or handle real-world wild flora, fungi, or fauna based on game content.
