@@ -52,6 +52,9 @@ export class WorldScene extends Phaser.Scene {
   private riverLevel = 0.25;
 
   private playerSprite!: Phaser.GameObjects.Sprite;
+  private playerFacing: 'side' | 'down' | 'up' = 'down';
+  private wasInWater = false;
+  private activeCanoeId: string | null = null;
   private playerActionBusyUntil = 0;
   private isSleepingTransition = false;
 
@@ -122,7 +125,9 @@ export class WorldScene extends Phaser.Scene {
     this.timeOfDayMinutes = 8 * 60 + 30;
     this.weather = 'clear';
     this.riverLevel = 0.25;
-    this.builtStructures = [];
+    this.playerFacing = 'down';
+    this.wasInWater = false;
+    this.activeCanoeId = null;
     this.harvestedNodeKeys = [];
     this.victoryTriggered = false;
 
@@ -158,6 +163,25 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.worldData = WorldGenSystem.generateWorld(seed, this.harvestedNodeKeys);
+
+    // Place moored wooden dugout canoes at the northern and southern riverbanks so player can cross by boat
+    const northShoreY = (Math.floor(this.worldData.heightTiles * 0.68) - 2) * TILE_SIZE + 8;
+    const southShoreY = (Math.floor(this.worldData.heightTiles * 0.68) + 3) * TILE_SIZE + 8;
+    this.builtStructures = [
+      {
+        id: 'canoe_dock_north',
+        recipeId: 'curiara_canoa_rescate',
+        x: this.worldData.spawnX + TILE_SIZE,
+        y: northShoreY
+      },
+      {
+        id: 'canoe_dock_south',
+        recipeId: 'curiara_canoa_rescate',
+        x: this.worldData.spawnX + TILE_SIZE * 6,
+        y: southShoreY
+      }
+    ];
+
     this.rebuildSceneVisuals(this.worldData.spawnX, this.worldData.spawnY);
     this.broadcastAllState();
     void this.saveToSlot('autosave', false);
@@ -197,7 +221,7 @@ export class WorldScene extends Phaser.Scene {
       }
     }
 
-    // Render detailed 24x24 botanical & material resource nodes with gentle canopy sway tween
+    // Render detailed 24x24 botanical & material resource nodes
     for (const node of this.worldData.resourceNodes) {
       if (node.harvested) continue;
       const texKey = ProceduralAtlasGenerator.getNodeTextureKey(node.kind, node.itemId);
@@ -217,21 +241,26 @@ export class WorldScene extends Phaser.Scene {
       this.npcSprites.set(npc.id, spr);
     }
 
-    // Render Threats & Wildlife with dedicated species animations
+    // Render Threats & Wildlife with dedicated species animations (Jaguar, Anaconda, Fer-de-Lance Viper, Caiman, Pirarucú)
     for (const threat of this.worldData.threats) {
       const isJaguar = threat.speciesId.includes('jaguar');
       const isFish = threat.speciesId.includes('pirarucu');
-      const isSnake = threat.speciesId.includes('talla_equis') || threat.speciesId.includes('verrugosa');
+      const isAnaconda = threat.speciesId.includes('anaconda');
+      const isSnake =
+        threat.speciesId.includes('talla_equis') || threat.speciesId.includes('verrugosa');
       const texKey = isJaguar
         ? 'creature_jaguar'
         : isFish
           ? 'creature_fish'
-          : isSnake
-            ? 'creature_snake'
-            : 'creature_caiman';
+          : isAnaconda
+            ? 'creature_anaconda'
+            : isSnake
+              ? 'creature_snake'
+              : 'creature_caiman';
       const spr = this.add.sprite(threat.x, threat.y, texKey).setDepth(9);
       if (isJaguar) spr.play('jaguar_idle');
       else if (isFish) spr.play('fish_swim');
+      else if (isAnaconda) spr.play('anaconda_slither');
       else if (isSnake) spr.play('snake_coil');
       else spr.play('caiman_move');
 
@@ -247,9 +276,9 @@ export class WorldScene extends Phaser.Scene {
       this.playerSprite.destroy();
     }
     this.playerSprite = this.add
-      .sprite(playerX, playerY, this.currentCharTexKey, 0)
+      .sprite(playerX, playerY, this.currentCharTexKey, 13)
       .setDepth(10);
-    this.playerSprite.play(`${this.currentCharTexKey}_idle`);
+    this.playerSprite.play(`${this.currentCharTexKey}_idle_${this.playerFacing}`);
 
     // Night lighting tint overlay
     if (this.nightOverlay) {
@@ -286,11 +315,34 @@ export class WorldScene extends Phaser.Scene {
     const currentTile = this.getTileAtWorld(this.playerSprite.x, this.playerSprite.y);
     const inWater = currentTile?.biome === 'aquatic';
 
-    // 1. Apply Player Movement & Walk / Idle Animation State
+    // Auto-board moored riverbank canoe when stepping onto it toward the river
+    if (!this.activeCanoeId && isMoving && (inWater || currentTile?.biome === 'riverbank')) {
+      const nearbyCanoe = this.builtStructures.find(
+        (s) =>
+          s.recipeId === 'curiara_canoa_rescate' &&
+          Math.hypot(s.x - this.playerSprite.x, s.y - this.playerSprite.y) <= 18
+      );
+      if (nearbyCanoe) {
+        this.activeCanoeId = nearbyCanoe.id;
+        AudioSynth.playChime('craft');
+      }
+    }
+
+    const ridingCanoe = this.activeCanoeId !== null;
+
+    // 1. Apply Player Movement, Directional Perspective, Swimming & Canoe Navigation
     const baseSpeed = 62;
-    const biomeMult = inWater ? 0.58 : currentTile?.biome === 'varzea' ? 0.82 : 1.0;
+    const biomeMult = ridingCanoe
+      ? inWater
+        ? 1.24
+        : 0.92
+      : inWater
+        ? 0.58
+        : currentTile?.biome === 'varzea'
+          ? 0.82
+          : 1.0;
     const sprintMult = move.sprinting && this.stats.stamina > 10 ? 1.38 : 1.0;
-    const currentDriftX = inWater ? 8 * dtSec : 0;
+    const currentDriftX = inWater && !ridingCanoe ? 8 * dtSec : 0;
 
     const nextX = Phaser.Math.Clamp(
       this.playerSprite.x + move.dx * baseSpeed * biomeMult * sprintMult * dtSec + currentDriftX,
@@ -302,44 +354,112 @@ export class WorldScene extends Phaser.Scene {
       12,
       this.worldData.heightTiles * TILE_SIZE - 12
     );
-    this.playerSprite.setPosition(nextX, nextY);
 
-    if (move.dx < -0.05) {
-      this.playerSprite.setFlipX(true);
-    } else if (move.dx > 0.05) {
-      this.playerSprite.setFlipX(false);
+    const nextTile = this.getTileAtWorld(nextX, nextY);
+
+    // If riding a canoe and walking onto dry inland forest (terra_firme or varzea), dock the canoe at shore
+    if (
+      ridingCanoe &&
+      nextTile &&
+      nextTile.biome !== 'aquatic' &&
+      nextTile.biome !== 'riverbank'
+    ) {
+      const canoeSpr = this.structureSprites.get(this.activeCanoeId!);
+      if (canoeSpr) canoeSpr.setDepth(6);
+      this.activeCanoeId = null;
     }
 
+    this.playerSprite.setPosition(nextX, nextY);
+
+    // Sync active canoe hull directly underneath the player
+    if (this.activeCanoeId) {
+      const canoeStruct = this.builtStructures.find((s) => s.id === this.activeCanoeId);
+      if (canoeStruct) {
+        canoeStruct.x = nextX;
+        canoeStruct.y = nextY + 3;
+      }
+      const canoeSpr = this.structureSprites.get(this.activeCanoeId);
+      if (canoeSpr) {
+        canoeSpr.setPosition(nextX, nextY + 3);
+        canoeSpr.setDepth(9.5);
+        if (move.dx < -0.05) canoeSpr.setFlipX(true);
+        else if (move.dx > 0.05) canoeSpr.setFlipX(false);
+      }
+    }
+
+    // Update 4-directional perspective facing (down / up / side)
+    if (isMoving) {
+      if (Math.abs(move.dy) > Math.abs(move.dx) * 1.05 && !inWater && !this.activeCanoeId) {
+        this.playerFacing = move.dy > 0 ? 'down' : 'up';
+        this.playerSprite.setFlipX(false);
+      } else {
+        this.playerFacing = 'side';
+        if (move.dx < -0.05) {
+          this.playerSprite.setFlipX(true);
+        } else if (move.dx > 0.05) {
+          this.playerSprite.setFlipX(false);
+        }
+      }
+    }
+
+    // Entry water splash burst when plunging into the river without a boat
+    if (inWater && !this.wasInWater && !this.activeCanoeId) {
+      this.spawnWaterSplashEffect(nextX, nextY + 3);
+    }
+    this.wasInWater = inWater;
+
     if (timeMs > this.playerActionBusyUntil) {
-      const targetAnim = isMoving
-        ? `${this.currentCharTexKey}_walk`
-        : `${this.currentCharTexKey}_idle`;
+      let targetAnim: string;
+      if (this.activeCanoeId) {
+        targetAnim = isMoving
+          ? `${this.currentCharTexKey}_paddle`
+          : `${this.currentCharTexKey}_paddle_idle`;
+      } else if (inWater) {
+        targetAnim = isMoving
+          ? `${this.currentCharTexKey}_swim`
+          : `${this.currentCharTexKey}_swim_idle`;
+      } else {
+        targetAnim = isMoving
+          ? `${this.currentCharTexKey}_walk_${this.playerFacing}`
+          : `${this.currentCharTexKey}_idle_${this.playerFacing}`;
+      }
       this.playerSprite.anims.timeScale = isMoving ? sprintMult : 1.0;
       if (this.playerSprite.anims.currentAnim?.key !== targetAnim) {
         this.playerSprite.play(targetAnim, true);
       }
     }
 
-    // Spawn subtle footstep dust / water splash particles at boot level while walking
+    // Spawn water wake ripples (when swimming or paddling canoe) or footstep dust on land
     if (isMoving && timeMs % 180 < deltaMs + 12) {
-      const stepColor = inWater
-        ? 0x85c1e9
-        : currentTile?.biome === 'riverbank'
-          ? 0xd5bdaf
-          : 0x58d68d;
-      const footOffsetX = (Math.floor(timeMs / 180) % 2 === 0 ? -3 : 3) * (this.playerSprite.flipX ? -1 : 1);
-      const puff = this.add
-        .rectangle(nextX + footOffsetX, nextY + 9, 2, 2, stepColor, 0.75)
-        .setDepth(9);
-      this.tweens.add({
-        targets: puff,
-        y: nextY + 6,
-        alpha: 0,
-        scaleX: 1.5,
-        scaleY: 1.5,
-        duration: 260,
-        onComplete: () => puff.destroy()
-      });
+      if (inWater || this.activeCanoeId) {
+        const wake = this.add
+          .circle(nextX, nextY + 4, this.activeCanoeId ? 5 : 3, 0x5dade2, 0.45)
+          .setStrokeStyle(1, 0xd6eaf8, 0.85)
+          .setDepth(4);
+        this.tweens.add({
+          targets: wake,
+          radius: this.activeCanoeId ? 14 : 10,
+          alpha: 0,
+          duration: 380,
+          onComplete: () => wake.destroy()
+        });
+      } else {
+        const stepColor = currentTile?.biome === 'riverbank' ? 0xd5bdaf : 0x58d68d;
+        const footOffsetX =
+          (Math.floor(timeMs / 180) % 2 === 0 ? -3 : 3) * (this.playerSprite.flipX ? -1 : 1);
+        const puff = this.add
+          .rectangle(nextX + footOffsetX, nextY + 9, 2, 2, stepColor, 0.75)
+          .setDepth(9);
+        this.tweens.add({
+          targets: puff,
+          y: nextY + 6,
+          alpha: 0,
+          scaleX: 1.5,
+          scaleY: 1.5,
+          duration: 260,
+          onComplete: () => puff.destroy()
+        });
+      }
     }
 
     // Check if player reached the Eastern Community Pier Rescue Landmark
@@ -453,7 +573,7 @@ export class WorldScene extends Phaser.Scene {
         difficulty: this.difficulty,
         isMoving,
         isSprinting: move.sprinting,
-        inWater,
+        inWater: inWater && !this.activeCanoeId,
         weather: this.weather,
         isNight,
         nearLitCampfire: nearFire,
@@ -469,6 +589,36 @@ export class WorldScene extends Phaser.Scene {
     if (this.autosaveAccumulatorMs >= AUTOSAVE_INTERVAL_MS) {
       this.autosaveAccumulatorMs = 0;
       void this.saveToSlot('autosave', false);
+    }
+  }
+
+  private spawnWaterSplashEffect(x: number, y: number): void {
+    const ring = this.add
+      .circle(x, y, 4, 0x5dade2, 0.7)
+      .setStrokeStyle(1.5, 0xffffff, 0.95)
+      .setDepth(23);
+    this.tweens.add({
+      targets: ring,
+      radius: 16,
+      alpha: 0,
+      duration: 380,
+      onComplete: () => ring.destroy()
+    });
+
+    for (let i = 0; i < 6; i++) {
+      const drop = this.add
+        .rectangle(x, y, 2, 2, i % 2 === 0 ? 0xffffff : 0x85c1e9)
+        .setDepth(24);
+      const angle = (Math.PI * 2 * i) / 6;
+      this.tweens.add({
+        targets: drop,
+        x: x + Math.cos(angle) * 11,
+        y: y + Math.sin(angle) * 8 - 4,
+        alpha: 0,
+        duration: 300,
+        ease: 'Quad.easeOut',
+        onComplete: () => drop.destroy()
+      });
     }
   }
 
@@ -785,6 +935,42 @@ export class WorldScene extends Phaser.Scene {
   private handleInteractAction(): void {
     const px = this.playerSprite.x;
     const py = this.playerSprite.y;
+
+    // 0. Check if boarding or disembarking a River Canoe (Curiara / Potrillo)
+    if (this.activeCanoeId) {
+      const currentTile = this.getTileAtWorld(px, py);
+      if (currentTile && currentTile.biome !== 'aquatic') {
+        const canoeSpr = this.structureSprites.get(this.activeCanoeId);
+        if (canoeSpr) canoeSpr.setDepth(6);
+        this.activeCanoeId = null;
+        AudioSynth.playChime('craft');
+        EventBus.emit('TOAST_MESSAGE', {
+          text:
+            i18n.getLanguage() === 'es'
+              ? '🛶 Canoa amarrada en la orilla.'
+              : '🛶 Canoe moored at the riverbank.',
+          type: 'info'
+        });
+        return;
+      }
+    } else {
+      const nearbyCanoe = this.builtStructures.find(
+        (s) => s.recipeId === 'curiara_canoa_rescate' && Math.hypot(s.x - px, s.y - py) <= 34
+      );
+      if (nearbyCanoe) {
+        this.activeCanoeId = nearbyCanoe.id;
+        this.playerSprite.setPosition(nearbyCanoe.x, nearbyCanoe.y - 3);
+        AudioSynth.playChime('craft');
+        EventBus.emit('TOAST_MESSAGE', {
+          text:
+            i18n.getLanguage() === 'es'
+              ? '🛶 Navegando en Canoa Amazónica — cruza el río con seguridad.'
+              : '🛶 Boarded River Canoe — paddle safely across the river.',
+          type: 'success'
+        });
+        return;
+      }
+    }
 
     // 1. Check nearby Friendly NPC first
     for (const npc of this.worldData.npcs) {

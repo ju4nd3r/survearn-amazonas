@@ -48,6 +48,7 @@ export class ProceduralAtlasGenerator {
     this.createJaguarSpritesheet(scene, 'creature_jaguar');
     this.createCaimanSpritesheet(scene, 'creature_caiman');
     this.createSnakeSpritesheet(scene, 'creature_snake');
+    this.createAnacondaSpritesheet(scene, 'creature_anaconda');
     this.createFishSpritesheet(scene, 'creature_fish');
     this.createNPCSpritesheet(scene, 'npc_mentor');
 
@@ -145,33 +146,29 @@ export class ProceduralAtlasGenerator {
   }
 
   /**
-   * Generates a 13-frame (24x24 per frame = 312x24 strip) character spritesheet:
-   * Frame 0: Idle 1 (Planted neutral stance)
-   * Frame 1: Idle 2 (Breathing torso bob)
-   * Frame 2: Walk Contact A (Left leg strides forward/down, Right leg pushes back/up)
-   * Frame 3: Walk Passing A (Right knee lifts & passes forward, torso rises)
-   * Frame 4: Walk Contact B (Right leg strides forward/down, Left leg pushes back/up)
-   * Frame 5: Walk Passing B (Left knee lifts & passes forward, torso rises)
-   * Frame 6: Chop Windup (Machete raised high overhead)
-   * Frame 7: Chop Cleave (Machete slashes downward with silver motion arc)
-   * Frame 8: Pick Reach (Both arms reach high into palm/tree canopy)
-   * Frame 9: Dig / Crouch Gather (Deep knee bend reaching into soil/roots)
-   * Frame 10: Scoop Water (Kneeling at river edge holding totuma gourd bowl)
-   * Frame 11: Celebrate Hold-Up (Both arms raise collected item overhead, Zelda-style)
-   * Frame 12: Inspect Magnifying Glass Pose
+   * Generates a 27-frame (24x24 per frame = 648x24 strip) character spritesheet:
+   * Frame 0..1: Side Profile Idle (Breathing torso bob)
+   * Frame 2..5: Side Profile Walk Cycle (Scissoring legs + arm swing)
+   * Frame 6..12: Specialized Harvest & Action Poses (Chop, Pick, Dig, Scoop, Hold-Up, Inspect)
+   * Frame 13: Front Perspective Idle (Down)
+   * Frame 14..17: Front Perspective Walk Cycle (Down — foreshortened boots stepping toward camera)
+   * Frame 18: Rear Perspective Idle (Up — back of head + full expedition backpack)
+   * Frame 19..22: Rear Perspective Walk Cycle (Up — alternating lifted boot soles + backpack sway)
+   * Frame 23..24: River Swimming Strokes (Submerged lower body + frothy water ring + alternating swim strokes)
+   * Frame 25..26: Canoe Paddling Strokes (Seated in dugout canoe pulling wooden oar through water)
    */
   public static getOrCreateCharacterTexture(
     scene: Phaser.Scene,
     appearance: CharacterAppearance
   ): string {
-    const key = `char_v4_${appearance.bodyType}_${appearance.skinTone}_${appearance.hairStyle}_${appearance.hairColor}_${appearance.outfit}_${appearance.startingBackpack}`;
+    const key = `char_v5_${appearance.bodyType}_${appearance.skinTone}_${appearance.hairStyle}_${appearance.hairColor}_${appearance.outfit}_${appearance.startingBackpack}`;
     if (scene.textures.exists(key)) {
       return key;
     }
 
     const frameW = 24;
     const frameH = 24;
-    const totalFrames = 13;
+    const totalFrames = 27;
     const canvas = document.createElement('canvas');
     canvas.width = frameW * totalFrames;
     canvas.height = frameH;
@@ -188,10 +185,17 @@ export class ProceduralAtlasGenerator {
       frameHeight: frameH
     });
 
-    // Register character-specific animations
+    // Register character-specific directional, swimming, canoeing, and harvesting animations
     if (!scene.anims.exists(`${key}_idle`)) {
+      // Side Profile (Left/Right)
       scene.anims.create({
         key: `${key}_idle`,
+        frames: scene.anims.generateFrameNumbers(key, { start: 0, end: 1 }),
+        frameRate: 2.5,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: `${key}_idle_side`,
         frames: scene.anims.generateFrameNumbers(key, { start: 0, end: 1 }),
         frameRate: 2.5,
         repeat: -1
@@ -202,6 +206,69 @@ export class ProceduralAtlasGenerator {
         frameRate: 10,
         repeat: -1
       });
+      scene.anims.create({
+        key: `${key}_walk_side`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [2, 3, 4, 5] }),
+        frameRate: 10,
+        repeat: -1
+      });
+
+      // Front Perspective (Down — walking toward camera)
+      scene.anims.create({
+        key: `${key}_idle_down`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [13, 15] }),
+        frameRate: 2.5,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: `${key}_walk_down`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [14, 15, 16, 17] }),
+        frameRate: 10,
+        repeat: -1
+      });
+
+      // Rear Perspective (Up — walking away from camera, full backpack + boot soles)
+      scene.anims.create({
+        key: `${key}_idle_up`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [18, 20] }),
+        frameRate: 2.5,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: `${key}_walk_up`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [19, 20, 21, 22] }),
+        frameRate: 10,
+        repeat: -1
+      });
+
+      // River Swimming (Submerged lower body + alternating arm strokes)
+      scene.anims.create({
+        key: `${key}_swim`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [23, 24] }),
+        frameRate: 6,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: `${key}_swim_idle`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [23, 24] }),
+        frameRate: 2.5,
+        repeat: -1
+      });
+
+      // Canoe Paddling (Seated in wooden canoe + dipping paddle)
+      scene.anims.create({
+        key: `${key}_paddle`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [25, 26] }),
+        frameRate: 6,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: `${key}_paddle_idle`,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [25] }),
+        frameRate: 2,
+        repeat: -1
+      });
+
       // Specialized Harvesting Animations
       scene.anims.create({
         key: `${key}_chop_wood`,
@@ -265,7 +332,7 @@ export class ProceduralAtlasGenerator {
     ctx.fillRect(0, Math.floor(canvas.height * 0.72), canvas.width, Math.ceil(canvas.height * 0.28));
 
     const scale = Math.max(1, Math.floor(canvas.width / 24));
-    this.drawDetailedExplorerFrame(ctx, 0, 0, appearance, 0, scale);
+    this.drawDetailedExplorerFrame(ctx, 0, 0, appearance, 13, scale);
   }
 
   private static drawDetailedExplorerFrame(
@@ -285,7 +352,295 @@ export class ProceduralAtlasGenerator {
       appearance.bodyType === 'sturdy' ? 10 : appearance.bodyType === 'agile' ? 8 : 9;
     const leftX = Math.floor((24 - bodyW) / 2);
 
-    // Crouch / dip offsets per pose
+    const packMain =
+      appearance.startingBackpack === 'botanist'
+        ? '#2e7d32'
+        : appearance.startingBackpack === 'fisher'
+          ? '#1565c0'
+          : '#d35400';
+    const packShade =
+      appearance.startingBackpack === 'botanist'
+        ? '#1b5e20'
+        : appearance.startingBackpack === 'fisher'
+          ? '#0d47a1'
+          : '#a04000';
+    const packTrim = '#f39c12';
+
+    const outfitMain =
+      appearance.outfit === 'expedition_vest'
+        ? '#c29b61'
+        : appearance.outfit === 'river_poncho'
+          ? '#16a085'
+          : '#d6eaf8';
+    const outfitShade =
+      appearance.outfit === 'expedition_vest'
+        ? '#9c7844'
+        : appearance.outfit === 'river_poncho'
+          ? '#117864'
+          : '#aed6f1';
+
+    // =========================================================================
+    // CASE A: RIVER SWIMMING FRAMES (23..24) — Submerged lower body + Swim Stroke
+    // =========================================================================
+    if (frameIdx === 23 || frameIdx === 24) {
+      const strokeB = frameIdx === 24;
+      const bobY = strokeB ? 1 : 0;
+
+      // Frothy cyan/white water surface ring around submerged chest
+      px(2, 16, 20, 5, 'rgba(21, 101, 192, 0.55)');
+      px(3, 15 + bobY, 18, 4, '#2e86c1');
+      px(4, 15 + bobY, 16, 2, '#5dade2');
+      // White water foam crests & splashes
+      px(strokeB ? 3 : 5, 14 + bobY, 4, 2, '#d6eaf8');
+      px(strokeB ? 15 : 13, 14 + bobY, 5, 2, '#ffffff');
+      px(strokeB ? 2 : 19, 12, 2, 2, '#d6eaf8');
+
+      // Top of waterproof backpack bobbing just at the waterline
+      px(5, 10 + bobY, 4, 5, '#111914');
+      px(6, 11 + bobY, 3, 4, packMain);
+
+      // Upper shoulders above water
+      px(8, 10 + bobY, 8, 5, '#141e18');
+      px(9, 11 + bobY, 6, 4, outfitMain);
+
+      // Alternating Front-Crawl / Breaststroke Arms cutting through the water
+      if (!strokeB) {
+        px(15, 11 + bobY, 6, 3, appearance.skinTone);
+        px(19, 13 + bobY, 3, 1, '#ffffff');
+        px(3, 12 + bobY, 4, 3, appearance.skinTone);
+      } else {
+        px(14, 12 + bobY, 4, 3, appearance.skinTone);
+        px(2, 11 + bobY, 5, 3, appearance.skinTone);
+        px(1, 13 + bobY, 3, 1, '#ffffff');
+      }
+
+      // Head tilted slightly up to keep chin clear of river current
+      px(7, 3 + bobY, 10, 8, '#141e18');
+      px(8, 4 + bobY, 8, 7, appearance.skinTone);
+      px(10, 7 + bobY, 1, 2, '#111111');
+      px(14, 7 + bobY, 1, 2, '#111111');
+      px(15, 7 + bobY, 1, 2, '#ffffff');
+      px(7, 3 + bobY, 10, 2, appearance.hairColor);
+      px(8, 2 + bobY, 8, 2, appearance.hairColor);
+      return;
+    }
+
+    // =========================================================================
+    // CASE B: CANOE PADDLING FRAMES (25..26) — Seated in Canoe + Wooden Oar
+    // =========================================================================
+    if (frameIdx === 25 || frameIdx === 26) {
+      const pullBack = frameIdx === 26;
+      const bobY = pullBack ? 1 : 0;
+
+      // Backpack & Upper Torso seated inside canoe hull
+      px(5, 8 + bobY, 4, 7, '#111914');
+      px(6, 9 + bobY, 3, 5, packMain);
+      px(8, 8 + bobY, 8, 8, '#141e18');
+      px(9, 9 + bobY, 6, 6, outfitMain);
+      px(9, 14 + bobY, 6, 1, '#4a2f1d');
+
+      // Head facing forward
+      px(7, 2 + bobY, 10, 7, '#141e18');
+      px(8, 3 + bobY, 8, 6, appearance.skinTone);
+      px(13, 6 + bobY, 1, 2, '#111111');
+      px(14, 6 + bobY, 1, 2, '#ffffff');
+      px(7, 2 + bobY, 10, 2, appearance.hairColor);
+      px(8, 1 + bobY, 8, 2, appearance.hairColor);
+
+      // Hands & Carved Wooden Canoe Paddle (Remo Amazónico)
+      if (!pullBack) {
+        px(13, 10 + bobY, 4, 3, appearance.skinTone);
+        px(14, 7 + bobY, 2, 10, '#6e2c00');
+        px(15, 16 + bobY, 3, 5, '#ca6f1e');
+        px(14, 19 + bobY, 5, 2, '#d6eaf8');
+      } else {
+        px(11, 11 + bobY, 4, 3, appearance.skinTone);
+        px(11, 8 + bobY, 2, 9, '#6e2c00');
+        px(9, 16 + bobY, 4, 5, '#ca6f1e');
+        px(13, 18 + bobY, 4, 2, '#ffffff');
+      }
+      return;
+    }
+
+    // =========================================================================
+    // CASE C: FRONT PERSPECTIVE (DOWN — Frames 13..17, Walking Toward Camera)
+    // =========================================================================
+    if (frameIdx >= 13 && frameIdx <= 17) {
+      const stepPhase = frameIdx - 13; // 0=idle, 1=L forward, 2=pass, 3=R forward, 4=pass
+      const bobY = stepPhase === 1 || stepPhase === 3 ? 1 : 0;
+
+      // Ground drop shadow
+      px(6, 21, 12, 2, 'rgba(0, 0, 0, 0.42)');
+
+      // Top of backpack peeking behind shoulders
+      px(leftX - 1, 7 + bobY, bodyW + 2, 3, '#111914');
+      px(leftX, 8 + bobY, bodyW, 2, packMain);
+
+      // Front Perspective Legs (Foreshortened depth: stepping leg has larger closer boot at y=17..21, back leg is higher at y=15..18)
+      if (stepPhase === 1) {
+        // Back leg (Right)
+        px(12, 15, 4, 4, '#101712');
+        px(13, 15, 2, 2, '#1f2d3a');
+        px(13, 17, 2, 2, '#4e342e');
+        // Front closer leg (Left — larger foreshortened boot!)
+        px(7, 16, 5, 6, '#101712');
+        px(8, 16, 3, 2, '#34495e');
+        px(8, 18, 3, 3, '#6e4726');
+        px(8, 18, 3, 1, '#a04000');
+        px(8, 20, 3, 1, '#2c1d14');
+      } else if (stepPhase === 3) {
+        // Back leg (Left)
+        px(8, 15, 4, 4, '#101712');
+        px(9, 15, 2, 2, '#1f2d3a');
+        px(9, 17, 2, 2, '#4e342e');
+        // Front closer leg (Right — larger foreshortened boot!)
+        px(12, 16, 5, 6, '#101712');
+        px(13, 16, 3, 2, '#34495e');
+        px(13, 18, 3, 3, '#6e4726');
+        px(13, 18, 3, 1, '#a04000');
+        px(13, 20, 3, 1, '#2c1d14');
+      } else {
+        const liftLeft = stepPhase === 4 ? -1 : 0;
+        const liftRight = stepPhase === 2 ? -1 : 0;
+        px(7, 16 + liftLeft, 5, 5, '#101712');
+        px(8, 16 + liftLeft, 3, 2, '#34495e');
+        px(8, 18 + liftLeft, 3, 2, '#6e4726');
+        px(12, 16 + liftRight, 5, 5, '#101712');
+        px(13, 16 + liftRight, 3, 2, '#34495e');
+        px(13, 18 + liftRight, 3, 2, '#6e4726');
+      }
+
+      // Front Torso with V-neck collar, backpack shoulder straps, and centered belt buckle
+      px(leftX - 1, 8 + bobY, bodyW + 2, 8, '#141e18');
+      px(leftX, 9 + bobY, bodyW, 6, outfitMain);
+      px(leftX, 13 + bobY, bodyW, 2, outfitShade);
+      px(leftX, 9 + bobY, 2, 5, packShade);
+      px(leftX + bodyW - 2, 9 + bobY, 2, 5, packShade);
+      px(leftX, 11 + bobY, 1, 1, packTrim);
+      px(leftX + bodyW - 1, 11 + bobY, 1, 1, packTrim);
+      px(11, 9 + bobY, 2, 3, '#1e4d2b');
+      px(leftX, 14 + bobY, bodyW, 1, '#4a2f1d');
+      px(11, 14 + bobY, 2, 1, '#f1c40f');
+
+      // Front Perspective Arms
+      const leftArmY = stepPhase === 3 ? 10 : stepPhase === 1 ? 8 : 9;
+      const leftArmH = stepPhase === 3 ? 6 : stepPhase === 1 ? 4 : 5;
+      const rightArmY = stepPhase === 1 ? 10 : stepPhase === 3 ? 8 : 9;
+      const rightArmH = stepPhase === 1 ? 6 : stepPhase === 3 ? 4 : 5;
+
+      px(leftX - 2, leftArmY + bobY, 2, leftArmH, appearance.skinTone);
+      px(leftX - 2, leftArmY + bobY, 2, 2, outfitMain);
+      px(leftX + bodyW, rightArmY + bobY, 2, rightArmH, appearance.skinTone);
+      px(leftX + bodyW, rightArmY + bobY, 2, 2, outfitMain);
+
+      // Symmetrical Front Head & Both Eyes
+      px(7, 2 + bobY, 10, 8, '#141e18');
+      px(8, 3 + bobY, 8, 7, appearance.skinTone);
+      px(8, 9 + bobY, 8, 1, 'rgba(0,0,0,0.15)');
+      px(9, 6 + bobY, 1, 2, '#ffffff');
+      px(10, 6 + bobY, 1, 2, '#111111');
+      px(14, 6 + bobY, 1, 2, '#111111');
+      px(15, 6 + bobY, 1, 2, '#ffffff');
+      px(9, 5 + bobY, 2, 1, appearance.hairColor);
+      px(14, 5 + bobY, 2, 1, appearance.hairColor);
+
+      // Front Hair
+      px(7, 2 + bobY, 10, 2, appearance.hairColor);
+      px(8, 1 + bobY, 8, 2, appearance.hairColor);
+      if (appearance.hairStyle === 'braided') {
+        px(6, 4 + bobY, 2, 8, appearance.hairColor);
+        px(16, 4 + bobY, 2, 8, appearance.hairColor);
+        px(6, 11 + bobY, 2, 1, '#e74c3c');
+        px(16, 11 + bobY, 2, 1, '#e74c3c');
+      } else if (appearance.hairStyle === 'curly') {
+        px(6, 2 + bobY, 12, 4, appearance.hairColor);
+      } else if (appearance.hairStyle === 'bun') {
+        px(10, 0 + bobY, 4, 2, appearance.hairColor);
+        px(10, 1 + bobY, 4, 1, '#f1c40f');
+      }
+      return;
+    }
+
+    // =========================================================================
+    // CASE D: REAR PERSPECTIVE (UP — Frames 18..22, Walking Away From Camera)
+    // =========================================================================
+    if (frameIdx >= 18 && frameIdx <= 22) {
+      const stepPhase = frameIdx - 18; // 0=idle, 1=L away/R sole up, 2=pass, 3=R away/L sole up, 4=pass
+      const bobY = stepPhase === 1 || stepPhase === 3 ? 1 : 0;
+      const packSwayX = stepPhase === 1 ? -1 : stepPhase === 3 ? 1 : 0;
+
+      // Ground drop shadow
+      px(6, 21, 12, 2, 'rgba(0, 0, 0, 0.42)');
+
+      // Rear Perspective Legs (Kicking boot shows dark mud-treaded sole facing the camera!)
+      if (stepPhase === 1) {
+        px(8, 15, 4, 4, '#101712');
+        px(9, 15, 2, 3, '#1f2d3a');
+        px(12, 15, 5, 6, '#101712');
+        px(13, 15, 3, 2, '#34495e');
+        px(13, 17, 3, 3, '#1c130c');
+        px(13, 18, 3, 1, '#7f8c8d');
+      } else if (stepPhase === 3) {
+        px(12, 15, 4, 4, '#101712');
+        px(13, 15, 2, 3, '#1f2d3a');
+        px(7, 15, 5, 6, '#101712');
+        px(8, 15, 3, 2, '#34495e');
+        px(8, 17, 3, 3, '#1c130c');
+        px(8, 18, 3, 1, '#7f8c8d');
+      } else {
+        px(7, 16, 5, 5, '#101712');
+        px(8, 16, 3, 2, '#2c3e50');
+        px(8, 18, 3, 2, '#4e342e');
+        px(12, 16, 5, 5, '#101712');
+        px(13, 16, 3, 2, '#2c3e50');
+        px(13, 18, 3, 2, '#4e342e');
+      }
+
+      // Rear Torso & Arms swinging away
+      px(leftX - 1, 8 + bobY, bodyW + 2, 8, '#141e18');
+      px(leftX, 9 + bobY, bodyW, 6, outfitShade);
+
+      const leftArmY = stepPhase === 1 ? 8 : stepPhase === 3 ? 10 : 9;
+      const rightArmY = stepPhase === 3 ? 8 : stepPhase === 1 ? 10 : 9;
+      px(leftX - 2, leftArmY + bobY, 2, 5, appearance.skinTone);
+      px(leftX - 2, leftArmY + bobY, 2, 2, outfitShade);
+      px(leftX + bodyW, rightArmY + bobY, 2, 5, appearance.skinTone);
+      px(leftX + bodyW, rightArmY + bobY, 2, 2, outfitShade);
+
+      // Back of Head (Covered completely in hair — no face/eyes visible from behind!)
+      px(7, 2 + bobY, 10, 8, '#141e18');
+      px(8, 2 + bobY, 8, 7, appearance.hairColor);
+      px(9, 1 + bobY, 6, 2, appearance.hairColor);
+      px(10, 3 + bobY, 4, 1, 'rgba(255,255,255,0.14)');
+      if (appearance.hairStyle === 'braided') {
+        px(7, 5 + bobY, 2, 7, appearance.hairColor);
+        px(15, 5 + bobY, 2, 7, appearance.hairColor);
+        px(7, 11 + bobY, 2, 1, '#e74c3c');
+        px(15, 11 + bobY, 2, 1, '#e74c3c');
+      } else if (appearance.hairStyle === 'bun') {
+        px(10, 4 + bobY, 4, 4, '#111111');
+        px(10, 4 + bobY, 4, 3, appearance.hairColor);
+        px(10, 6 + bobY, 4, 1, '#f1c40f');
+      }
+
+      // Full Expedition Backpack Centered on Back (Drawn on top of torso in rear view!)
+      const pxPack = 7 + packSwayX;
+      px(pxPack - 1, 7 + bobY, 12, 9, '#111914');
+      px(pxPack, 8 + bobY, 10, 2, '#d5bdaf');
+      px(pxPack + 2, 8 + bobY, 1, 2, '#4a2f1d');
+      px(pxPack + 7, 8 + bobY, 1, 2, '#4a2f1d');
+      px(pxPack, 10 + bobY, 10, 5, packMain);
+      px(pxPack, 10 + bobY, 10, 2, packShade);
+      px(pxPack + 2, 10 + bobY, 1, 5, '#3e2723');
+      px(pxPack + 7, 10 + bobY, 1, 5, '#3e2723');
+      px(pxPack + 2, 12 + bobY, 1, 1, packTrim);
+      px(pxPack + 7, 12 + bobY, 1, 1, packTrim);
+      return;
+    }
+
+    // =========================================================================
+    // CASE E: SIDE PROFILE PERSPECTIVE (Frames 0..5) & ACTION POSES (Frames 6..12)
+    // =========================================================================
     const isCrouching = frameIdx === 9 || frameIdx === 10;
     const isReachingUp = frameIdx === 8 || frameIdx === 11;
     const bobY = isCrouching
@@ -301,25 +656,19 @@ export class ProceduralAtlasGenerator {
     const shadowX = Math.floor((24 - shadowW) / 2);
     px(shadowX, 21, shadowW, 2, 'rgba(0, 0, 0, 0.42)');
 
-    // 1. Backpack Layer
-    const packMain =
-      appearance.startingBackpack === 'botanist'
-        ? '#2e7d32'
-        : appearance.startingBackpack === 'fisher'
-          ? '#1565c0'
-          : '#d35400';
-    const packTrim = '#f39c12';
-    px(leftX - 2, 8 + bobY, bodyW + 4, 8, '#111914');
-    px(leftX - 1, 9 + bobY, bodyW + 2, 6, packMain);
-    px(leftX - 1, 10 + bobY, 1, 2, packTrim);
-    px(leftX + bodyW, 10 + bobY, 1, 2, packTrim);
+    // 1. Side-Profile Backpack Protruding Behind the Explorer's Back
+    px(4, 7 + bobY, 6, 9, '#111914');
+    px(5, 7 + bobY, 4, 2, '#d5bdaf');
+    px(5, 9 + bobY, 4, 6, packMain);
+    px(5, 9 + bobY, 4, 2, packShade);
+    px(6, 11 + bobY, 2, 1, packTrim);
 
-    // 2. Biomechanical Walk & Crouch Legs
-    let leftLegX = 8;
+    // 2. Side-Profile Biomechanical Scissoring Legs
+    let leftLegX = 9;
     let leftLegY = 16;
     let leftSoleUp = false;
 
-    let rightLegX = 13;
+    let rightLegX = 12;
     let rightLegY = 16;
     let rightSoleUp = false;
 
@@ -372,112 +721,81 @@ export class ProceduralAtlasGenerator {
       drawLeg(rightLegX, rightLegY, rightSoleUp, true);
     }
 
-    // 3. Torso Outfit & Belt
-    const outfitMain =
-      appearance.outfit === 'expedition_vest'
-        ? '#c29b61'
-        : appearance.outfit === 'river_poncho'
-          ? '#16a085'
-          : '#d6eaf8';
-    const outfitShade =
-      appearance.outfit === 'expedition_vest'
-        ? '#9c7844'
-        : appearance.outfit === 'river_poncho'
-          ? '#117864'
-          : '#aed6f1';
+    // 3. Side-Profile Torso Outfit & Belt
+    px(8, 8 + bobY, 8, 8, '#141e18');
+    px(9, 9 + bobY, 6, 6, outfitMain);
+    px(9, 13 + bobY, 6, 2, outfitShade);
+    px(9, 9 + bobY, 2, 5, packShade);
+    px(9, 14 + bobY, 6, 1, '#4a2f1d');
+    px(13, 14 + bobY, 2, 1, '#f1c40f');
 
-    px(leftX - 1, 8 + bobY, bodyW + 2, 8, '#141e18');
-    px(leftX, 9 + bobY, bodyW, 6, outfitMain);
-    px(leftX, 13 + bobY, bodyW, 2, outfitShade);
-    px(11, 9 + bobY, 2, 2, '#1e4d2b');
-    px(leftX, 14 + bobY, bodyW, 1, '#4a2f1d');
-    px(11, 14 + bobY, 2, 1, '#f1c40f');
-
-    // 4. Arms & Specialized Harvest / Action Poses
-    const armSwingLeftX = frameIdx === 2 ? 1 : frameIdx === 4 ? -1 : 0;
-    const armSwingLeftY = frameIdx === 2 ? 1 : frameIdx === 4 ? -1 : 0;
-    const armSwingRightX = frameIdx === 2 ? -1 : frameIdx === 4 ? 1 : 0;
-    const armSwingRightY = frameIdx === 2 ? -1 : frameIdx === 4 ? 1 : 0;
+    // 4. Side-Profile Arms & Specialized Harvest / Action Poses
+    const armSwingX = frameIdx === 2 ? 2 : frameIdx === 4 ? -2 : 0;
+    const armSwingY = frameIdx === 2 ? -1 : frameIdx === 4 ? 1 : 0;
 
     if (frameIdx === 6) {
-      // Frame 6: Chop Windup — Machete raised high overhead
       px(leftX - 2, 9 + bobY, 2, 5, appearance.skinTone);
       px(leftX + bodyW, 4 + bobY, 2, 6, appearance.skinTone);
-      px(leftX + bodyW + 1, 0, 2, 6, '#ecf0f1'); // Raised blade
+      px(leftX + bodyW + 1, 0, 2, 6, '#ecf0f1');
       px(leftX + bodyW + 2, 0, 1, 5, '#ffffff');
     } else if (frameIdx === 7) {
-      // Frame 7: Chop Cleave — Downward machete slash with motion arc
       px(leftX - 2, 10 + bobY, 2, 5, appearance.skinTone);
       px(leftX + bodyW, 10 + bobY, 3, 3, appearance.skinTone);
-      px(leftX + bodyW + 2, 11 + bobY, 5, 2, '#ecf0f1'); // Forward blade
-      // Silver slash arc
+      px(leftX + bodyW + 2, 11 + bobY, 5, 2, '#ecf0f1');
       px(leftX + bodyW + 4, 4, 2, 3, 'rgba(255, 255, 255, 0.85)');
       px(leftX + bodyW + 5, 7, 2, 5, 'rgba(174, 214, 241, 0.9)');
       px(leftX + bodyW + 3, 12, 3, 2, 'rgba(255, 255, 255, 0.85)');
     } else if (frameIdx === 8) {
-      // Frame 8: Pick Fruit — Both arms reaching high into canopy
       px(leftX - 2, 4 + bobY, 2, 6, appearance.skinTone);
       px(leftX + bodyW, 3 + bobY, 2, 7, appearance.skinTone);
       px(leftX - 2, 8 + bobY, 2, 2, outfitMain);
       px(leftX + bodyW, 8 + bobY, 2, 2, outfitMain);
     } else if (frameIdx === 9) {
-      // Frame 9: Dig Tuber / Gather Ground — Arms reaching down into soil/roots
       px(leftX - 2, 12 + bobY, 2, 6, appearance.skinTone);
       px(leftX + bodyW, 12 + bobY, 3, 6, appearance.skinTone);
-      px(leftX + bodyW + 1, 16 + bobY, 3, 2, '#935116'); // Digging stick / root pull
+      px(leftX + bodyW + 1, 16 + bobY, 3, 2, '#935116');
     } else if (frameIdx === 10) {
-      // Frame 10: Scoop Water — Holding carved Totuma gourd forward into river
       px(leftX - 2, 11 + bobY, 2, 5, appearance.skinTone);
       px(leftX + bodyW, 11 + bobY, 3, 4, appearance.skinTone);
-      px(leftX + bodyW + 2, 12 + bobY, 5, 4, '#ca6f1e'); // Totuma gourd bowl
-      px(leftX + bodyW + 3, 12 + bobY, 3, 2, '#5dade2'); // Sparkling water inside gourd
+      px(leftX + bodyW + 2, 12 + bobY, 5, 4, '#ca6f1e');
+      px(leftX + bodyW + 3, 12 + bobY, 3, 2, '#5dade2');
     } else if (frameIdx === 11) {
-      // Frame 11: Celebrate Hold-Up — Both arms raise golden glow overhead
       px(leftX - 2, 4 + bobY, 2, 6, appearance.skinTone);
       px(leftX + bodyW, 4 + bobY, 2, 6, appearance.skinTone);
-      px(9, 0, 6, 2, '#f1c40f'); // Golden discovery sparkle above hands
+      px(9, 0, 6, 2, '#f1c40f');
     } else if (frameIdx === 12) {
-      // Frame 12: Inspect Magnifying Glass Pose
       px(leftX - 2, 9 + bobY, 2, 5, appearance.skinTone);
       px(leftX + bodyW, 7 + bobY, 3, 3, appearance.skinTone);
       px(leftX + bodyW + 2, 5, 4, 4, '#f1c40f');
       px(leftX + bodyW + 3, 6, 2, 2, '#85c1e9');
     } else {
-      // Standard Idle / Walk arms
-      px(leftX - 2 + armSwingLeftX, 9 + bobY + armSwingLeftY, 2, 5, appearance.skinTone);
-      px(leftX - 2 + armSwingLeftX, 9 + bobY + armSwingLeftY, 2, 2, outfitMain);
-      px(leftX + bodyW + armSwingRightX, 9 + bobY + armSwingRightY, 2, 5, appearance.skinTone);
-      px(leftX + bodyW + armSwingRightX, 9 + bobY + armSwingRightY, 2, 2, outfitMain);
+      px(10 + armSwingX, 9 + bobY + armSwingY, 3, 5, '#141e18');
+      px(11 + armSwingX, 9 + bobY + armSwingY, 2, 2, outfitMain);
+      px(11 + armSwingX, 11 + bobY + armSwingY, 2, 3, appearance.skinTone);
     }
 
-    // 5. Head, Face, Eyes & Shading
-    px(7, 2 + bobY, 10, 8, '#141e18');
-    px(8, 3 + bobY, 8, 7, appearance.skinTone);
-    px(8, 9 + bobY, 8, 1, 'rgba(0,0,0,0.14)');
-    px(9, 6 + bobY, 1, 2, '#ffffff');
-    px(10, 6 + bobY, 1, 2, '#111111');
+    // 5. Side-Profile Head, Nose & Forward-Looking Eye
+    px(8, 2 + bobY, 9, 8, '#141e18');
+    px(9, 3 + bobY, 7, 7, appearance.skinTone);
+    px(16, 6 + bobY, 1, 2, appearance.skinTone);
+    px(9, 9 + bobY, 7, 1, 'rgba(0,0,0,0.14)');
+    px(13, 6 + bobY, 1, 2, '#ffffff');
     px(14, 6 + bobY, 1, 2, '#111111');
-    px(15, 6 + bobY, 1, 2, '#ffffff');
-    px(9, 5 + bobY, 2, 1, appearance.hairColor);
-    px(14, 5 + bobY, 2, 1, appearance.hairColor);
+    px(13, 5 + bobY, 2, 1, appearance.hairColor);
 
-    // 6. Hair Style & Color
+    // 6. Side-Profile Hair & Back Ponytail / Braid
     px(7, 2 + bobY, 10, 2, appearance.hairColor);
     px(8, 1 + bobY, 8, 2, appearance.hairColor);
-    px(10, 2 + bobY, 4, 1, 'rgba(255,255,255,0.16)');
+    px(8, 3 + bobY, 3, 5, appearance.hairColor);
 
     if (appearance.hairStyle === 'braided') {
-      px(6, 4 + bobY, 2, 8, appearance.hairColor);
-      px(16, 4 + bobY, 2, 8, appearance.hairColor);
-      px(6, 11 + bobY, 2, 1, '#e74c3c');
-      px(16, 11 + bobY, 2, 1, '#e74c3c');
+      px(6, 4 + bobY, 2, 7, appearance.hairColor);
+      px(6, 10 + bobY, 2, 1, '#e74c3c');
     } else if (appearance.hairStyle === 'curly') {
-      px(6, 2 + bobY, 12, 4, appearance.hairColor);
-      px(6, 5 + bobY, 2, 3, appearance.hairColor);
-      px(16, 5 + bobY, 2, 3, appearance.hairColor);
+      px(6, 2 + bobY, 6, 5, appearance.hairColor);
     } else if (appearance.hairStyle === 'bun') {
-      px(10, 0 + bobY, 4, 2, appearance.hairColor);
-      px(10, 1 + bobY, 4, 1, '#f1c40f');
+      px(6, 2 + bobY, 3, 3, appearance.hairColor);
+      px(7, 3 + bobY, 1, 2, '#f1c40f');
     }
   }
 
@@ -1131,21 +1449,47 @@ export class ProceduralAtlasGenerator {
 
   private static createDetailedCanoeTexture(scene: Phaser.Scene, key: string): void {
     if (scene.textures.exists(key)) return;
-    const tex = scene.textures.createCanvas(key, 24, 24);
+    const tex = scene.textures.createCanvas(key, 32, 20);
     if (!tex) return;
     const ctx = tex.getContext();
+    ctx.imageSmoothingEnabled = false;
 
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
-    ctx.fillRect(2, 15, 20, 4);
-    ctx.fillStyle = '#4e342e';
-    ctx.fillRect(1, 9, 22, 7);
+    // Water shadow / reflection beneath hull
+    ctx.fillStyle = 'rgba(11, 35, 64, 0.45)';
+    ctx.fillRect(2, 14, 28, 4);
+    ctx.fillStyle = 'rgba(214, 234, 248, 0.55)';
+    ctx.fillRect(1, 15, 4, 1);
+    ctx.fillRect(27, 15, 4, 1);
+
+    // Tapered Amazonian dugout canoe hull (Curiara / Potrillo) with pointed bow & stern prows
+    ctx.fillStyle = '#1b110c'; // Dark outline
+    ctx.fillRect(1, 8, 30, 5);
+    ctx.fillRect(3, 7, 26, 7);
+    ctx.fillRect(0, 7, 3, 3); // Stern prow tip
+    ctx.fillRect(29, 7, 3, 3); // Bow prow tip
+
+    // Mahogany outer hull planking
+    ctx.fillStyle = '#6e2c00';
+    ctx.fillRect(2, 8, 28, 5);
     ctx.fillStyle = '#a04000';
-    ctx.fillRect(2, 10, 20, 5);
-    ctx.fillStyle = '#5d4037';
-    ctx.fillRect(5, 11, 14, 3);
-    ctx.fillStyle = '#f5cba7';
-    ctx.fillRect(8, 11, 2, 3);
-    ctx.fillRect(14, 11, 2, 3);
+    ctx.fillRect(4, 8, 24, 4);
+    ctx.fillStyle = '#d35400'; // Upper gunwale highlight
+    ctx.fillRect(3, 8, 26, 1);
+    ctx.fillRect(1, 8, 2, 1);
+    ctx.fillRect(29, 8, 2, 1);
+
+    // Hollow interior & carved wooden thwarts (benches)
+    ctx.fillStyle = '#3e2723';
+    ctx.fillRect(6, 9, 20, 3);
+    ctx.fillStyle = '#f5cba7'; // Wooden seats
+    ctx.fillRect(9, 9, 2, 3);
+    ctx.fillRect(15, 9, 2, 3);
+    ctx.fillRect(21, 9, 2, 3);
+
+    // Coiled chambira mooring rope at bow
+    ctx.fillStyle = '#f39c12';
+    ctx.fillRect(26, 8, 2, 2);
+
     tex.refresh();
   }
 
@@ -1235,16 +1579,39 @@ export class ProceduralAtlasGenerator {
 
     for (let f = 0; f < 2; f++) {
       const ox = f * 24;
-      ctx.fillStyle = '#1b2631';
-      ctx.fillRect(ox + 1, 10, 22, 7);
-      ctx.fillStyle = '#2ecc71';
-      ctx.fillRect(ox + 2, 11, 19, 4);
+      // Water ripple shadow
+      ctx.fillStyle = 'rgba(21, 101, 192, 0.35)';
+      ctx.fillRect(ox + 1, 16, 22, 4);
+
+      // Serrated muscular tail + armored body + long snout
+      ctx.fillStyle = '#0b130e';
+      ctx.fillRect(ox + 1, 11, 22, 6);
+      ctx.fillRect(ox + 13, 8, 5, 4); // Raised eye ridge
+
+      // Dark olive-black armored hide (Melanosuchus niger)
+      ctx.fillStyle = '#1e3a28';
+      ctx.fillRect(ox + 2, 12, 15, 4);
+      ctx.fillStyle = '#27ae60';
+      ctx.fillRect(ox + 3, 12, 13, 2);
+      // Pale yellow-green jaw underside & sharp conical teeth
+      ctx.fillStyle = '#a9dfbf';
+      ctx.fillRect(ox + 15, 15, 7, 1);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(ox + 17, 14, 1, 1);
+      ctx.fillRect(ox + 19, 14, 1, 1);
+      ctx.fillRect(ox + 21, 14, 1, 1);
+
+      // Dorsal osteoderm scute spikes along back & tail
       ctx.fillStyle = '#145a32';
-      for (let x = 3; x <= 17; x += 3) {
-        ctx.fillRect(ox + x, 9 + (f % 2), 2, 2);
+      for (let x = 2; x <= 14; x += 3) {
+        ctx.fillRect(ox + x, 9 + ((x + f) % 2), 2, 2);
       }
+
+      // Glowing amber reptilian eye
       ctx.fillStyle = '#f1c40f';
-      ctx.fillRect(ox + 18, 9, 2, 2);
+      ctx.fillRect(ox + 15, 9, 2, 2);
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(ox + 16, 9, 1, 2);
     }
 
     scene.textures.addSpriteSheet(key, canvas as unknown as HTMLImageElement, {
@@ -1253,36 +1620,176 @@ export class ProceduralAtlasGenerator {
     });
   }
 
+  /**
+   * 4-Frame High-Detail Fer-de-Lance / Talla Equis Pit Viper (Bothrops atrox)
+   * Features unmistakable S-curved serpent coils, dark brown/gold diamond "X" dorsal markings,
+   * pale cream ventral belly scales, raised lance-shaped triangular viper head, slit yellow eye,
+   * and an animated flickering crimson forked tongue.
+   */
   private static createSnakeSpritesheet(scene: Phaser.Scene, key: string): void {
     if (scene.textures.exists(key)) return;
+    const frameW = 24;
+    const frameH = 24;
+    const frames = 4;
     const canvas = document.createElement('canvas');
-    canvas.width = 48;
-    canvas.height = 24;
+    canvas.width = frameW * frames;
+    canvas.height = frameH;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    for (let f = 0; f < 2; f++) {
-      const ox = f * 24;
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(ox + 4, 17, 16, 4);
-      ctx.fillStyle = '#4a235a';
-      ctx.fillRect(ox + 4, 11, 16, 7);
-      ctx.fillStyle = '#b9770e';
-      ctx.fillRect(ox + 5, 12, 14, 5);
-      ctx.fillStyle = '#1c2833';
-      ctx.fillRect(ox + 7, 13, 2, 2);
-      ctx.fillRect(ox + 12, 13, 2, 2);
-      ctx.fillStyle = '#935116';
-      ctx.fillRect(ox + 14, 8, 5, 4);
-      if (f === 1) {
+    for (let f = 0; f < frames; f++) {
+      const ox = f * frameW;
+      const sway = f === 1 || f === 3 ? 1 : 0;
+      const strikeShift = f === 2 ? 1 : 0;
+
+      // Ground shadow under S-coils
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+      ctx.fillRect(ox + 3, 19, 17, 3);
+
+      // Vibrating tapered tail tip on left (x = 1..4)
+      ctx.fillStyle = '#17120c';
+      ctx.fillRect(ox + 1, 14 + (f % 2), 3, 3);
+      ctx.fillStyle = '#8d6e63';
+      ctx.fillRect(ox + 2, 15 + (f % 2), 2, 1);
+
+      // Lower Base Coil (Bottom loop of the S-curve: x = 4..18, y = 15..20)
+      ctx.fillStyle = '#17120c'; // Dark outline
+      ctx.fillRect(ox + 4, 15, 15, 5);
+      ctx.fillStyle = '#c29b61'; // Warm ochre-tan viper scales
+      ctx.fillRect(ox + 5, 16, 13, 3);
+      ctx.fillStyle = '#f5cba7'; // Pale cream ventral belly scales along bottom edge
+      ctx.fillRect(ox + 6, 18, 11, 1);
+      // Iconic "Talla Equis" dark brown diamond/chevron markings along lower coil
+      ctx.fillStyle = '#2c1810';
+      ctx.fillRect(ox + 6 + sway, 16, 2, 2);
+      ctx.fillRect(ox + 10 + sway, 16, 3, 2);
+      ctx.fillRect(ox + 15, 16, 2, 2);
+      ctx.fillStyle = '#f9e79f'; // Gold scale edge highlights
+      ctx.fillRect(ox + 9 + sway, 16, 1, 1);
+      ctx.fillRect(ox + 14, 16, 1, 1);
+
+      // Middle S-Curve Neck Loop curving back left and rising (x = 6..15, y = 10..15)
+      ctx.fillStyle = '#17120c';
+      ctx.fillRect(ox + 6, 10 + sway, 10, 6);
+      ctx.fillStyle = '#b9935a';
+      ctx.fillRect(ox + 7, 11 + sway, 8, 4);
+      ctx.fillStyle = '#f5cba7';
+      ctx.fillRect(ox + 8, 14 + sway, 6, 1);
+      // Diamond "X" dorsal pattern on middle coil
+      ctx.fillStyle = '#2c1810';
+      ctx.fillRect(ox + 8, 11 + sway, 2, 3);
+      ctx.fillRect(ox + 12, 11 + sway, 2, 3);
+      ctx.fillStyle = '#f9e79f';
+      ctx.fillRect(ox + 10, 12 + sway, 2, 1);
+
+      // Raised Triangular Pit-Viper Head (Lancehead) poised to strike (x = 11..19, y = 5..10)
+      const hx = ox + 11 + strikeShift;
+      const hy = 5 + sway;
+      ctx.fillStyle = '#17120c'; // Head outline
+      ctx.fillRect(hx, hy, 8, 5);
+      ctx.fillRect(hx - 1, hy + 1, 2, 3); // Broad triangular temporal venom glands
+      ctx.fillStyle = '#9c7844'; // Dorsal head scales
+      ctx.fillRect(hx, hy + 1, 7, 3);
+      ctx.fillStyle = '#2c1810'; // Dark post-ocular stripe behind eye
+      ctx.fillRect(hx + 1, hy + 2, 3, 1);
+      // Menacing glowing vertical-slit yellow viper eye
+      ctx.fillStyle = '#f1c40f';
+      ctx.fillRect(hx + 4, hy + 1, 2, 2);
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(hx + 5, hy + 1, 1, 2);
+
+      // White venom fang glimpse & flickering crimson forked tongue
+      if (f === 1 || f === 2) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(hx + 6, hy + 4, 1, 1); // Fang tip
+        // Crimson forked tongue with split upper/lower tips
         ctx.fillStyle = '#e74c3c';
-        ctx.fillRect(ox + 19, 9, 3, 1);
+        ctx.fillRect(hx + 8, hy + 2, 3, 1); // Tongue stem
+        ctx.fillRect(hx + 11, hy + 1, 1, 1); // Upper fork prong
+        ctx.fillRect(hx + 11, hy + 3, 1, 1); // Lower fork prong
+      } else if (f === 3) {
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(hx + 8, hy + 2, 2, 1);
       }
     }
 
     scene.textures.addSpriteSheet(key, canvas as unknown as HTMLImageElement, {
-      frameWidth: 24,
-      frameHeight: 24
+      frameWidth: frameW,
+      frameHeight: frameH
+    });
+  }
+
+  /**
+   * 4-Frame High-Detail Green Anaconda (Eunectes murinus)
+   * Massive olive-green constrictor with black-rimmed gold oval ocelli spots, wet specular highlights,
+   * thick undulating coils, and flickering forked tongue.
+   */
+  private static createAnacondaSpritesheet(scene: Phaser.Scene, key: string): void {
+    if (scene.textures.exists(key)) return;
+    const frameW = 24;
+    const frameH = 24;
+    const frames = 4;
+    const canvas = document.createElement('canvas');
+    canvas.width = frameW * frames;
+    canvas.height = frameH;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    for (let f = 0; f < frames; f++) {
+      const ox = f * frameW;
+      const wave = f % 2;
+
+      // Water / mud shadow beneath massive coils
+      ctx.fillStyle = 'rgba(14, 47, 68, 0.42)';
+      ctx.fillRect(ox + 2, 18, 20, 4);
+
+      // Thick muscular lower coil (x = 2..20, y = 13..19)
+      ctx.fillStyle = '#0d1f12';
+      ctx.fillRect(ox + 2, 13, 19, 6);
+      ctx.fillStyle = '#1e8449'; // Deep olive-emerald hide
+      ctx.fillRect(ox + 3, 14, 17, 4);
+      ctx.fillStyle = '#52be80'; // Wet dorsal sheen
+      ctx.fillRect(ox + 4, 14, 15, 1);
+      ctx.fillStyle = '#f7dc6f'; // Yellow-checked ventral belly scales
+      ctx.fillRect(ox + 4, 17, 15, 1);
+
+      // Iconic black-rimmed ochre ocelli (oval spots) along body
+      for (const sx of [5, 10, 15]) {
+        ctx.fillStyle = '#111712';
+        ctx.fillRect(ox + sx + wave, 14, 3, 3);
+        ctx.fillStyle = '#d4ac0d';
+        ctx.fillRect(ox + sx + 1 + wave, 15, 1, 1);
+      }
+
+      // Upper undulating coil & raised constrictor head (x = 5..20, y = 6..13)
+      ctx.fillStyle = '#0d1f12';
+      ctx.fillRect(ox + 5, 9 + wave, 11, 5);
+      ctx.fillStyle = '#229954';
+      ctx.fillRect(ox + 6, 10 + wave, 9, 3);
+      ctx.fillStyle = '#111712';
+      ctx.fillRect(ox + 8, 10 + wave, 3, 2);
+
+      // Raised Anaconda Head with dorsal eyes & orange stripe
+      ctx.fillStyle = '#0d1f12';
+      ctx.fillRect(ox + 13, 5 + wave, 8, 5);
+      ctx.fillStyle = '#196f3d';
+      ctx.fillRect(ox + 14, 6 + wave, 6, 3);
+      ctx.fillStyle = '#e67e22'; // Post-orbital orange-gold stripe
+      ctx.fillRect(ox + 14, 7 + wave, 3, 1);
+      ctx.fillStyle = '#f1c40f';
+      ctx.fillRect(ox + 17, 6 + wave, 2, 1);
+
+      if (f === 1 || f === 2) {
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(ox + 21, 7 + wave, 2, 1);
+        ctx.fillRect(ox + 22, 6 + wave, 1, 1);
+        ctx.fillRect(ox + 22, 8 + wave, 1, 1);
+      }
+    }
+
+    scene.textures.addSpriteSheet(key, canvas as unknown as HTMLImageElement, {
+      frameWidth: frameW,
+      frameHeight: frameH
     });
   }
 
@@ -1331,8 +1838,8 @@ export class ProceduralAtlasGenerator {
       startingBackpack: 'fisher'
     };
 
-    this.drawDetailedExplorerFrame(ctx, 0, 0, mentorAppearance, 0, 1);
-    this.drawDetailedExplorerFrame(ctx, 24, 0, mentorAppearance, 1, 1);
+    this.drawDetailedExplorerFrame(ctx, 0, 0, mentorAppearance, 13, 1);
+    this.drawDetailedExplorerFrame(ctx, 24, 0, mentorAppearance, 15, 1);
 
     for (let f = 0; f < 2; f++) {
       const ox = f * 24;
@@ -1382,8 +1889,16 @@ export class ProceduralAtlasGenerator {
     if (!scene.anims.exists('snake_coil')) {
       scene.anims.create({
         key: 'snake_coil',
-        frames: scene.anims.generateFrameNumbers('creature_snake', { start: 0, end: 1 }),
-        frameRate: 2.5,
+        frames: scene.anims.generateFrameNumbers('creature_snake', { start: 0, end: 3 }),
+        frameRate: 4.5,
+        repeat: -1
+      });
+    }
+    if (!scene.anims.exists('anaconda_slither')) {
+      scene.anims.create({
+        key: 'anaconda_slither',
+        frames: scene.anims.generateFrameNumbers('creature_anaconda', { start: 0, end: 3 }),
+        frameRate: 4,
         repeat: -1
       });
     }

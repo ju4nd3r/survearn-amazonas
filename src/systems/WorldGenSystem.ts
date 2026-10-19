@@ -199,13 +199,26 @@ export class WorldGenSystem {
         id: 'threat_talla_equis_1',
         speciesId: 'bothrops_atrox_talla_equis',
         x: (spawnTileX + 6) * TILE_SIZE,
-        y: (spawnTileY - 7) * TILE_SIZE,
+        y: (spawnTileY - 5) * TILE_SIZE,
         homeX: (spawnTileX + 6) * TILE_SIZE,
-        homeY: (spawnTileY - 7) * TILE_SIZE,
+        homeY: (spawnTileY - 5) * TILE_SIZE,
         vx: 0,
         vy: 0,
         state: 'idle',
         stateTimerSec: 5,
+        attackCooldownSec: 0
+      },
+      {
+        id: 'threat_anaconda_1',
+        speciesId: 'eunectes_murinus_anaconda',
+        x: (spawnTileX + 4) * TILE_SIZE,
+        y: (spawnTileY + 5) * TILE_SIZE,
+        homeX: (spawnTileX + 4) * TILE_SIZE,
+        homeY: (spawnTileY + 5) * TILE_SIZE,
+        vx: 0,
+        vy: 0,
+        state: 'wander',
+        stateTimerSec: 4,
         attackCooldownSec: 0
       },
       {
