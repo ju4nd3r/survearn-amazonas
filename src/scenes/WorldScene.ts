@@ -116,10 +116,9 @@ export class WorldScene extends Phaser.Scene {
     });
 
     EventBus.on('LANGUAGE_CHANGED', () => {
-      const pText = i18n.getLanguage() === 'es' ? 'ℹ️ [E] Hablar' : 'ℹ️ [E] Talk';
       for (const container of this.npcPromptIndicators.values()) {
         const textObj = container.list[1] as Phaser.GameObjects.Text | undefined;
-        if (textObj) textObj.setText(pText);
+        if (textObj) textObj.setText('E');
       }
     });
 
@@ -256,39 +255,51 @@ export class WorldScene extends Phaser.Scene {
       this.spawnStructureSprite(st);
     }
 
-    // Render Friendly NPCs with breathing idle animation & prominent Information Beacon badge
-    const lang = i18n.getLanguage();
-    const promptText = lang === 'es' ? 'ℹ️ [E] Hablar' : 'ℹ️ [E] Talk';
+    // Render Friendly NPCs with breathing idle animation & compact Information Beacon badge
     for (const npc of this.worldData.npcs) {
       const spr = this.add.sprite(npc.x, npc.y, 'npc_mentor').setDepth(8);
       spr.play('npc_idle');
       this.npcSprites.set(npc.id, spr);
 
-      // Create floating Information Beacon & interaction prompt badge above NPC
+      // Create compact, pixel-crisp Information Beacon & key prompt above NPC (width: 20px, height: 11px)
       const badgeBg = this.add.graphics();
+      // Dark pill with 1px gold border
       badgeBg.fillStyle(0x071b12, 0.95);
-      badgeBg.lineStyle(1.5, 0xf1c40f, 1);
-      badgeBg.fillRoundedRect(-32, -8, 64, 16, 4);
-      badgeBg.strokeRoundedRect(-32, -8, 64, 16, 4);
+      badgeBg.lineStyle(1, 0xf1c40f, 1);
+      badgeBg.fillRoundedRect(-10, -5.5, 20, 11, 2.5);
+      badgeBg.strokeRoundedRect(-10, -5.5, 20, 11, 2.5);
 
+      // Tiny speech tail pointing down toward the NPC's head
+      badgeBg.fillStyle(0x071b12, 0.95);
+      badgeBg.fillTriangle(-2, 5.5, 2, 5.5, 0, 7.5);
+      badgeBg.lineStyle(1, 0xf1c40f, 1);
+      badgeBg.strokeLineShape(new Phaser.Geom.Line(-2, 5.5, 0, 7.5));
+      badgeBg.strokeLineShape(new Phaser.Geom.Line(2, 5.5, 0, 7.5));
+
+      // Tiny pixel-art circular info badge (blue circle with crisp white dot & stem)
+      badgeBg.fillStyle(0x2980b9, 1);
+      badgeBg.fillCircle(-5.5, 0, 2.8);
+      badgeBg.fillStyle(0xffffff, 1);
+      badgeBg.fillRect(-6, -1.8, 1, 0.8);
+      badgeBg.fillRect(-6, -0.6, 1, 1.8);
+
+      // Crisp E key prompt
       const label = this.add
-        .text(0, 0, promptText, {
-          fontSize: '8px',
+        .text(3, 0, 'E', {
+          fontSize: '7px',
           color: '#fef9e7',
-          fontStyle: 'bold',
-          stroke: '#071b12',
-          strokeThickness: 2
+          fontStyle: 'bold'
         })
         .setOrigin(0.5);
 
       const promptContainer = this.add
-        .container(npc.x, npc.y - 20, [badgeBg, label])
+        .container(npc.x, npc.y - 19, [badgeBg, label])
         .setDepth(22)
         .setAlpha(0);
 
       this.tweens.add({
         targets: promptContainer,
-        y: npc.y - 24,
+        y: npc.y - 22,
         duration: 650,
         yoyo: true,
         repeat: -1,
