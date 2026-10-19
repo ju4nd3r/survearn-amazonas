@@ -78,26 +78,28 @@ export class ProceduralAtlasGenerator {
   }
 
   /**
-   * Generates a 6-frame (24x24 per frame = 144x24 strip) character spritesheet
-   * Frame 0: Idle 1
-   * Frame 1: Idle 2 (breathing)
-   * Frame 2: Walk Left Foot
-   * Frame 3: Walk Right Foot
-   * Frame 4: Action / Harvest Tool Swing
-   * Frame 5: Inspect Magnifying Glass Pose
+   * Generates an 8-frame (24x24 per frame = 192x24 strip) character spritesheet:
+   * Frame 0: Idle 1 (Planted neutral stance)
+   * Frame 1: Idle 2 (Breathing torso bob)
+   * Frame 2: Walk Contact A (Left leg strides forward/down, Right leg pushes back/up)
+   * Frame 3: Walk Passing A (Right knee lifts & passes forward, torso rises)
+   * Frame 4: Walk Contact B (Right leg strides forward/down, Left leg pushes back/up)
+   * Frame 5: Walk Passing B (Left knee lifts & passes forward, torso rises)
+   * Frame 6: Action / Harvest Tool Swing
+   * Frame 7: Inspect Magnifying Glass Pose
    */
   public static getOrCreateCharacterTexture(
     scene: Phaser.Scene,
     appearance: CharacterAppearance
   ): string {
-    const key = `char_v2_${appearance.bodyType}_${appearance.skinTone}_${appearance.hairStyle}_${appearance.hairColor}_${appearance.outfit}_${appearance.startingBackpack}`;
+    const key = `char_v3_${appearance.bodyType}_${appearance.skinTone}_${appearance.hairStyle}_${appearance.hairColor}_${appearance.outfit}_${appearance.startingBackpack}`;
     if (scene.textures.exists(key)) {
       return key;
     }
 
     const frameW = 24;
     const frameH = 24;
-    const totalFrames = 6;
+    const totalFrames = 8;
     const canvas = document.createElement('canvas');
     canvas.width = frameW * totalFrames;
     canvas.height = frameH;
@@ -124,19 +126,19 @@ export class ProceduralAtlasGenerator {
       });
       scene.anims.create({
         key: `${key}_walk`,
-        frames: scene.anims.generateFrameNumbers(key, { frames: [2, 0, 3, 0] }),
-        frameRate: 8,
+        frames: scene.anims.generateFrameNumbers(key, { frames: [2, 3, 4, 5] }),
+        frameRate: 10,
         repeat: -1
       });
       scene.anims.create({
         key: `${key}_action`,
-        frames: scene.anims.generateFrameNumbers(key, { frames: [4, 0] }),
+        frames: scene.anims.generateFrameNumbers(key, { frames: [6, 0] }),
         frameRate: 6,
         repeat: 0
       });
       scene.anims.create({
         key: `${key}_inspect`,
-        frames: scene.anims.generateFrameNumbers(key, { frames: [5, 5, 0] }),
+        frames: scene.anims.generateFrameNumbers(key, { frames: [7, 7, 0] }),
         frameRate: 4,
         repeat: 0
       });
@@ -180,10 +182,14 @@ export class ProceduralAtlasGenerator {
     const bodyW =
       appearance.bodyType === 'sturdy' ? 10 : appearance.bodyType === 'agile' ? 8 : 9;
     const leftX = Math.floor((24 - bodyW) / 2);
-    const bobY = frameIdx === 1 || frameIdx === 2 || frameIdx === 3 ? 1 : 0;
 
-    // Ground drop shadow
-    px(6, 21, 12, 2, 'rgba(0, 0, 0, 0.38)');
+    // Torso dips 1px on wide contact strides (frames 2 & 4) and rises on passing steps (frames 3 & 5)
+    const bobY = frameIdx === 1 || frameIdx === 2 || frameIdx === 4 ? 1 : 0;
+
+    // Ground drop shadow (widens during contact stride, narrows during passing step)
+    const shadowW = frameIdx === 2 || frameIdx === 4 ? 14 : 11;
+    const shadowX = Math.floor((24 - shadowW) / 2);
+    px(shadowX, 21, shadowW, 2, 'rgba(0, 0, 0, 0.4)');
 
     // 1. Backpack Layer (with straps & flap detail)
     const packMain =
@@ -193,20 +199,72 @@ export class ProceduralAtlasGenerator {
           ? '#1565c0'
           : '#d35400';
     const packTrim = '#f39c12';
-    px(leftX - 2, 9 + bobY, bodyW + 4, 8, '#111914'); // Outline
-    px(leftX - 1, 10 + bobY, bodyW + 2, 6, packMain);
-    px(leftX - 1, 11 + bobY, 1, 2, packTrim);
-    px(leftX + bodyW, 11 + bobY, 1, 2, packTrim);
+    px(leftX - 2, 8 + bobY, bodyW + 4, 8, '#111914'); // Outline
+    px(leftX - 1, 9 + bobY, bodyW + 2, 6, packMain);
+    px(leftX - 1, 10 + bobY, 1, 2, packTrim);
+    px(leftX + bodyW, 10 + bobY, 1, 2, packTrim);
 
-    // 2. Legs & Boots (Animated stride on frames 2 & 3)
-    const leftLegY = frameIdx === 2 ? 16 : 17;
-    const rightLegY = frameIdx === 3 ? 16 : 17;
-    // Trousers
-    px(8, leftLegY, 3, 3, '#2c3e50');
-    px(13, rightLegY, 3, 3, '#2c3e50');
-    // Mud-resistant field boots
-    px(8, leftLegY + 3, 3, 2, '#4e342e');
-    px(13, rightLegY + 3, 3, 2, '#4e342e');
+    // 2. Biomechanical Walk Cycle: Legs, Knees & Field Boots
+    // Compute horizontal (X), vertical (Y), and lifted-sole states for Left & Right legs
+    let leftLegX = 8;
+    let leftLegY = 16;
+    let leftSoleUp = false;
+
+    let rightLegX = 13;
+    let rightLegY = 16;
+    let rightSoleUp = false;
+
+    if (frameIdx === 2) {
+      // Contact A: Left foot steps forward & plants; Right foot pushes back & lifts heel
+      leftLegX = 6;
+      leftLegY = 16;
+      rightLegX = 15;
+      rightLegY = 14;
+      rightSoleUp = true;
+    } else if (frameIdx === 3) {
+      // Passing A: Left leg supports upright; Right knee swings forward lifted off ground
+      leftLegX = 9;
+      leftLegY = 16;
+      rightLegX = 12;
+      rightLegY = 14;
+      rightSoleUp = true;
+    } else if (frameIdx === 4) {
+      // Contact B: Right foot steps forward & plants; Left foot pushes back & lifts heel
+      leftLegX = 6;
+      leftLegY = 14;
+      leftSoleUp = true;
+      rightLegX = 15;
+      rightLegY = 16;
+    } else if (frameIdx === 5) {
+      // Passing B: Right leg supports upright; Left knee swings forward lifted off ground
+      leftLegX = 9;
+      leftLegY = 14;
+      leftSoleUp = true;
+      rightLegX = 12;
+      rightLegY = 16;
+    }
+
+    const drawLeg = (lx: number, ly: number, isLifted: boolean, isFrontLeg: boolean) => {
+      const trouserColor = isFrontLeg ? '#34495e' : '#1f2d3a';
+      const bootColor = isFrontLeg ? '#6e4726' : '#4e342e';
+      // Dark outline around leg & boot
+      px(lx - 1, ly, 5, 6, '#101712');
+      // Thigh & knee trousers
+      px(lx, ly, 3, 3, trouserColor);
+      // Field boot upper + toe cap extending 1px forward
+      px(lx, ly + 3, 4, 2, bootColor);
+      // Boot sole (bright mud-tread highlight when foot is lifted in mid-stride)
+      px(lx, ly + 5, 4, 1, isLifted ? '#d5bdaf' : '#2c1d14');
+    };
+
+    // Render back leg first, then front leg for natural depth overlap during stride
+    if (frameIdx === 2 || frameIdx === 5) {
+      drawLeg(rightLegX, rightLegY, rightSoleUp, false);
+      drawLeg(leftLegX, leftLegY, leftSoleUp, true);
+    } else {
+      drawLeg(leftLegX, leftLegY, leftSoleUp, false);
+      drawLeg(rightLegX, rightLegY, rightSoleUp, true);
+    }
 
     // 3. Torso Outfit & Belt
     const outfitMain =
@@ -222,38 +280,39 @@ export class ProceduralAtlasGenerator {
           ? '#117864'
           : '#aed6f1';
 
-    px(leftX - 1, 9 + bobY, bodyW + 2, 8, '#141e18'); // Torso dark outline
-    px(leftX, 10 + bobY, bodyW, 6, outfitMain);
-    px(leftX, 14 + bobY, bodyW, 2, outfitShade);
+    px(leftX - 1, 8 + bobY, bodyW + 2, 8, '#141e18'); // Torso dark outline
+    px(leftX, 9 + bobY, bodyW, 6, outfitMain);
+    px(leftX, 13 + bobY, bodyW, 2, outfitShade);
     // Collar / V-neck & utility belt
-    px(11, 10 + bobY, 2, 2, '#1e4d2b');
-    px(leftX, 15 + bobY, bodyW, 1, '#4a2f1d');
-    px(11, 15 + bobY, 2, 1, '#f1c40f'); // Belt buckle
+    px(11, 9 + bobY, 2, 2, '#1e4d2b');
+    px(leftX, 14 + bobY, bodyW, 1, '#4a2f1d');
+    px(11, 14 + bobY, 2, 1, '#f1c40f'); // Belt buckle
 
-    // 4. Arms & Action Poses
-    const armSwingLeft = frameIdx === 2 ? -1 : frameIdx === 3 ? 1 : 0;
-    const armSwingRight = frameIdx === 2 ? 1 : frameIdx === 3 ? -1 : 0;
+    // 4. Arms & Counter-Swinging Walk / Action Poses
+    const armSwingLeftX = frameIdx === 2 ? 1 : frameIdx === 4 ? -1 : 0;
+    const armSwingLeftY = frameIdx === 2 ? 1 : frameIdx === 4 ? -1 : 0;
+    const armSwingRightX = frameIdx === 2 ? -1 : frameIdx === 4 ? 1 : 0;
+    const armSwingRightY = frameIdx === 2 ? -1 : frameIdx === 4 ? 1 : 0;
 
     // Left arm
-    px(leftX - 2, 10 + bobY + armSwingLeft, 2, 5, appearance.skinTone);
-    px(leftX - 2, 10 + bobY + armSwingLeft, 2, 2, outfitMain); // Sleeve
+    px(leftX - 2 + armSwingLeftX, 9 + bobY + armSwingLeftY, 2, 5, appearance.skinTone);
+    px(leftX - 2 + armSwingLeftX, 9 + bobY + armSwingLeftY, 2, 2, outfitMain); // Sleeve
 
-    // Right arm (swings tool on frame 4, holds lens on frame 5)
-    if (frameIdx === 4) {
+    // Right arm (swings tool on frame 6, holds lens on frame 7, or counter-swings while walking)
+    if (frameIdx === 6) {
       // Raised arm swinging machete / harvesting stick
-      px(leftX + bodyW, 8 + bobY, 3, 3, appearance.skinTone);
-      // Machete blade gleam
-      px(leftX + bodyW + 2, 4, 2, 6, '#ecf0f1');
-      px(leftX + bodyW + 3, 3, 2, 4, '#ffffff');
-      px(leftX + bodyW + 1, 9, 2, 2, '#6e4726');
-    } else if (frameIdx === 5) {
+      px(leftX + bodyW, 7 + bobY, 3, 3, appearance.skinTone);
+      px(leftX + bodyW + 2, 3, 2, 6, '#ecf0f1');
+      px(leftX + bodyW + 3, 2, 2, 4, '#ffffff');
+      px(leftX + bodyW + 1, 8, 2, 2, '#6e4726');
+    } else if (frameIdx === 7) {
       // Holding magnifying glass up to inspect flora/fauna
-      px(leftX + bodyW, 8 + bobY, 3, 3, appearance.skinTone);
-      px(leftX + bodyW + 2, 6, 4, 4, '#f1c40f'); // Brass rim
-      px(leftX + bodyW + 3, 7, 2, 2, '#85c1e9'); // Glass lens glint
+      px(leftX + bodyW, 7 + bobY, 3, 3, appearance.skinTone);
+      px(leftX + bodyW + 2, 5, 4, 4, '#f1c40f'); // Brass rim
+      px(leftX + bodyW + 3, 6, 2, 2, '#85c1e9'); // Glass lens glint
     } else {
-      px(leftX + bodyW, 10 + bobY + armSwingRight, 2, 5, appearance.skinTone);
-      px(leftX + bodyW, 10 + bobY + armSwingRight, 2, 2, outfitMain);
+      px(leftX + bodyW + armSwingRightX, 9 + bobY + armSwingRightY, 2, 5, appearance.skinTone);
+      px(leftX + bodyW + armSwingRightX, 9 + bobY + armSwingRightY, 2, 2, outfitMain);
     }
 
     // 5. Head, Face, Eyes & Shading

@@ -314,9 +314,32 @@ export class WorldScene extends Phaser.Scene {
       const targetAnim = isMoving
         ? `${this.currentCharTexKey}_walk`
         : `${this.currentCharTexKey}_idle`;
+      this.playerSprite.anims.timeScale = isMoving ? sprintMult : 1.0;
       if (this.playerSprite.anims.currentAnim?.key !== targetAnim) {
         this.playerSprite.play(targetAnim, true);
       }
+    }
+
+    // Spawn subtle footstep dust / water splash particles at boot level while walking
+    if (isMoving && timeMs % 180 < deltaMs + 12) {
+      const stepColor = inWater
+        ? 0x85c1e9
+        : currentTile?.biome === 'riverbank'
+          ? 0xd5bdaf
+          : 0x58d68d;
+      const footOffsetX = (Math.floor(timeMs / 180) % 2 === 0 ? -3 : 3) * (this.playerSprite.flipX ? -1 : 1);
+      const puff = this.add
+        .rectangle(nextX + footOffsetX, nextY + 9, 2, 2, stepColor, 0.75)
+        .setDepth(9);
+      this.tweens.add({
+        targets: puff,
+        y: nextY + 6,
+        alpha: 0,
+        scaleX: 1.5,
+        scaleY: 1.5,
+        duration: 260,
+        onComplete: () => puff.destroy()
+      });
     }
 
     // Check if player reached the Eastern Community Pier Rescue Landmark
