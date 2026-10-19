@@ -1760,7 +1760,7 @@ export class ProceduralAtlasGenerator {
     if (scene.textures.exists(key)) return;
     const frameW = 24;
     const frameH = 24;
-    const frames = 6; // 0..1=land idle, 2..3=land run, 4..5=water swim
+    const frames = 8; // 0..1=land idle, 2..3=land run, 4..5=water swim, 6..7=attack pounce
     const canvas = document.createElement('canvas');
     canvas.width = frameW * frames;
     canvas.height = frameH;
@@ -1769,6 +1769,91 @@ export class ProceduralAtlasGenerator {
 
     for (let f = 0; f < frames; f++) {
       const ox = f * frameW;
+
+      // Frames 6..7: Jaguar Attack Pounce & Claw Slash
+      if (f >= 6) {
+        const pounceStep = f - 6; // 0=rear up & roar, 1=lunge & rake claws
+        const pounceShiftX = pounceStep === 1 ? 3 : 0;
+        const pounceShiftY = pounceStep === 0 ? -2 : 0;
+
+        // Ground shadow
+        ctx.fillStyle = 'rgba(0,0,0,0.4)';
+        ctx.fillRect(ox + 3, 20, 18, 3);
+
+        // Arched tail lashing back
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 1, 6 + pounceShiftY, 4, 6);
+        ctx.fillStyle = '#d68910';
+        ctx.fillRect(ox + 2, 7 + pounceShiftY, 2, 4);
+
+        // Coiled hind legs planted for power
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 3, 14, 4, 6);
+        ctx.fillRect(ox + 7, 15, 4, 5);
+        ctx.fillStyle = '#d68910';
+        ctx.fillRect(ox + 4, 15, 2, 4);
+        ctx.fillRect(ox + 8, 16, 2, 3);
+
+        // Reared muscular torso
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 4 + pounceShiftX, 7 + pounceShiftY, 15, 9);
+        ctx.fillStyle = '#f39c12';
+        ctx.fillRect(ox + 5 + pounceShiftX, 8 + pounceShiftY, 13, 7);
+        // Rosettes
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 7 + pounceShiftX, 9 + pounceShiftY, 3, 3);
+        ctx.fillRect(ox + 12 + pounceShiftX, 10 + pounceShiftY, 3, 3);
+        ctx.fillStyle = '#d35400';
+        ctx.fillRect(ox + 8 + pounceShiftX, 10 + pounceShiftY, 1, 1);
+        ctx.fillRect(ox + 13 + pounceShiftX, 11 + pounceShiftY, 1, 1);
+
+        // Front legs raking forward with razor claws
+        ctx.fillStyle = '#111111';
+        if (pounceStep === 0) {
+          // Reared up in air
+          ctx.fillRect(ox + 16, 5, 4, 8);
+          ctx.fillRect(ox + 18, 3, 3, 4);
+          ctx.fillStyle = '#f39c12';
+          ctx.fillRect(ox + 17, 6, 2, 6);
+          // Extended white claws
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(ox + 18, 2, 1, 2);
+          ctx.fillRect(ox + 20, 2, 1, 2);
+        } else {
+          // Downward claw swipe with white slash trail
+          ctx.fillRect(ox + 18, 9, 5, 5);
+          ctx.fillRect(ox + 21, 13, 3, 5);
+          ctx.fillStyle = '#f39c12';
+          ctx.fillRect(ox + 19, 10, 3, 3);
+          // Curved white slash lines
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(ox + 22, 11, 2, 5);
+          ctx.fillRect(ox + 20, 15, 4, 1);
+        }
+
+        // Roaring Head with open jaws & sharp fangs
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 15 + pounceShiftX, 4 + pounceShiftY, 8, 8);
+        ctx.fillStyle = '#f39c12';
+        ctx.fillRect(ox + 16 + pounceShiftX, 5 + pounceShiftY, 6, 6);
+        // Ears
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 15 + pounceShiftX, 3 + pounceShiftY, 2, 2);
+        ctx.fillRect(ox + 19 + pounceShiftX, 3 + pounceShiftY, 2, 2);
+        // Blazing red predatory eyes
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(ox + 19 + pounceShiftX, 5 + pounceShiftY, 2, 2);
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(ox + 20 + pounceShiftX, 5 + pounceShiftY, 1, 1);
+        // Gaping red mouth & white fangs
+        ctx.fillStyle = '#922b21';
+        ctx.fillRect(ox + 19 + pounceShiftX, 8 + pounceShiftY, 4, 3);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(ox + 19 + pounceShiftX, 7 + pounceShiftY, 1, 2); // Upper canine
+        ctx.fillRect(ox + 21 + pounceShiftX, 7 + pounceShiftY, 1, 2); // Upper canine
+        ctx.fillRect(ox + 20 + pounceShiftX, 10 + pounceShiftY, 1, 2); // Lower canine
+        continue;
+      }
 
       // Frames 4..5: Water Swimming Jaguar
       if (f >= 4) {
@@ -1885,7 +1970,7 @@ export class ProceduralAtlasGenerator {
     if (scene.textures.exists(key)) return;
     const frameW = 24;
     const frameH = 24;
-    const frames = 6;
+    const frames = 8;
     const canvas = document.createElement('canvas');
     canvas.width = frameW * frames;
     canvas.height = frameH;
@@ -1934,6 +2019,85 @@ export class ProceduralAtlasGenerator {
         ctx.fillRect(ox + 15, 9, 2, 2);
         ctx.fillStyle = '#111111';
         ctx.fillRect(ox + 16, 9, 1, 2);
+        continue;
+      }
+
+      // ==========================================
+      // FRAMES 6..7: CAIMAN ATTACK JAW SNAP & THRASH
+      // ==========================================
+      if (f >= 6) {
+        const snapStep = f - 6; // 0=jaws wide open, 1=clamped shut impact
+        // Ground shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.fillRect(ox + 2, 19, 20, 3);
+
+        // Body & arched back
+        ctx.fillStyle = '#0b130e';
+        ctx.fillRect(ox + 2, 9, 14, 7);
+        ctx.fillStyle = '#1e3a28';
+        ctx.fillRect(ox + 3, 10, 12, 5);
+        ctx.fillStyle = '#27ae60';
+        ctx.fillRect(ox + 4, 10, 10, 3);
+
+        // Front and back legs bracing
+        ctx.fillStyle = '#0b130e';
+        ctx.fillRect(ox + 4, 15, 4, 5);
+        ctx.fillRect(ox + 12, 15, 4, 5);
+        ctx.fillStyle = '#d5bdaf';
+        ctx.fillRect(ox + 4, 19, 3, 1);
+        ctx.fillRect(ox + 12, 19, 3, 1);
+
+        // Thrashing tail
+        ctx.fillStyle = '#0b130e';
+        ctx.fillRect(ox + 1, snapStep === 0 ? 6 : 12, 3, 5);
+        ctx.fillStyle = '#145a32';
+        ctx.fillRect(ox + 2, snapStep === 0 ? 7 : 13, 2, 3);
+
+        // Amber/Red glowing eye
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(ox + 14, 7, 2, 2);
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(ox + 15, 7, 1, 2);
+
+        if (snapStep === 0) {
+          // JAWS GAPE OPEN WIDE AT 45 DEGREES
+          // Upper jaw reared high
+          ctx.fillStyle = '#0b130e';
+          ctx.fillRect(ox + 14, 4, 9, 4);
+          ctx.fillStyle = '#1e3a28';
+          ctx.fillRect(ox + 15, 5, 7, 2);
+          // Lower jaw dropped low
+          ctx.fillStyle = '#0b130e';
+          ctx.fillRect(ox + 14, 13, 9, 3);
+          ctx.fillStyle = '#a9dfbf';
+          ctx.fillRect(ox + 15, 14, 7, 1);
+          // Deep red throat
+          ctx.fillStyle = '#922b21';
+          ctx.fillRect(ox + 14, 8, 5, 5);
+          // Long white conical fangs top & bottom
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(ox + 17, 8, 1, 2);
+          ctx.fillRect(ox + 19, 8, 1, 2);
+          ctx.fillRect(ox + 21, 8, 1, 2);
+          ctx.fillRect(ox + 18, 11, 1, 2);
+          ctx.fillRect(ox + 20, 11, 1, 2);
+        } else {
+          // CLAMPED SHUT WITH VIOLENT IMPACT SPRAY
+          ctx.fillStyle = '#0b130e';
+          ctx.fillRect(ox + 14, 9, 10, 6);
+          ctx.fillStyle = '#1e3a28';
+          ctx.fillRect(ox + 15, 10, 8, 4);
+          ctx.fillStyle = '#ffffff'; // Interlocking teeth clamped
+          ctx.fillRect(ox + 16, 12, 1, 1);
+          ctx.fillRect(ox + 18, 12, 1, 1);
+          ctx.fillRect(ox + 20, 12, 1, 1);
+          ctx.fillRect(ox + 22, 12, 1, 1);
+          // Impact spray droplets
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(ox + 23, 8, 1, 1);
+          ctx.fillRect(ox + 22, 15, 1, 1);
+          ctx.fillRect(ox + 23, 11, 1, 1);
+        }
         continue;
       }
 
@@ -2049,7 +2213,7 @@ export class ProceduralAtlasGenerator {
     if (scene.textures.exists(key)) return;
     const frameW = 24;
     const frameH = 24;
-    const frames = 4;
+    const frames = 6;
     const canvas = document.createElement('canvas');
     canvas.width = frameW * frames;
     canvas.height = frameH;
@@ -2058,6 +2222,64 @@ export class ProceduralAtlasGenerator {
 
     for (let f = 0; f < frames; f++) {
       const ox = f * frameW;
+
+      // ==========================================
+      // FRAMES 4..5: VIPER LIGHTNING STRIKE ATTACK
+      // ==========================================
+      if (f >= 4) {
+        const strikeStep = f - 4; // 0=reared high, 1=strike forward & down
+        // Ground shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+        ctx.fillRect(ox + 3, 19, 18, 3);
+
+        // Lower anchor coil
+        ctx.fillStyle = '#17120c';
+        ctx.fillRect(ox + 3, 15, 14, 5);
+        ctx.fillStyle = '#c29b61';
+        ctx.fillRect(ox + 4, 16, 12, 3);
+
+        if (strikeStep === 0) {
+          // Reared high in dramatic S-threat posture
+          ctx.fillStyle = '#17120c';
+          ctx.fillRect(ox + 8, 8, 6, 8);
+          ctx.fillStyle = '#b9935a';
+          ctx.fillRect(ox + 9, 9, 4, 6);
+
+          // Head cocked back
+          ctx.fillStyle = '#17120c';
+          ctx.fillRect(ox + 10, 3, 8, 6);
+          ctx.fillStyle = '#9c7844';
+          ctx.fillRect(ox + 11, 4, 6, 4);
+          ctx.fillStyle = '#e74c3c';
+          ctx.fillRect(ox + 14, 5, 3, 3);
+          ctx.fillStyle = '#f1c40f'; // blazing eye
+          ctx.fillRect(ox + 13, 3, 2, 2);
+        } else {
+          // Strike lunge forward and down
+          ctx.fillStyle = '#17120c';
+          ctx.fillRect(ox + 7, 11, 10, 5);
+          ctx.fillStyle = '#b9935a';
+          ctx.fillRect(ox + 8, 12, 8, 3);
+
+          // Gaping triangular head with protruding hypodermic fangs & venom droplet
+          ctx.fillStyle = '#17120c';
+          ctx.fillRect(ox + 14, 8, 8, 6);
+          ctx.fillStyle = '#922b21'; // red mouth interior
+          ctx.fillRect(ox + 16, 10, 4, 3);
+          // Long white needle fangs
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(ox + 18, 9, 1, 3);
+          ctx.fillRect(ox + 20, 9, 1, 3);
+          // Glistening yellow venom bead
+          ctx.fillStyle = '#f4d03f';
+          ctx.fillRect(ox + 18, 12, 1, 1);
+          // Eye
+          ctx.fillStyle = '#e74c3c';
+          ctx.fillRect(ox + 15, 8, 2, 2);
+        }
+        continue;
+      }
+
       const sway = f === 1 || f === 3 ? 1 : 0;
       const strikeShift = f === 2 ? 1 : 0;
 
@@ -2137,12 +2359,13 @@ export class ProceduralAtlasGenerator {
    * Green Anaconda (Eunectes murinus):
    * Frames 0..3: Land Slither (terrestrial creeping along forest floor)
    * Frames 4..7: Water Swimming (undulating coils surrounded by river water wakes)
+   * Frames 8..9: Strike Attack (coiled spring lunge with gaping constrictor jaws)
    */
   private static createAnacondaSpritesheet(scene: Phaser.Scene, key: string): void {
     if (scene.textures.exists(key)) return;
     const frameW = 24;
     const frameH = 24;
-    const frames = 8;
+    const frames = 10;
     const canvas = document.createElement('canvas');
     canvas.width = frameW * frames;
     canvas.height = frameH;
@@ -2151,6 +2374,75 @@ export class ProceduralAtlasGenerator {
 
     for (let f = 0; f < frames; f++) {
       const ox = f * frameW;
+
+      // ==========================================
+      // FRAMES 8..9: ANACONDA STRIKING ATTACK
+      // ==========================================
+      if (f >= 8) {
+        const strikeStep = f - 8; // 0=coiled spring drawback, 1=explosive strike forward
+
+        // Ground/water shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
+        ctx.fillRect(ox + 2, 19, 20, 3);
+
+        // Coiled muscular body
+        ctx.fillStyle = '#0d1f12';
+        ctx.fillRect(ox + 2, 12, 17, 7);
+        ctx.fillStyle = '#1e8449';
+        ctx.fillRect(ox + 3, 13, 15, 5);
+        ctx.fillStyle = '#f7dc6f';
+        ctx.fillRect(ox + 4, 16, 13, 1);
+
+        // Black-rimmed ocelli
+        for (const sx of [5, 11]) {
+          ctx.fillStyle = '#111712';
+          ctx.fillRect(ox + sx, 13, 3, 3);
+        }
+
+        if (strikeStep === 0) {
+          // Coiled back S-neck
+          ctx.fillStyle = '#0d1f12';
+          ctx.fillRect(ox + 7, 7, 7, 6);
+          ctx.fillStyle = '#196f3d';
+          ctx.fillRect(ox + 8, 8, 5, 4);
+
+          // Head drawn back with open mouth
+          ctx.fillStyle = '#0d1f12';
+          ctx.fillRect(ox + 11, 5, 8, 6);
+          ctx.fillStyle = '#196f3d';
+          ctx.fillRect(ox + 12, 6, 6, 4);
+          ctx.fillStyle = '#e74c3c';
+          ctx.fillRect(ox + 15, 7, 3, 2); // red mouth
+          ctx.fillStyle = '#f1c40f'; // eye
+          ctx.fillRect(ox + 14, 5, 2, 1);
+        } else {
+          // Explosive forward strike
+          ctx.fillStyle = '#0d1f12';
+          ctx.fillRect(ox + 8, 8, 10, 5);
+          ctx.fillStyle = '#196f3d';
+          ctx.fillRect(ox + 9, 9, 8, 3);
+
+          // Gaping constrictor jaws striking forward
+          ctx.fillStyle = '#0d1f12';
+          ctx.fillRect(ox + 15, 5, 8, 7);
+          ctx.fillStyle = '#922b21';
+          ctx.fillRect(ox + 17, 7, 5, 3); // Gaping gullet
+          ctx.fillStyle = '#ffffff'; // Curved needle teeth
+          ctx.fillRect(ox + 17, 6, 1, 1);
+          ctx.fillRect(ox + 19, 6, 1, 1);
+          ctx.fillRect(ox + 18, 9, 1, 1);
+          // Red forked tongue striking out
+          ctx.fillStyle = '#e74c3c';
+          ctx.fillRect(ox + 21, 8, 2, 1);
+          ctx.fillRect(ox + 23, 7, 1, 1);
+          ctx.fillRect(ox + 23, 9, 1, 1);
+          // Blazing eye
+          ctx.fillStyle = '#f1c40f';
+          ctx.fillRect(ox + 16, 5, 2, 2);
+        }
+        continue;
+      }
+
       const isWater = f >= 4;
       const wave = f % 2;
 
@@ -2333,6 +2625,12 @@ export class ProceduralAtlasGenerator {
         frameRate: 5,
         repeat: -1
       });
+      scene.anims.create({
+        key: 'jaguar_attack',
+        frames: scene.anims.generateFrameNumbers('creature_jaguar', { frames: [6, 7] }),
+        frameRate: 6,
+        repeat: -1
+      });
     }
     if (!scene.anims.exists('caiman_swim')) {
       scene.anims.create({
@@ -2353,12 +2651,24 @@ export class ProceduralAtlasGenerator {
         frameRate: 5,
         repeat: -1
       });
+      scene.anims.create({
+        key: 'caiman_attack',
+        frames: scene.anims.generateFrameNumbers('creature_caiman', { frames: [6, 7] }),
+        frameRate: 6,
+        repeat: -1
+      });
     }
     if (!scene.anims.exists('snake_coil')) {
       scene.anims.create({
         key: 'snake_coil',
         frames: scene.anims.generateFrameNumbers('creature_snake', { start: 0, end: 3 }),
         frameRate: 4.5,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: 'snake_attack',
+        frames: scene.anims.generateFrameNumbers('creature_snake', { frames: [4, 5] }),
+        frameRate: 6,
         repeat: -1
       });
     }
@@ -2373,6 +2683,12 @@ export class ProceduralAtlasGenerator {
         key: 'anaconda_swim',
         frames: scene.anims.generateFrameNumbers('creature_anaconda', { frames: [4, 5, 6, 7] }),
         frameRate: 5,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: 'anaconda_attack',
+        frames: scene.anims.generateFrameNumbers('creature_anaconda', { frames: [8, 9] }),
+        frameRate: 6,
         repeat: -1
       });
     }

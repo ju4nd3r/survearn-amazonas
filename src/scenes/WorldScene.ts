@@ -615,20 +615,25 @@ export class WorldScene extends Phaser.Scene {
         const spr = this.threatSprites.get(res.threat.id);
         if (spr) {
           spr.setPosition(res.threat.x, res.threat.y);
-          if (res.threat.vx < -0.5) spr.setFlipX(true);
-          else if (res.threat.vx > 0.5) spr.setFlipX(false);
+          if (res.threat.state === 'attack') {
+            spr.setFlipX(this.playerSprite.x < res.threat.x);
+          } else {
+            if (res.threat.vx < -0.5) spr.setFlipX(true);
+            else if (res.threat.vx > 0.5) spr.setFlipX(false);
+          }
 
           const threatTile = this.getTileAtWorld(res.threat.x, res.threat.y);
           const inWater = threatTile?.biome === 'aquatic';
 
           if (res.threat.speciesId.includes('jaguar')) {
             let desiredAnim: string;
-            if (inWater) {
+            if (res.threat.state === 'attack') {
+              desiredAnim = 'jaguar_attack';
+            } else if (inWater) {
               desiredAnim = 'jaguar_swim';
             } else {
               const isRunning =
                 res.threat.state === 'chase' ||
-                res.threat.state === 'attack' ||
                 res.threat.state === 'flee' ||
                 Math.hypot(res.threat.vx, res.threat.vy) > 30;
               desiredAnim = isRunning ? 'jaguar_run' : 'jaguar_idle';
@@ -637,12 +642,36 @@ export class WorldScene extends Phaser.Scene {
               spr.play(desiredAnim, true);
             }
           } else if (res.threat.speciesId.includes('caiman')) {
-            const desiredAnim = inWater ? 'caiman_swim' : 'caiman_walk';
+            let desiredAnim: string;
+            if (res.threat.state === 'attack') {
+              desiredAnim = 'caiman_attack';
+            } else {
+              desiredAnim = inWater ? 'caiman_swim' : 'caiman_walk';
+            }
             if (spr.anims.currentAnim?.key !== desiredAnim) {
               spr.play(desiredAnim, true);
             }
           } else if (res.threat.speciesId.includes('anaconda')) {
-            const desiredAnim = inWater ? 'anaconda_swim' : 'anaconda_slither';
+            let desiredAnim: string;
+            if (res.threat.state === 'attack') {
+              desiredAnim = 'anaconda_attack';
+            } else {
+              desiredAnim = inWater ? 'anaconda_swim' : 'anaconda_slither';
+            }
+            if (spr.anims.currentAnim?.key !== desiredAnim) {
+              spr.play(desiredAnim, true);
+            }
+          } else if (
+            res.threat.speciesId.includes('talla_equis') ||
+            res.threat.speciesId.includes('verrugosa') ||
+            res.threat.speciesId.includes('snake')
+          ) {
+            let desiredAnim: string;
+            if (res.threat.state === 'attack') {
+              desiredAnim = 'snake_attack';
+            } else {
+              desiredAnim = 'snake_coil';
+            }
             if (spr.anims.currentAnim?.key !== desiredAnim) {
               spr.play(desiredAnim, true);
             }
@@ -657,20 +686,75 @@ export class WorldScene extends Phaser.Scene {
         if (res.damageDealtToPlayer > 0) {
           const diffDamageMult =
             tuning.difficultyMultipliers[this.difficulty].threatDamageMultiplier;
+          const actualDmg = Math.round(res.damageDealtToPlayer * diffDamageMult);
           this.stats.health = Math.max(
             0,
-            this.stats.health - res.damageDealtToPlayer * diffDamageMult
+            this.stats.health - actualDmg
           );
           if (res.inflictedStatus) {
             SurvivalSystem.addOrRefreshEffect(this.stats, res.inflictedStatus);
           }
 
-          // Visual hit flash & lunge feedback on player and attacker
+          // 1. Visceral attacker lunge tween towards player
+          if (spr) {
+            const origX = spr.x;
+            const origY = spr.y;
+            const lungeAngle = Math.atan2(this.playerSprite.y - spr.y, this.playerSprite.x - spr.x);
+            const lungeDist = 14;
+            this.tweens.add({
+              targets: spr,
+              x: origX + Math.cos(lungeAngle) * lungeDist,
+              y: origY + Math.sin(lungeAngle) * lungeDist,
+              duration: 90,
+              yoyo: true,
+              ease: 'Quad.easeOut'
+            });
+          }
+
+          // 2. Player knockback recoil twitch & red damage flash
+          const kbAngle = Math.atan2(this.playerSprite.y - res.threat.y, this.playerSprite.x - res.threat.x);
+          this.tweens.add({
+            targets: this.playerSprite,
+            x: this.playerSprite.x + Math.cos(kbAngle) * 5,
+            y: this.playerSprite.y + Math.sin(kbAngle) * 5,
+            duration: 80,
+            yoyo: true,
+            ease: 'Quad.easeOut'
+          });
           this.playerSprite.setTint(0xe74c3c);
           this.time.delayedCall(220, () => {
             if (this.playerSprite) this.playerSprite.clearTint();
           });
 
+          // 3. Species-specific visceral attack FX
+          this.spawnAnimalAttackEffect(
+            this.playerSprite.x,
+            this.playerSprite.y,
+            res.threat.speciesId
+          );
+
+          // 4. Floating red damage text badge
+          const dmgText = this.add
+            .text(this.playerSprite.x, this.playerSprite.y - 12, `-${actualDmg} HP`, {
+              fontFamily: 'monospace',
+              fontSize: '11px',
+              color: '#ff3333',
+              stroke: '#000000',
+              strokeThickness: 3
+            })
+            .setOrigin(0.5, 0.5)
+            .setDepth(35);
+          this.tweens.add({
+            targets: dmgText,
+            y: dmgText.y - 16,
+            alpha: 0,
+            duration: 650,
+            ease: 'Quad.easeOut',
+            onComplete: () => dmgText.destroy()
+          });
+
+          // 5. Impact camera shake & audio chime
+          this.cameras.main.shake(160, 0.007);
           AudioSynth.playChime('warning');
           EventBus.emit('TOAST_MESSAGE', {
             text: i18n.t('messages.jaguarWarning'),
@@ -755,6 +839,114 @@ export class WorldScene extends Phaser.Scene {
         duration: 300,
         ease: 'Quad.easeOut',
         onComplete: () => drop.destroy()
+      });
+    }
+  }
+
+  private spawnAnimalAttackEffect(x: number, y: number, speciesId: string): void {
+    const isJaguar = speciesId.includes('jaguar');
+    const isCaiman = speciesId.includes('caiman');
+    const isSnakeOrAnaconda =
+      speciesId.includes('snake') ||
+      speciesId.includes('anaconda') ||
+      speciesId.includes('talla_equis') ||
+      speciesId.includes('verrugosa');
+
+    if (isJaguar) {
+      // 3 visceral claw slash marks
+      const offsets = [-5, 0, 5];
+      for (const off of offsets) {
+        const slash = this.add.graphics().setDepth(32);
+        slash.lineStyle(2, 0xff3b30, 0.95);
+        slash.beginPath();
+        slash.moveTo(x + off - 6, y + off - 8);
+        slash.lineTo(x + off + 6, y + off + 8);
+        slash.strokePath();
+
+        this.tweens.add({
+          targets: slash,
+          alpha: 0,
+          scaleX: 1.3,
+          scaleY: 1.3,
+          duration: 220,
+          ease: 'Quad.easeOut',
+          onComplete: () => slash.destroy()
+        });
+      }
+    } else if (isCaiman) {
+      // Vicious snapping jaw crunch shockwave with teeth punctures
+      const crunchRing = this.add
+        .circle(x, y, 6, 0xffffff, 0.3)
+        .setStrokeStyle(2, 0xe74c3c, 0.9)
+        .setDepth(32);
+      this.tweens.add({
+        targets: crunchRing,
+        radius: 18,
+        alpha: 0,
+        duration: 260,
+        ease: 'Quad.easeOut',
+        onComplete: () => crunchRing.destroy()
+      });
+
+      // 4 bone-white teeth impact points
+      for (let i = 0; i < 4; i++) {
+        const angle = (Math.PI / 2) * i + Math.PI / 4;
+        const tooth = this.add
+          .rectangle(
+            x + Math.cos(angle) * 10,
+            y + Math.sin(angle) * 10,
+            3,
+            3,
+            0xffffff
+          )
+          .setDepth(33)
+          .setRotation(angle);
+        this.tweens.add({
+          targets: tooth,
+          alpha: 0,
+          scale: 0.5,
+          duration: 240,
+          onComplete: () => tooth.destroy()
+        });
+      }
+    } else if (isSnakeOrAnaconda) {
+      // Dual venomous puncture sparks + venom drops
+      const leftPuncture = this.add.circle(x - 3, y - 1, 2, 0xff0033).setDepth(33);
+      const rightPuncture = this.add.circle(x + 3, y - 1, 2, 0xff0033).setDepth(33);
+      this.tweens.add({
+        targets: [leftPuncture, rightPuncture],
+        alpha: 0,
+        scale: 1.8,
+        duration: 250,
+        onComplete: () => {
+          leftPuncture.destroy();
+          rightPuncture.destroy();
+        }
+      });
+
+      // 4 venom spatters
+      for (let i = 0; i < 4; i++) {
+        const drop = this.add.circle(x, y, 1.5, 0x2ecc71).setDepth(32);
+        const ang = (Math.PI * 2 * i) / 4 + 0.3;
+        this.tweens.add({
+          targets: drop,
+          x: x + Math.cos(ang) * 9,
+          y: y + Math.sin(ang) * 9,
+          alpha: 0,
+          duration: 280,
+          ease: 'Quad.easeOut',
+          onComplete: () => drop.destroy()
+        });
+      }
+    } else {
+      // Generic attack strike flash
+      const flash = this.add.circle(x, y, 8, 0xff4d4d, 0.7).setDepth(32);
+      this.tweens.add({
+        targets: flash,
+        radius: 16,
+        alpha: 0,
+        duration: 200,
+        onComplete: () => flash.destroy()
       });
     }
   }
