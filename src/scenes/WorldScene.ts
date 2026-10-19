@@ -38,6 +38,7 @@ export class WorldScene extends Phaser.Scene {
     outfit: 'expedition_vest',
     startingBackpack: 'botanist'
   };
+  private currentCharTexKey = '';
   private difficulty: DifficultyMode = 'survivalist';
   private stats: SurvivalStats = SurvivalSystem.createInitialStats();
   private inventory: InventoryItemSlot[] = [];
@@ -51,6 +52,9 @@ export class WorldScene extends Phaser.Scene {
   private riverLevel = 0.25;
 
   private playerSprite!: Phaser.GameObjects.Sprite;
+  private playerActionBusyUntil = 0;
+  private isSleepingTransition = false;
+
   private tileGroup!: Phaser.GameObjects.Group;
   private nodeSprites = new Map<string, Phaser.GameObjects.Sprite>();
   private threatSprites = new Map<string, Phaser.GameObjects.Sprite>();
@@ -87,6 +91,7 @@ export class WorldScene extends Phaser.Scene {
     });
 
     EventBus.on('PLAYER_INPUT_ACTION', ({ action }) => {
+      if (this.isSleepingTransition) return;
       if (action === 'interact') {
         this.handleInteractAction();
       } else if (action === 'inspect') {
@@ -121,7 +126,6 @@ export class WorldScene extends Phaser.Scene {
     this.harvestedNodeKeys = [];
     this.victoryTriggered = false;
 
-    // Starting backpack items
     if (character.startingBackpack === 'botanist') {
       this.inventory = [
         { itemId: 'agua_hervida_segura', count: 2 },
@@ -170,38 +174,33 @@ export class WorldScene extends Phaser.Scene {
     this.npcSprites.clear();
     this.structureSprites.clear();
 
-    // Render terrain tiles
+    // Render terrain tiles with 4 organic variants per biome to eliminate grid repetition
     for (let y = 0; y < this.worldData.heightTiles; y++) {
       const row = this.worldData.tiles[y];
       if (!row) continue;
       for (let x = 0; x < this.worldData.widthTiles; x++) {
         const tile = row[x];
         if (!tile) continue;
+        const variantIdx = (x * 7 + y * 13) % 4;
+        const suffix = variantIdx === 0 ? '' : `_${variantIdx}`;
         const texKey = tile.isRescuePier
           ? 'tile_pier'
           : tile.biome === 'terra_firme'
-            ? 'tile_terra_firme'
+            ? `tile_terra_firme${suffix}`
             : tile.biome === 'varzea'
-              ? 'tile_varzea'
+              ? `tile_varzea${suffix}`
               : tile.biome === 'riverbank'
-                ? 'tile_riverbank'
-                : 'tile_aquatic';
-        const img = this.add
-          .image(x * TILE_SIZE + 8, y * TILE_SIZE + 8, texKey)
-          .setDepth(1);
+                ? `tile_riverbank${suffix}`
+                : `tile_aquatic${suffix}`;
+        const img = this.add.image(x * TILE_SIZE + 8, y * TILE_SIZE + 8, texKey).setDepth(1);
         this.tileGroup.add(img);
       }
     }
 
-    // Render resource nodes
+    // Render detailed 24x24 botanical & material resource nodes with gentle canopy sway tween
     for (const node of this.worldData.resourceNodes) {
       if (node.harvested) continue;
-      const texKey =
-        node.kind === 'material'
-          ? 'node_material'
-          : node.itemId.includes('manihot')
-            ? 'node_tuber'
-            : 'node_plant';
+      const texKey = ProceduralAtlasGenerator.getNodeTextureKey(node.kind, node.itemId);
       const spr = this.add.sprite(node.x, node.y, texKey).setDepth(5);
       this.nodeSprites.set(node.nodeKey, spr);
     }
@@ -211,29 +210,46 @@ export class WorldScene extends Phaser.Scene {
       this.spawnStructureSprite(st);
     }
 
-    // Render Friendly NPCs
+    // Render Friendly NPCs with breathing idle animation
     for (const npc of this.worldData.npcs) {
       const spr = this.add.sprite(npc.x, npc.y, 'npc_mentor').setDepth(8);
+      spr.play('npc_idle');
       this.npcSprites.set(npc.id, spr);
     }
 
-    // Render Threats & Wildlife
+    // Render Threats & Wildlife with dedicated species animations
     for (const threat of this.worldData.threats) {
-      const texKey = threat.speciesId.includes('jaguar')
+      const isJaguar = threat.speciesId.includes('jaguar');
+      const isFish = threat.speciesId.includes('pirarucu');
+      const isSnake = threat.speciesId.includes('talla_equis') || threat.speciesId.includes('verrugosa');
+      const texKey = isJaguar
         ? 'creature_jaguar'
-        : threat.speciesId.includes('pirarucu')
+        : isFish
           ? 'creature_fish'
-          : 'creature_reptile';
+          : isSnake
+            ? 'creature_snake'
+            : 'creature_caiman';
       const spr = this.add.sprite(threat.x, threat.y, texKey).setDepth(9);
+      if (isJaguar) spr.play('jaguar_idle');
+      else if (isFish) spr.play('fish_swim');
+      else if (isSnake) spr.play('snake_coil');
+      else spr.play('caiman_move');
+
       this.threatSprites.set(threat.id, spr);
     }
 
-    // Render Player layered character sprite
-    const charTex = ProceduralAtlasGenerator.getOrCreateCharacterTexture(this, this.character);
+    // Render Player 24x24 animated character spritesheet
+    this.currentCharTexKey = ProceduralAtlasGenerator.getOrCreateCharacterTexture(
+      this,
+      this.character
+    );
     if (this.playerSprite) {
       this.playerSprite.destroy();
     }
-    this.playerSprite = this.add.sprite(playerX, playerY, charTex).setDepth(10);
+    this.playerSprite = this.add
+      .sprite(playerX, playerY, this.currentCharTexKey, 0)
+      .setDepth(10);
+    this.playerSprite.play(`${this.currentCharTexKey}_idle`);
 
     // Night lighting tint overlay
     if (this.nightOverlay) {
@@ -261,8 +277,8 @@ export class WorldScene extends Phaser.Scene {
     this.cameras.main.setZoom(3);
   }
 
-  public override update(_time: number, deltaMs: number): void {
-    if (!this.playerSprite || !this.worldData) return;
+  public override update(timeMs: number, deltaMs: number): void {
+    if (!this.playerSprite || !this.worldData || this.isSleepingTransition) return;
 
     const dtSec = Math.min(0.1, deltaMs / 1000);
     const move = this.inputCtrl.getMovement();
@@ -270,11 +286,11 @@ export class WorldScene extends Phaser.Scene {
     const currentTile = this.getTileAtWorld(this.playerSprite.x, this.playerSprite.y);
     const inWater = currentTile?.biome === 'aquatic';
 
-    // 1. Apply Player Movement
+    // 1. Apply Player Movement & Walk / Idle Animation State
     const baseSpeed = 62;
     const biomeMult = inWater ? 0.58 : currentTile?.biome === 'varzea' ? 0.82 : 1.0;
     const sprintMult = move.sprinting && this.stats.stamina > 10 ? 1.38 : 1.0;
-    const currentDriftX = inWater ? 8 * dtSec : 0; // Gentle downstream river current
+    const currentDriftX = inWater ? 8 * dtSec : 0;
 
     const nextX = Phaser.Math.Clamp(
       this.playerSprite.x + move.dx * baseSpeed * biomeMult * sprintMult * dtSec + currentDriftX,
@@ -287,6 +303,21 @@ export class WorldScene extends Phaser.Scene {
       this.worldData.heightTiles * TILE_SIZE - 12
     );
     this.playerSprite.setPosition(nextX, nextY);
+
+    if (move.dx < -0.05) {
+      this.playerSprite.setFlipX(true);
+    } else if (move.dx > 0.05) {
+      this.playerSprite.setFlipX(false);
+    }
+
+    if (timeMs > this.playerActionBusyUntil) {
+      const targetAnim = isMoving
+        ? `${this.currentCharTexKey}_walk`
+        : `${this.currentCharTexKey}_idle`;
+      if (this.playerSprite.anims.currentAnim?.key !== targetAnim) {
+        this.playerSprite.play(targetAnim, true);
+      }
+    }
 
     // Check if player reached the Eastern Community Pier Rescue Landmark
     if (
@@ -306,7 +337,7 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    // 2. AI Tick (10 Hz / every 100ms)
+    // 2. AI Tick (10 Hz / every 100ms) with Jaguar Run / Pounce Animations
     this.aiAccumulatorMs += deltaMs;
     if (this.aiAccumulatorMs >= 100) {
       const aiDt = this.aiAccumulatorMs / 1000;
@@ -327,6 +358,20 @@ export class WorldScene extends Phaser.Scene {
         const spr = this.threatSprites.get(res.threat.id);
         if (spr) {
           spr.setPosition(res.threat.x, res.threat.y);
+          if (res.threat.vx < -1) spr.setFlipX(true);
+          else if (res.threat.vx > 1) spr.setFlipX(false);
+
+          if (res.threat.speciesId.includes('jaguar')) {
+            const isRunning =
+              res.threat.state === 'chase' ||
+              res.threat.state === 'attack' ||
+              res.threat.state === 'flee' ||
+              Math.hypot(res.threat.vx, res.threat.vy) > 30;
+            const desiredAnim = isRunning ? 'jaguar_run' : 'jaguar_idle';
+            if (spr.anims.currentAnim?.key !== desiredAnim) {
+              spr.play(desiredAnim, true);
+            }
+          }
         }
 
         if (res.damageDealtToPlayer > 0) {
@@ -339,6 +384,13 @@ export class WorldScene extends Phaser.Scene {
           if (res.inflictedStatus) {
             SurvivalSystem.addOrRefreshEffect(this.stats, res.inflictedStatus);
           }
+
+          // Visual hit flash & lunge feedback on player and attacker
+          this.playerSprite.setTint(0xe74c3c);
+          this.time.delayedCall(220, () => {
+            if (this.playerSprite) this.playerSprite.clearTint();
+          });
+
           AudioSynth.playChime('warning');
           EventBus.emit('TOAST_MESSAGE', {
             text: i18n.t('messages.jaguarWarning'),
@@ -397,13 +449,59 @@ export class WorldScene extends Phaser.Scene {
     }
   }
 
+  private playPlayerActionPose(
+    animSuffix: 'action' | 'inspect',
+    badgeEmoji: string,
+    targetX?: number,
+    targetY?: number
+  ): void {
+    this.playerActionBusyUntil = this.time.now + 420;
+    this.playerSprite.play(`${this.currentCharTexKey}_${animSuffix}`, true);
+
+    if (targetX !== undefined) {
+      this.playerSprite.setFlipX(targetX < this.playerSprite.x);
+    }
+
+    // Floating pixel action badge & harvest burst
+    const floatText = this.add
+      .text(this.playerSprite.x, this.playerSprite.y - 14, badgeEmoji, {
+        fontSize: '10px',
+        color: '#fef9e7',
+        stroke: '#09170e',
+        strokeThickness: 2
+      })
+      .setOrigin(0.5)
+      .setDepth(25);
+
+    this.tweens.add({
+      targets: floatText,
+      y: this.playerSprite.y - 26,
+      alpha: 0,
+      duration: 550,
+      ease: 'Cubic.easeOut',
+      onComplete: () => floatText.destroy()
+    });
+
+    if (targetX !== undefined && targetY !== undefined) {
+      const ring = this.add.circle(targetX, targetY, 3, 0xf1c40f, 0.85).setDepth(24);
+      this.tweens.add({
+        targets: ring,
+        radius: 13,
+        alpha: 0,
+        duration: 340,
+        onComplete: () => ring.destroy()
+      });
+    }
+  }
+
   private handleInteractAction(): void {
     const px = this.playerSprite.x;
     const py = this.playerSprite.y;
 
     // 1. Check nearby Friendly NPC first
     for (const npc of this.worldData.npcs) {
-      if (Math.hypot(npc.x - px, npc.y - py) <= 30) {
+      if (Math.hypot(npc.x - px, npc.y - py) <= 32) {
+        this.playPlayerActionPose('action', '💬', npc.x, npc.y);
         const def = ContentRegistry.npcs.find((n) => n.id === npc.npcId);
         if (def) {
           for (const spId of def.unlocksSpeciesIds) {
@@ -425,8 +523,9 @@ export class WorldScene extends Phaser.Scene {
     }
 
     // 2. Check nearby Resource Node
-    const nearestNode = ForagingSystem.findNearestNode(this.worldData.resourceNodes, px, py, 32);
+    const nearestNode = ForagingSystem.findNearestNode(this.worldData.resourceNodes, px, py, 34);
     if (nearestNode) {
+      this.playPlayerActionPose('action', '🌿 +1', nearestNode.x, nearestNode.y);
       const res = ForagingSystem.harvestNode(
         nearestNode,
         this.inventory,
@@ -438,8 +537,15 @@ export class WorldScene extends Phaser.Scene {
 
       const spr = this.nodeSprites.get(nearestNode.nodeKey);
       if (spr) {
-        spr.destroy();
         this.nodeSprites.delete(nearestNode.nodeKey);
+        this.tweens.add({
+          targets: spr,
+          scaleX: 1.35,
+          scaleY: 0.2,
+          alpha: 0,
+          duration: 220,
+          onComplete: () => spr.destroy()
+        });
       }
 
       AudioSynth.playChime('harvest');
@@ -454,7 +560,11 @@ export class WorldScene extends Phaser.Scene {
 
     // 3. If standing in or adjacent to water, scoop Raw River Water
     const tile = this.getTileAtWorld(px, py);
-    if (tile && (tile.biome === 'aquatic' || tile.biome === 'riverbank' || tile.biome === 'varzea')) {
+    if (
+      tile &&
+      (tile.biome === 'aquatic' || tile.biome === 'riverbank' || tile.biome === 'varzea')
+    ) {
+      this.playPlayerActionPose('action', '💧 +1', px, py);
       this.inventory = CraftingSystem.addItem(this.inventory, 'agua_rio_cruda', 1);
       this.discoveredSpecies = FieldGuideSystem.unlockSpecies(
         this.discoveredSpecies,
@@ -477,7 +587,8 @@ export class WorldScene extends Phaser.Scene {
 
     // Check nearby threat/creature first
     for (const threat of this.worldData.threats) {
-      if (Math.hypot(threat.x - px, threat.y - py) <= 95) {
+      if (Math.hypot(threat.x - px, threat.y - py) <= 105) {
+        this.playPlayerActionPose('inspect', '🔍📖', threat.x, threat.y);
         const animal = ContentRegistry.getAnimal(threat.speciesId);
         if (animal) {
           this.discoveredSpecies = FieldGuideSystem.unlockSpecies(
@@ -497,8 +608,9 @@ export class WorldScene extends Phaser.Scene {
     }
 
     // Check nearby plant/material node
-    const node = ForagingSystem.findNearestNode(this.worldData.resourceNodes, px, py, 56);
+    const node = ForagingSystem.findNearestNode(this.worldData.resourceNodes, px, py, 64);
     if (node) {
+      this.playPlayerActionPose('inspect', '🔍📖', node.x, node.y);
       this.discoveredSpecies = FieldGuideSystem.unlockSpecies(
         this.discoveredSpecies,
         node.itemId,
@@ -515,19 +627,65 @@ export class WorldScene extends Phaser.Scene {
         type: 'info'
       });
       this.broadcastAllState();
+      return;
     }
+
+    this.playPlayerActionPose('inspect', '🔍');
   }
 
   private handleRestAction(): void {
-    this.timeOfDayMinutes = (this.timeOfDayMinutes + 180) % 1440;
-    if (this.timeOfDayMinutes < 180) {
+    if (this.isSleepingTransition) return;
+    this.isSleepingTransition = true;
+
+    const sheltered = this.isPlayerInShelter() || this.isPlayerNearCampfire();
+    const bonusHealth = sheltered ? 22 : 10;
+
+    this.timeOfDayMinutes = (this.timeOfDayMinutes + 240) % 1440;
+    if (this.timeOfDayMinutes < 240) {
       this.dayCount += 1;
     }
-    const bonusHealth = this.isPlayerInShelter() || this.isPlayerNearCampfire() ? 18 : 8;
+
     this.stats.health = Math.min(100, this.stats.health + bonusHealth);
     this.stats.stamina = 100;
+    if (sheltered) {
+      this.stats.wetness = Math.max(0, this.stats.wetness - 45);
+      this.stats.bodyTemp = tuning.simulation.normalBodyTemp;
+    }
+
+    // Floating Zzz animation above character while sleep curtain fades in/out
+    const zzz = this.add
+      .text(this.playerSprite.x, this.playerSprite.y - 14, '💤 Zzz...', {
+        fontSize: '10px',
+        color: '#f9e79f',
+        stroke: '#09170e',
+        strokeThickness: 2
+      })
+      .setOrigin(0.5)
+      .setDepth(26);
+
+    this.tweens.add({
+      targets: zzz,
+      y: this.playerSprite.y - 28,
+      alpha: 0,
+      duration: 1400,
+      onComplete: () => zzz.destroy()
+    });
+
+    EventBus.emit('SLEEP_TRANSITION_START', {
+      dayCount: this.dayCount,
+      timeFormatted: WeatherSystem.formatClock(this.timeOfDayMinutes),
+      healthRecovered: bonusHealth,
+      sheltered
+    });
+
+    const isNight = WeatherSystem.isNight(this.timeOfDayMinutes);
+    this.nightOverlay.setAlpha(isNight ? (this.isPlayerNearCampfire() ? 0.28 : 0.52) : 0);
     this.broadcastStats();
     void this.saveToSlot('autosave', false);
+
+    this.time.delayedCall(1500, () => {
+      this.isSleepingTransition = false;
+    });
   }
 
   private handleCraftRecipe(recipeId: string): void {
@@ -550,13 +708,14 @@ export class WorldScene extends Phaser.Scene {
     }
 
     this.inventory = res.inventory;
+    this.playPlayerActionPose('action', '🔨✨');
     AudioSynth.playChime('craft');
 
     if (res.placedStructureRecipeId) {
       const st: BuiltStructure = {
         id: `struct_${Date.now()}`,
         recipeId: res.placedStructureRecipeId,
-        x: this.playerSprite.x + 16,
+        x: this.playerSprite.x + 20,
         y: this.playerSprite.y
       };
       this.builtStructures.push(st);
@@ -613,12 +772,14 @@ export class WorldScene extends Phaser.Scene {
     const itemName = ContentRegistry.getItemDisplayName(itemId, lang);
 
     if (outcome.wasToxicOrRawRisk) {
+      this.playPlayerActionPose('action', '🤢⚠️');
       AudioSynth.playChime('warning');
       EventBus.emit('TOAST_MESSAGE', {
         text: `${i18n.t('messages.consumedToxic')} ${itemName}`,
         type: 'danger'
       });
     } else {
+      this.playPlayerActionPose('action', '💚✨');
       AudioSynth.playChime('harvest');
       EventBus.emit('TOAST_MESSAGE', {
         text: `${i18n.t('messages.consumedSafe')} ${itemName}`,
@@ -637,6 +798,9 @@ export class WorldScene extends Phaser.Scene {
           ? 'structure_tambo'
           : 'structure_canoe';
     const spr = this.add.sprite(st.x, st.y, texKey).setDepth(6);
+    if (st.recipeId === 'fogata_campamento') {
+      spr.play('campfire_burn');
+    }
     this.structureSprites.set(st.id, spr);
   }
 

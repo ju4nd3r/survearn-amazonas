@@ -8,6 +8,9 @@ import { WeatherSystem } from '../../systems/WeatherSystem';
 export class HudOverlay {
   private readonly root: HTMLElement;
   private readonly toastEl: HTMLElement;
+  private readonly sleepCurtainEl: HTMLElement;
+  private toastTimeoutId: number | null = null;
+
   private stats: SurvivalStats = SurvivalSystem.createInitialStats();
   private inventory: InventoryItemSlot[] = [];
   private dayCount = 1;
@@ -26,6 +29,12 @@ export class HudOverlay {
     this.toastEl.setAttribute('role', 'status');
     this.toastEl.setAttribute('aria-live', 'polite');
     parent.appendChild(this.toastEl);
+
+    this.sleepCurtainEl = document.createElement('div');
+    this.sleepCurtainEl.className = 'sleep-curtain';
+    this.sleepCurtainEl.setAttribute('data-testid', 'sleep-curtain');
+    this.sleepCurtainEl.setAttribute('aria-hidden', 'true');
+    parent.appendChild(this.sleepCurtainEl);
 
     this.render();
 
@@ -51,12 +60,59 @@ export class HudOverlay {
     EventBus.on('TOAST_MESSAGE', ({ text, type }) => {
       this.showToast(text, type);
     });
+
+    EventBus.on(
+      'SLEEP_TRANSITION_START',
+      ({ dayCount, timeFormatted, healthRecovered, sheltered }) => {
+        this.playSleepTransition(dayCount, timeFormatted, healthRecovered, sheltered);
+      }
+    );
+  }
+
+  private playSleepTransition(
+    dayCount: number,
+    timeFormatted: string,
+    healthRecovered: number,
+    sheltered: boolean
+  ): void {
+    const isEs = i18n.getLanguage() === 'es';
+    const title = isEs
+      ? sheltered
+        ? '🌙 Descansando bajo refugio seguro...'
+        : '🌙 Descansando en la selva...'
+      : sheltered
+        ? '🌙 Resting safely by shelter & fire...'
+        : '🌙 Resting in the rainforest...';
+    const subtitle = isEs
+      ? `☀️ Amanece / Avanza a Día ${dayCount} (${timeFormatted}) • +${healthRecovered}% Salud y 100% Energía`
+      : `☀️ Advancing to Day ${dayCount} (${timeFormatted}) • +${healthRecovered}% Health & 100% Stamina`;
+
+    this.sleepCurtainEl.innerHTML = `
+      <div class="sleep-curtain-card">
+        <div class="sleep-moon-icon">🌙 ✨ 💤</div>
+        <h2>${title}</h2>
+        <p>${subtitle}</p>
+      </div>
+    `;
+    this.sleepCurtainEl.classList.add('active');
+    this.sleepCurtainEl.setAttribute('aria-hidden', 'false');
+
+    window.setTimeout(() => {
+      this.sleepCurtainEl.classList.remove('active');
+      this.sleepCurtainEl.setAttribute('aria-hidden', 'true');
+    }, 1450);
   }
 
   private showToast(text: string, type: string): void {
     this.toastEl.textContent = text;
     this.toastEl.dataset.type = type;
     this.toastEl.classList.add('visible');
+    if (this.toastTimeoutId !== null) {
+      window.clearTimeout(this.toastTimeoutId);
+    }
+    this.toastTimeoutId = window.setTimeout(() => {
+      this.toastEl.classList.remove('visible');
+    }, 4000);
   }
 
   public render(): void {

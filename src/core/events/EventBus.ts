@@ -37,6 +37,12 @@ export interface GameEventMap {
   CRAFT_RECIPE: { recipeId: string };
   CONSUME_INVENTORY_ITEM: { itemId: string };
   PLAYER_INPUT_ACTION: { action: 'interact' | 'inspect' | 'rest' };
+  SLEEP_TRANSITION_START: {
+    dayCount: number;
+    timeFormatted: string;
+    healthRecovered: number;
+    sheltered: boolean;
+  };
   VICTORY_ACHIEVED: { method: 'canoe' | 'pier'; dayCount: number; discoveredCount: number };
 }
 

@@ -625,3 +625,56 @@ dialog::backdrop {
   flex-direction: column;
   gap: 6px;
 }
+
+/* Animated Sleep / Rest Curtain Transition */
+.sleep-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  background: radial-gradient(circle at center, rgba(12, 34, 22, 0.96), rgba(3, 9, 6, 0.99));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.sleep-curtain.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sleep-curtain-card {
+  background: var(--bg-card);
+  border: 2px solid var(--color-accent);
+  border-radius: 14px;
+  padding: 22px 28px;
+  text-align: center;
+  max-width: 440px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65);
+  transform: translateY(8px);
+  transition: transform 0.35s ease;
+}
+
+.sleep-curtain.active .sleep-curtain-card {
+  transform: translateY(0);
+}
+
+.sleep-moon-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.sleep-curtain-card h2 {
+  margin: 0 0 6px 0;
+  color: #f9e79f;
+  font-size: 1.15rem;
+}
+
+.sleep-curtain-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+

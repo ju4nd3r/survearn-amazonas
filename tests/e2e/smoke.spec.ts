@@ -34,7 +34,12 @@ test.describe('survearn — Edition: Amazonas Colombia (Selva Viva) E2E Smoke Su
     );
     await page.getByTestId('btn-close-bitacora').click();
 
-    // 6. Open Save Slots modal, save to Slot 1, and verify slot metadata updates
+    // 6. Trigger Rest/Sleep and verify animated sleep transition curtain
+    await page.getByTestId('btn-rest').click();
+    await expect(page.getByTestId('sleep-curtain')).toHaveClass(/active/);
+    await page.waitForTimeout(1600);
+
+    // 7. Open Save Slots modal, save to Slot 1, and verify slot metadata updates
     await page.getByTestId('btn-open-saves').click();
     await page.getByTestId('btn-save-slot_1').click();
     await expect(page.getByTestId('save-card-slot_1')).toContainText('Wayra');
