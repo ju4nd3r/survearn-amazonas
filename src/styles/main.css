@@ -562,7 +562,6 @@ dialog::backdrop {
   overflow-y: auto;
 }
 
-.recipe-card,
 .save-slot-card {
   background: var(--bg-card);
   border: 1px solid var(--border-canopy);
@@ -574,14 +573,154 @@ dialog::backdrop {
   gap: 12px;
 }
 
-.recipe-card h3 {
-  margin: 0 0 4px 0;
-  font-size: 0.95rem;
+.recipe-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-canopy);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.recipe-card p {
-  margin: 2px 0;
+.recipe-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recipe-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.item-miniature {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.item-miniature.output-icon {
+  width: 32px;
+  height: 32px;
+  padding: 2px;
+  border: 1.5px solid var(--color-accent);
+  background: radial-gradient(circle, rgba(241, 196, 15, 0.25) 0%, rgba(7, 27, 18, 0.9) 100%);
+}
+
+.recipe-title-block h3 {
+  margin: 0 0 2px 0;
+  font-size: 0.95rem;
+  color: #fef9e7;
+}
+
+.recipe-desc {
+  margin: 0;
   font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.crafting-materials-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.materials-header-label {
+  font-size: 0.76rem;
+  color: #a9dfbf;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ingredients-thumbs-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ing-thumb-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: rgba(14, 34, 23, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  min-width: 170px;
+  flex: 1 1 calc(50% - 8px);
+}
+
+.ing-thumb-card.is-met {
+  border-color: rgba(46, 204, 113, 0.5);
+  background: rgba(46, 204, 113, 0.08);
+}
+
+.ing-thumb-card.is-missing {
+  border-color: rgba(231, 76, 60, 0.4);
+  background: rgba(231, 76, 60, 0.06);
+}
+
+.ing-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.ing-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #eaeded;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ing-count-badge {
+  font-size: 0.72rem;
+  font-weight: bold;
+  padding: 1px 6px;
+  border-radius: 10px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.badge-ok {
+  background: #27ae60;
+  color: #ffffff;
+}
+
+.badge-need {
+  background: #c0392b;
+  color: #ffffff;
+}
+
+.ing-biome-hint {
+  font-size: 0.7rem;
+  color: #f7dc6f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recipe-card .cultural-note {
+  margin: 2px 0 0 0;
+  color: #82e0aa;
+}
+
+.recipe-action {
+  align-self: center;
 }
 
 .settings-form {

@@ -3,6 +3,7 @@ import { InventoryItemSlot } from '../../core/types/game.types';
 import { ContentRegistry } from '../../data/ContentRegistry';
 import { i18n } from '../../i18n/I18nService';
 import { CraftingSystem } from '../../systems/CraftingSystem';
+import { ProceduralAtlasGenerator } from '../../assets/ProceduralAtlasGenerator';
 import {
   closeModalDialog,
   createAccessibleModalDialog,
@@ -58,20 +59,45 @@ export class CraftingModal {
           this.nearCampfire,
           this.inShelter
         );
-        const ingredientsText = recipe.ingredients
+        const outputThumb = ProceduralAtlasGenerator.getItemThumbnailDataUrl(recipe.outputItemId);
+
+        const ingredientsCards = recipe.ingredients
           .map((ing) => {
             const owned = this.inventory.find((s) => s.itemId === ing.itemId)?.count ?? 0;
+            const isMet = owned >= ing.count;
             const itemName = ContentRegistry.getItemDisplayName(ing.itemId, lang);
-            return `${itemName} (${owned}/${ing.count})`;
+            const thumbUrl = ProceduralAtlasGenerator.getItemThumbnailDataUrl(ing.itemId);
+            const biomeHint = ProceduralAtlasGenerator.getItemBiomeLocationHint(ing.itemId, lang);
+
+            return `
+              <div class="ing-thumb-card ${isMet ? 'is-met' : 'is-missing'}" title="${itemName}: ${owned}/${ing.count}">
+                <img class="item-miniature" src="${thumbUrl}" alt="${itemName}" width="24" height="24" />
+                <div class="ing-meta">
+                  <span class="ing-name">${itemName}</span>
+                  <span class="ing-count-badge ${isMet ? 'badge-ok' : 'badge-need'}">${owned}/${ing.count}</span>
+                  <span class="ing-biome-hint">📍 ${biomeHint}</span>
+                </div>
+              </div>
+            `;
           })
-          .join(' + ');
+          .join('');
 
         return `
           <article class="recipe-card ${check.allowed ? 'craftable' : 'disabled'}" data-testid="recipe-card-${recipe.id}">
             <div class="recipe-main">
-              <h3>${recipe.name[lang]}</h3>
-              <p>${recipe.description[lang]}</p>
-              <p class="ingredients-line"><strong>Materiales:</strong> ${ingredientsText}</p>
+              <div class="recipe-header-row">
+                <img class="item-miniature output-icon" src="${outputThumb}" alt="${recipe.name[lang]}" width="28" height="28" />
+                <div class="recipe-title-block">
+                  <h3>${recipe.name[lang]}</h3>
+                  <p class="recipe-desc">${recipe.description[lang]}</p>
+                </div>
+              </div>
+              <div class="crafting-materials-section">
+                <span class="materials-header-label"><strong>${lang === 'es' ? 'Materiales necesarios a buscar en el mapa:' : 'Materials needed to forage on map:'}</strong></span>
+                <div class="ingredients-thumbs-row">
+                  ${ingredientsCards}
+                </div>
+              </div>
               <p class="cultural-note"><small>🌿 ${recipe.culturalNote[lang]}</small></p>
             </div>
             <div class="recipe-action">

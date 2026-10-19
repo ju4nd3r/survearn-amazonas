@@ -62,6 +62,7 @@ export class WorldScene extends Phaser.Scene {
   private nodeSprites = new Map<string, Phaser.GameObjects.Sprite>();
   private threatSprites = new Map<string, Phaser.GameObjects.Sprite>();
   private npcSprites = new Map<string, Phaser.GameObjects.Sprite>();
+  private npcPromptIndicators = new Map<string, Phaser.GameObjects.Container>();
   private structureSprites = new Map<string, Phaser.GameObjects.Sprite>();
   private nightOverlay!: Phaser.GameObjects.Rectangle;
 
@@ -110,6 +111,14 @@ export class WorldScene extends Phaser.Scene {
 
     EventBus.on('CONSUME_INVENTORY_ITEM', ({ itemId }) => {
       this.handleConsumeInventoryItem(itemId);
+    });
+
+    EventBus.on('LANGUAGE_CHANGED', () => {
+      const pText = i18n.getLanguage() === 'es' ? '💬 [E] Hablar' : '💬 [E] Talk';
+      for (const container of this.npcPromptIndicators.values()) {
+        const textObj = container.list[1] as Phaser.GameObjects.Text | undefined;
+        if (textObj) textObj.setText(pText);
+      }
     });
   }
 
@@ -193,10 +202,12 @@ export class WorldScene extends Phaser.Scene {
     for (const s of this.threatSprites.values()) s.destroy();
     for (const s of this.npcSprites.values()) s.destroy();
     for (const s of this.structureSprites.values()) s.destroy();
+    for (const c of this.npcPromptIndicators.values()) c.destroy();
     this.nodeSprites.clear();
     this.threatSprites.clear();
     this.npcSprites.clear();
     this.structureSprites.clear();
+    this.npcPromptIndicators.clear();
 
     // Render terrain tiles with 4 organic variants per biome to eliminate grid repetition
     for (let y = 0; y < this.worldData.heightTiles; y++) {
@@ -234,14 +245,47 @@ export class WorldScene extends Phaser.Scene {
       this.spawnStructureSprite(st);
     }
 
-    // Render Friendly NPCs with breathing idle animation
+    // Render Friendly NPCs with breathing idle animation & proximity talk indicator
+    const lang = i18n.getLanguage();
+    const promptText = lang === 'es' ? '💬 [E] Hablar' : '💬 [E] Talk';
     for (const npc of this.worldData.npcs) {
       const spr = this.add.sprite(npc.x, npc.y, 'npc_mentor').setDepth(8);
       spr.play('npc_idle');
       this.npcSprites.set(npc.id, spr);
+
+      // Create floating proximity talk badge above NPC
+      const badgeBg = this.add.graphics();
+      badgeBg.fillStyle(0x071b12, 0.92);
+      badgeBg.lineStyle(1, 0xf1c40f, 1);
+      badgeBg.fillRoundedRect(-30, -7, 60, 14, 3);
+      badgeBg.strokeRoundedRect(-30, -7, 60, 14, 3);
+
+      const label = this.add
+        .text(0, 0, promptText, {
+          fontSize: '7.5px',
+          color: '#fef9e7',
+          fontStyle: 'bold'
+        })
+        .setOrigin(0.5);
+
+      const promptContainer = this.add
+        .container(npc.x, npc.y - 18, [badgeBg, label])
+        .setDepth(15)
+        .setAlpha(0);
+
+      this.tweens.add({
+        targets: promptContainer,
+        y: npc.y - 21,
+        duration: 700,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+
+      this.npcPromptIndicators.set(npc.id, promptContainer);
     }
 
-    // Render Threats & Wildlife with dedicated species animations (Jaguar, Anaconda, Fer-de-Lance Viper, Caiman, Pirarucú)
+    // Render Threats & Wildlife with dedicated species animations and water vs ground adaptations
     for (const threat of this.worldData.threats) {
       const isJaguar = threat.speciesId.includes('jaguar');
       const isFish = threat.speciesId.includes('pirarucu');
@@ -258,11 +302,15 @@ export class WorldScene extends Phaser.Scene {
               ? 'creature_snake'
               : 'creature_caiman';
       const spr = this.add.sprite(threat.x, threat.y, texKey).setDepth(9);
-      if (isJaguar) spr.play('jaguar_idle');
-      else if (isFish) spr.play('fish_swim');
-      else if (isAnaconda) spr.play('anaconda_slither');
+
+      const threatTile = this.getTileAtWorld(threat.x, threat.y);
+      const inWater = threatTile?.biome === 'aquatic';
+
+      if (isJaguar) spr.play(inWater ? 'jaguar_swim' : 'jaguar_idle');
+      else if (isFish) spr.play(inWater ? 'fish_swim' : 'fish_flop');
+      else if (isAnaconda) spr.play(inWater ? 'anaconda_swim' : 'anaconda_slither');
       else if (isSnake) spr.play('snake_coil');
-      else spr.play('caiman_move');
+      else spr.play(inWater ? 'caiman_swim' : 'caiman_walk');
 
       this.threatSprites.set(threat.id, spr);
     }
@@ -480,7 +528,16 @@ export class WorldScene extends Phaser.Scene {
       });
     }
 
-    // 2. AI Tick (10 Hz / every 100ms) with Jaguar Run / Pounce Animations
+    // 1b. Update proximity talk prompt badges for friendly NPCs
+    for (const npc of this.worldData.npcs) {
+      const indicator = this.npcPromptIndicators.get(npc.id);
+      if (indicator) {
+        const dist = Math.hypot(npc.x - nextX, npc.y - nextY);
+        indicator.setAlpha(dist <= 42 ? 1 : 0);
+      }
+    }
+
+    // 2. AI Tick (10 Hz / every 100ms) with Water vs Ground Adaptive Animations
     this.aiAccumulatorMs += deltaMs;
     if (this.aiAccumulatorMs >= 100) {
       const aiDt = this.aiAccumulatorMs / 1000;
@@ -501,16 +558,39 @@ export class WorldScene extends Phaser.Scene {
         const spr = this.threatSprites.get(res.threat.id);
         if (spr) {
           spr.setPosition(res.threat.x, res.threat.y);
-          if (res.threat.vx < -1) spr.setFlipX(true);
-          else if (res.threat.vx > 1) spr.setFlipX(false);
+          if (res.threat.vx < -0.5) spr.setFlipX(true);
+          else if (res.threat.vx > 0.5) spr.setFlipX(false);
+
+          const threatTile = this.getTileAtWorld(res.threat.x, res.threat.y);
+          const inWater = threatTile?.biome === 'aquatic';
 
           if (res.threat.speciesId.includes('jaguar')) {
-            const isRunning =
-              res.threat.state === 'chase' ||
-              res.threat.state === 'attack' ||
-              res.threat.state === 'flee' ||
-              Math.hypot(res.threat.vx, res.threat.vy) > 30;
-            const desiredAnim = isRunning ? 'jaguar_run' : 'jaguar_idle';
+            let desiredAnim: string;
+            if (inWater) {
+              desiredAnim = 'jaguar_swim';
+            } else {
+              const isRunning =
+                res.threat.state === 'chase' ||
+                res.threat.state === 'attack' ||
+                res.threat.state === 'flee' ||
+                Math.hypot(res.threat.vx, res.threat.vy) > 30;
+              desiredAnim = isRunning ? 'jaguar_run' : 'jaguar_idle';
+            }
+            if (spr.anims.currentAnim?.key !== desiredAnim) {
+              spr.play(desiredAnim, true);
+            }
+          } else if (res.threat.speciesId.includes('caiman')) {
+            const desiredAnim = inWater ? 'caiman_swim' : 'caiman_walk';
+            if (spr.anims.currentAnim?.key !== desiredAnim) {
+              spr.play(desiredAnim, true);
+            }
+          } else if (res.threat.speciesId.includes('anaconda')) {
+            const desiredAnim = inWater ? 'anaconda_swim' : 'anaconda_slither';
+            if (spr.anims.currentAnim?.key !== desiredAnim) {
+              spr.play(desiredAnim, true);
+            }
+          } else if (res.threat.speciesId.includes('pirarucu')) {
+            const desiredAnim = inWater ? 'fish_swim' : 'fish_flop';
             if (spr.anims.currentAnim?.key !== desiredAnim) {
               spr.play(desiredAnim, true);
             }
@@ -974,7 +1054,7 @@ export class WorldScene extends Phaser.Scene {
 
     // 1. Check nearby Friendly NPC first
     for (const npc of this.worldData.npcs) {
-      if (Math.hypot(npc.x - px, npc.y - py) <= 32) {
+      if (Math.hypot(npc.x - px, npc.y - py) <= 42) {
         this.playPlayerActionPose('action', '💬', npc.x, npc.y);
         const def = ContentRegistry.npcs.find((n) => n.id === npc.npcId);
         if (def) {

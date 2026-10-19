@@ -124,9 +124,11 @@ export class ProceduralAtlasGenerator {
     kind: 'plant' | 'material' | 'water',
     itemId: string
   ): HarvestStyle {
-    if (kind === 'water' || itemId.includes('agua')) return 'scoop_water';
+    if (kind === 'water' || itemId.includes('agua')) {
+      return 'scoop_water';
+    }
     if (kind === 'material') {
-      if (itemId.includes('madera') || itemId.includes('bambu') || itemId.includes('resina')) {
+      if (itemId.includes('madera') || itemId.includes('bambu')) {
         return 'chop_wood';
       }
       return 'gather_ground';
@@ -135,14 +137,275 @@ export class ProceduralAtlasGenerator {
       return 'dig_tuber';
     }
     if (
-      itemId.includes('sangre_drago') ||
-      itemId.includes('quina') ||
-      itemId.includes('una_gato') ||
-      itemId.includes('castana')
+      itemId.includes('asai') ||
+      itemId.includes('chontaduro') ||
+      itemId.includes('moriche') ||
+      itemId.includes('cacao') ||
+      itemId.includes('copoazu') ||
+      itemId.includes('araza') ||
+      itemId.includes('caimarona') ||
+      itemId.includes('camu')
     ) {
-      return 'chop_wood';
+      return 'pick_fruit';
     }
-    return 'pick_fruit';
+    return 'gather_ground';
+  }
+
+  private static thumbCache = new Map<string, string>();
+
+  public static getItemBiomeLocationHint(itemId: string, lang: 'es' | 'en'): string {
+    if (itemId.includes('madera')) return lang === 'es' ? 'Troncos de Capirona (Selva)' : 'Capirona Trunks (Forest)';
+    if (itemId.includes('piedra')) return lang === 'es' ? 'Orilla pedregosa del río' : 'Riverbank gravel';
+    if (itemId.includes('fibra')) return lang === 'es' ? 'Palmas de cumare/chambira' : 'Chambira palm groves';
+    if (itemId.includes('hoja') || itemId.includes('bijao')) return lang === 'es' ? 'Sotobosque húmedo' : 'Humid understory';
+    if (itemId.includes('bambu') || itemId.includes('guadua')) return lang === 'es' ? 'Guaduales en la ribera' : 'Riverside bamboo';
+    if (itemId.includes('resina') || itemId.includes('copal')) return lang === 'es' ? 'Corteza de árboles viejos' : 'Old-growth tree bark';
+    if (itemId.includes('manihot') || itemId.includes('yuca')) return lang === 'es' ? 'Chagras y claros de selva' : 'Forest clearings';
+    if (itemId.includes('agua')) return lang === 'es' ? 'Río Amazonas y cochas' : 'Amazon river & oxbow lakes';
+    if (itemId.includes('pescado')) return lang === 'es' ? 'Aguas del río (con lanza/nasa)' : 'River waters (spear/trap)';
+    if (itemId.includes('asai')) return lang === 'es' ? 'Palmas altas de asaí' : 'Tall asaí palms';
+    if (itemId.includes('chontaduro')) return lang === 'es' ? 'Palmas de chontaduro' : 'Peach palms';
+    if (itemId.includes('sangre_drago') || itemId.includes('quina')) return lang === 'es' ? 'Árboles medicinales' : 'Medicinal canopy';
+    return lang === 'es' ? 'Explora la selva viva' : 'Explore the rainforest';
+  }
+
+  /**
+   * Generates a crisp 24x24 pixel-art miniature data URL for an item so players can visually
+   * recognize what to search for on the map.
+   */
+  public static getItemThumbnailDataUrl(itemId: string): string {
+    const cached = this.thumbCache.get(itemId);
+    if (cached) return cached;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 24;
+    canvas.height = 24;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return '';
+    ctx.imageSmoothingEnabled = false;
+
+    // Subtly dark circular backdrop for high contrast in UI
+    ctx.fillStyle = 'rgba(7, 24, 15, 0.85)';
+    ctx.beginPath();
+    ctx.roundRect(1, 1, 22, 22, 4);
+    ctx.fill();
+
+    if (itemId.includes('madera')) {
+      // Capirona wood log with bark & rings
+      ctx.fillStyle = '#3e2723';
+      ctx.fillRect(3, 7, 18, 10);
+      ctx.fillStyle = '#6e2c00';
+      ctx.fillRect(4, 8, 16, 8);
+      ctx.fillStyle = '#a04000';
+      ctx.fillRect(5, 9, 14, 6);
+      ctx.fillStyle = '#f5cba7';
+      ctx.fillRect(16, 9, 3, 6); // End cut ring
+      ctx.fillStyle = '#6e2c00';
+      ctx.fillRect(17, 11, 1, 2);
+    } else if (itemId.includes('piedra')) {
+      // River flint stone
+      ctx.fillStyle = '#1b2631';
+      ctx.fillRect(5, 7, 14, 11);
+      ctx.fillStyle = '#5d6d7e';
+      ctx.fillRect(6, 8, 12, 9);
+      ctx.fillStyle = '#85929e';
+      ctx.fillRect(7, 9, 6, 4);
+      ctx.fillStyle = '#ebf5fb';
+      ctx.fillRect(8, 9, 2, 2);
+    } else if (itemId.includes('fibra')) {
+      // Chambira fiber roll
+      ctx.fillStyle = '#7d6608';
+      ctx.fillRect(4, 6, 16, 12);
+      ctx.fillStyle = '#d4ac0d';
+      ctx.fillRect(5, 7, 14, 10);
+      ctx.fillStyle = '#f9e79f';
+      ctx.fillRect(7, 9, 10, 2);
+      ctx.fillRect(7, 13, 10, 2);
+      ctx.fillStyle = '#9a7d0a';
+      ctx.fillRect(11, 6, 2, 12);
+    } else if (itemId.includes('hoja') || itemId.includes('bijao')) {
+      // Large bijao leaf
+      ctx.fillStyle = '#0e3a1d';
+      ctx.fillRect(6, 3, 12, 18);
+      ctx.fillStyle = '#27ae60';
+      ctx.fillRect(7, 4, 10, 16);
+      ctx.fillStyle = '#58d68d';
+      ctx.fillRect(8, 5, 4, 14);
+      ctx.fillStyle = '#145a32';
+      ctx.fillRect(11, 4, 1, 17); // Central leaf vein
+    } else if (itemId.includes('bambu') || itemId.includes('guadua')) {
+      // Guadua bamboo stalk
+      ctx.fillStyle = '#145a32';
+      ctx.fillRect(9, 2, 6, 20);
+      ctx.fillStyle = '#27ae60';
+      ctx.fillRect(10, 3, 4, 18);
+      ctx.fillStyle = '#f1c40f'; // Bamboo node joints
+      ctx.fillRect(9, 7, 6, 2);
+      ctx.fillRect(9, 14, 6, 2);
+    } else if (itemId.includes('resina') || itemId.includes('copal')) {
+      // Golden copal resin teardrop
+      ctx.fillStyle = '#7e5109';
+      ctx.fillRect(7, 6, 10, 12);
+      ctx.fillStyle = '#f39c12';
+      ctx.fillRect(8, 7, 8, 10);
+      ctx.fillStyle = '#f9e79f';
+      ctx.fillRect(9, 8, 4, 4);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(10, 8, 2, 2);
+    } else if (itemId.includes('manihot') || itemId.includes('yuca')) {
+      // Cassava tuber root
+      ctx.fillStyle = '#1b120c';
+      ctx.fillRect(4, 7, 16, 10);
+      ctx.fillStyle = '#784212';
+      ctx.fillRect(5, 8, 14, 8);
+      ctx.fillStyle = '#f5cba7'; // White starchy interior
+      ctx.fillRect(14, 9, 4, 6);
+      ctx.fillStyle = '#2ecc71';
+      ctx.fillRect(4, 5, 4, 3);
+    } else if (itemId.includes('agua_hervida')) {
+      // Purified steaming water totuma
+      ctx.fillStyle = '#4e342e';
+      ctx.fillRect(5, 10, 14, 8);
+      ctx.fillStyle = '#a04000';
+      ctx.fillRect(6, 11, 12, 6);
+      ctx.fillStyle = '#5dade2';
+      ctx.fillRect(7, 11, 10, 3);
+      // Steam wisps
+      ctx.fillStyle = '#d6eaf8';
+      ctx.fillRect(8, 6, 2, 3);
+      ctx.fillRect(13, 5, 2, 4);
+    } else if (itemId.includes('agua')) {
+      // Raw river water in totuma gourd
+      ctx.fillStyle = '#4e342e';
+      ctx.fillRect(5, 10, 14, 8);
+      ctx.fillStyle = '#a04000';
+      ctx.fillRect(6, 11, 12, 6);
+      ctx.fillStyle = '#2980b9';
+      ctx.fillRect(7, 11, 10, 4);
+      ctx.fillStyle = '#5dade2';
+      ctx.fillRect(9, 12, 2, 2);
+    } else if (itemId.includes('pescado_asado')) {
+      // Patarasca: roasted fish parcel wrapped in bijao leaf
+      ctx.fillStyle = '#145a32';
+      ctx.fillRect(4, 7, 16, 10);
+      ctx.fillStyle = '#1e8449';
+      ctx.fillRect(5, 8, 14, 8);
+      ctx.fillStyle = '#f39c12'; // Chambira binding strings
+      ctx.fillRect(9, 7, 2, 10);
+      ctx.fillRect(14, 7, 2, 10);
+    } else if (itemId.includes('pescado')) {
+      // Fresh river fish
+      ctx.fillStyle = '#1c2833';
+      ctx.fillRect(3, 8, 18, 8);
+      ctx.fillStyle = '#95a5a6';
+      ctx.fillRect(4, 9, 16, 6);
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillRect(6, 12, 11, 2);
+      ctx.fillStyle = '#111111'; // Eye
+      ctx.fillRect(17, 10, 2, 2);
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(18, 10, 1, 1);
+    } else if (itemId.includes('casabe')) {
+      // Golden circular casabe flatbread
+      ctx.fillStyle = '#935116';
+      ctx.beginPath();
+      ctx.arc(12, 12, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#f5cba7';
+      ctx.beginPath();
+      ctx.arc(12, 12, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#b9770e'; // Toast spots
+      ctx.fillRect(9, 10, 2, 2);
+      ctx.fillRect(13, 13, 2, 2);
+    } else if (itemId.includes('lanza')) {
+      // Bamboo fishing spear
+      ctx.fillStyle = '#6e2c00';
+      ctx.fillRect(4, 18, 15, 2);
+      ctx.fillStyle = '#d35400';
+      ctx.fillRect(17, 16, 4, 3);
+      ctx.fillStyle = '#f1c40f'; // Fire-hardened point
+      ctx.fillRect(20, 15, 3, 2);
+    } else if (itemId.includes('machete')) {
+      // Knapped stone bush knife
+      ctx.fillStyle = '#6e2c00'; // Handle
+      ctx.fillRect(5, 15, 4, 3);
+      ctx.fillStyle = '#7f8c8d'; // Flint blade
+      ctx.fillRect(8, 9, 12, 5);
+      ctx.fillStyle = '#ecf0f1'; // Sharp cutting edge
+      ctx.fillRect(9, 13, 11, 1);
+    } else if (itemId.includes('trampa') || itemId.includes('nasa')) {
+      // Woven conical fish trap
+      ctx.fillStyle = '#7d6608';
+      ctx.fillRect(4, 8, 16, 8);
+      ctx.fillStyle = '#f39c12';
+      ctx.fillRect(6, 9, 12, 6);
+      ctx.fillStyle = '#2c3e50';
+      ctx.fillRect(16, 10, 2, 4);
+    } else if (itemId.includes('hamaca')) {
+      // Woven hammock
+      ctx.fillStyle = '#7d6608';
+      ctx.fillRect(3, 10, 18, 5);
+      ctx.fillStyle = '#f1c40f';
+      ctx.fillRect(5, 11, 14, 3);
+    } else if (itemId.includes('fogata')) {
+      // Campfire
+      ctx.fillStyle = '#5d4037';
+      ctx.fillRect(5, 15, 14, 4);
+      ctx.fillStyle = '#e74c3c';
+      ctx.fillRect(8, 7, 8, 9);
+      ctx.fillStyle = '#f39c12';
+      ctx.fillRect(9, 8, 6, 7);
+      ctx.fillStyle = '#fef9e7';
+      ctx.fillRect(11, 11, 2, 3);
+    } else if (itemId.includes('tambo')) {
+      // Palafito / Tambo shelter
+      ctx.fillStyle = '#4e342e';
+      ctx.fillRect(6, 14, 2, 7);
+      ctx.fillRect(16, 14, 2, 7);
+      ctx.fillStyle = '#a04000';
+      ctx.fillRect(4, 13, 16, 2);
+      ctx.fillStyle = '#d35400'; // Thatched roof
+      ctx.fillRect(3, 6, 18, 7);
+      ctx.fillStyle = '#f39c12';
+      ctx.fillRect(6, 4, 12, 3);
+    } else if (itemId.includes('canoa')) {
+      // Curiara dugout canoe
+      ctx.fillStyle = '#4e342e';
+      ctx.fillRect(3, 10, 18, 6);
+      ctx.fillStyle = '#a04000';
+      ctx.fillRect(5, 11, 14, 4);
+      ctx.fillStyle = '#f5cba7'; // Paddle
+      ctx.fillRect(9, 8, 2, 9);
+    } else if (itemId.includes('asai')) {
+      // Asaí berries
+      ctx.fillStyle = '#1e8449';
+      ctx.fillRect(10, 4, 4, 4);
+      ctx.fillStyle = '#4a235a';
+      ctx.fillRect(7, 8, 10, 10);
+      ctx.fillStyle = '#8e44ad';
+      ctx.fillRect(8, 9, 3, 3);
+      ctx.fillRect(13, 9, 3, 3);
+      ctx.fillRect(10, 13, 3, 3);
+    } else if (itemId.includes('chontaduro')) {
+      // Chontaduro fruit
+      ctx.fillStyle = '#1e8449';
+      ctx.fillRect(10, 4, 4, 3);
+      ctx.fillStyle = '#c0392b';
+      ctx.fillRect(6, 7, 12, 11);
+      ctx.fillStyle = '#e67e22';
+      ctx.fillRect(8, 8, 8, 8);
+    } else {
+      // Generic berry/fruit/material icon
+      ctx.fillStyle = '#1e8449';
+      ctx.fillRect(8, 7, 8, 9);
+      ctx.fillStyle = '#2ecc71';
+      ctx.fillRect(9, 8, 6, 7);
+    }
+
+    const dataUrl = canvas.toDataURL();
+    this.thumbCache.set(itemId, dataUrl);
+    return dataUrl;
   }
 
   /**
@@ -1497,7 +1760,7 @@ export class ProceduralAtlasGenerator {
     if (scene.textures.exists(key)) return;
     const frameW = 24;
     const frameH = 24;
-    const frames = 4;
+    const frames = 6; // 0..1=land idle, 2..3=land run, 4..5=water swim
     const canvas = document.createElement('canvas');
     canvas.width = frameW * frames;
     canvas.height = frameH;
@@ -1506,6 +1769,50 @@ export class ProceduralAtlasGenerator {
 
     for (let f = 0; f < frames; f++) {
       const ox = f * frameW;
+
+      // Frames 4..5: Water Swimming Jaguar
+      if (f >= 4) {
+        const swimWave = f === 4 ? 0 : 1;
+        // Water ripples and wake around submerged body
+        ctx.fillStyle = 'rgba(21, 101, 192, 0.45)';
+        ctx.fillRect(ox + 2, 14, 20, 6);
+        ctx.fillStyle = '#5dade2';
+        ctx.fillRect(ox + 3, 15 + swimWave, 18, 3);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(ox + 1, 16, 3, 1);
+        ctx.fillRect(ox + 19, 16, 3, 1);
+
+        // Submerged Torso & Paddling Front Paw
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 4, 10 + swimWave, 14, 5);
+        ctx.fillStyle = '#f39c12';
+        ctx.fillRect(ox + 5, 11 + swimWave, 12, 4);
+        ctx.fillStyle = '#d35400';
+        ctx.fillRect(ox + 7, 12 + swimWave, 2, 2);
+        ctx.fillRect(ox + 11, 12 + swimWave, 2, 2);
+
+        // Paddling paw reaching through water
+        ctx.fillStyle = '#f39c12';
+        ctx.fillRect(ox + (f === 4 ? 17 : 15), 13, 3, 3);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(ox + (f === 4 ? 18 : 16), 14, 2, 1);
+
+        // Head held high above water line
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 15, 6 + swimWave, 8, 6);
+        ctx.fillStyle = '#f39c12';
+        ctx.fillRect(ox + 16, 7 + swimWave, 6, 4);
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 15, 5 + swimWave, 2, 2); // Ear
+        ctx.fillRect(ox + 19, 5 + swimWave, 2, 2); // Ear
+        ctx.fillStyle = '#a9dfbf'; // Eye
+        ctx.fillRect(ox + 19, 7 + swimWave, 2, 1);
+        ctx.fillStyle = '#ffffff'; // Muzzle
+        ctx.fillRect(ox + 21, 9 + swimWave, 2, 2);
+        continue;
+      }
+
+      // Frames 0..3: Terrestrial Jaguar (Idle & Run)
       const crouchY = f === 1 ? 2 : f === 2 ? -1 : 0;
 
       ctx.fillStyle = 'rgba(0,0,0,0.38)';
@@ -1569,62 +1876,174 @@ export class ProceduralAtlasGenerator {
     });
   }
 
+  /**
+   * Black Caiman (Melanosuchus niger):
+   * Frames 0..1: Water Swimming (low submerged profile in river with water ripple waves)
+   * Frames 2..5: Land High Walk / Crawling (body elevated on 4 muscular clawed legs with ground shadow)
+   */
   private static createCaimanSpritesheet(scene: Phaser.Scene, key: string): void {
     if (scene.textures.exists(key)) return;
+    const frameW = 24;
+    const frameH = 24;
+    const frames = 6;
     const canvas = document.createElement('canvas');
-    canvas.width = 48;
-    canvas.height = 24;
+    canvas.width = frameW * frames;
+    canvas.height = frameH;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    for (let f = 0; f < 2; f++) {
-      const ox = f * 24;
-      // Water ripple shadow
-      ctx.fillStyle = 'rgba(21, 101, 192, 0.35)';
-      ctx.fillRect(ox + 1, 16, 22, 4);
+    for (let f = 0; f < frames; f++) {
+      const ox = f * frameW;
 
-      // Serrated muscular tail + armored body + long snout
-      ctx.fillStyle = '#0b130e';
-      ctx.fillRect(ox + 1, 11, 22, 6);
-      ctx.fillRect(ox + 13, 8, 5, 4); // Raised eye ridge
+      // ==========================================
+      // FRAMES 0..1: CAIMAN SWIMMING IN WATER
+      // ==========================================
+      if (f < 2) {
+        // Water ripple wake
+        ctx.fillStyle = 'rgba(21, 101, 192, 0.45)';
+        ctx.fillRect(ox + 1, 15, 22, 5);
+        ctx.fillStyle = '#5dade2';
+        ctx.fillRect(ox + 2, 16 + (f % 2), 19, 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(ox + (f === 0 ? 3 : 5), 15, 4, 1);
 
-      // Dark olive-black armored hide (Melanosuchus niger)
-      ctx.fillStyle = '#1e3a28';
-      ctx.fillRect(ox + 2, 12, 15, 4);
-      ctx.fillStyle = '#27ae60';
-      ctx.fillRect(ox + 3, 12, 13, 2);
-      // Pale yellow-green jaw underside & sharp conical teeth
-      ctx.fillStyle = '#a9dfbf';
-      ctx.fillRect(ox + 15, 15, 7, 1);
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(ox + 17, 14, 1, 1);
-      ctx.fillRect(ox + 19, 14, 1, 1);
-      ctx.fillRect(ox + 21, 14, 1, 1);
+        // Low submerged profile
+        ctx.fillStyle = '#0b130e';
+        ctx.fillRect(ox + 2, 11, 20, 5);
+        ctx.fillRect(ox + 13, 8, 5, 4); // Eye ridge
 
-      // Dorsal osteoderm scute spikes along back & tail
-      ctx.fillStyle = '#145a32';
-      for (let x = 2; x <= 14; x += 3) {
-        ctx.fillRect(ox + x, 9 + ((x + f) % 2), 2, 2);
+        ctx.fillStyle = '#1e3a28';
+        ctx.fillRect(ox + 3, 12, 14, 3);
+        ctx.fillStyle = '#27ae60';
+        ctx.fillRect(ox + 4, 12, 12, 2);
+
+        // Conical white teeth glints
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(ox + 16, 14, 1, 1);
+        ctx.fillRect(ox + 18, 14, 1, 1);
+        ctx.fillRect(ox + 20, 14, 1, 1);
+
+        // Dorsal tail scutes swimming
+        ctx.fillStyle = '#145a32';
+        for (let x = 2; x <= 13; x += 3) {
+          ctx.fillRect(ox + x, 10 + ((x + f) % 2), 2, 2);
+        }
+
+        // Amber reptilian eye
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(ox + 15, 9, 2, 2);
+        ctx.fillStyle = '#111111';
+        ctx.fillRect(ox + 16, 9, 1, 2);
+        continue;
       }
 
-      // Glowing amber reptilian eye
+      // ==========================================
+      // FRAMES 2..5: CAIMAN HIGH-WALK ON GROUND
+      // ==========================================
+      const walkStep = f - 2; // 0, 1, 2, 3
+      const bob = walkStep === 1 || walkStep === 3 ? 1 : 0;
+
+      // Dark ground shadow under elevated body
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
+      ctx.fillRect(ox + 3, 19, 18, 3);
+
+      // Elevated Armored Body & Long Snout
+      ctx.fillStyle = '#0b130e'; // Dark outline
+      ctx.fillRect(ox + 2, 8 + bob, 20, 7);
+      ctx.fillStyle = '#1e3a28'; // Dark olive hide
+      ctx.fillRect(ox + 3, 9 + bob, 15, 5);
+      ctx.fillStyle = '#27ae60'; // Olive-emerald dorsal scales
+      ctx.fillRect(ox + 4, 9 + bob, 13, 3);
+      ctx.fillStyle = '#a9dfbf'; // Pale jaw underside
+      ctx.fillRect(ox + 15, 13 + bob, 6, 2);
+      ctx.fillStyle = '#ffffff'; // White teeth along jawline
+      ctx.fillRect(ox + 16, 13 + bob, 1, 1);
+      ctx.fillRect(ox + 18, 13 + bob, 1, 1);
+      ctx.fillRect(ox + 20, 13 + bob, 1, 1);
+
+      // Amber reptilian eye atop head
       ctx.fillStyle = '#f1c40f';
-      ctx.fillRect(ox + 15, 9, 2, 2);
+      ctx.fillRect(ox + 15, 7 + bob, 2, 2);
       ctx.fillStyle = '#111111';
-      ctx.fillRect(ox + 16, 9, 1, 2);
+      ctx.fillRect(ox + 16, 7 + bob, 1, 2);
+
+      // 4 Muscular Clawed Legs walking on ground
+      let leg1X = 6,
+        leg1Y = 14,
+        leg2X = 10,
+        leg2Y = 14,
+        leg3X = 14,
+        leg3Y = 14,
+        leg4X = 18,
+        leg4Y = 14;
+
+      if (walkStep === 0) {
+        leg1X = 5;
+        leg1Y = 14;
+        leg2X = 11;
+        leg2Y = 13;
+        leg3X = 13;
+        leg3Y = 14;
+        leg4X = 19;
+        leg4Y = 13;
+      } else if (walkStep === 1) {
+        leg1X = 6;
+        leg1Y = 14;
+        leg2X = 10;
+        leg2Y = 14;
+        leg3X = 14;
+        leg3Y = 14;
+        leg4X = 18;
+        leg4Y = 14;
+      } else if (walkStep === 2) {
+        leg1X = 7;
+        leg1Y = 13;
+        leg2X = 9;
+        leg2Y = 14;
+        leg3X = 15;
+        leg3Y = 13;
+        leg4X = 17;
+        leg4Y = 14;
+      } else {
+        leg1X = 6;
+        leg1Y = 14;
+        leg2X = 10;
+        leg2Y = 14;
+        leg3X = 14;
+        leg3Y = 14;
+        leg4X = 18;
+        leg4Y = 14;
+      }
+
+      const drawCaimanLeg = (lx: number, ly: number) => {
+        ctx.fillStyle = '#0b130e';
+        ctx.fillRect(ox + lx - 1, ly + bob, 4, 5);
+        ctx.fillStyle = '#1e3a28';
+        ctx.fillRect(ox + lx, ly + bob, 2, 4);
+        ctx.fillStyle = '#d5bdaf'; // Claw tips on ground
+        ctx.fillRect(ox + lx - 1, ly + 4 + bob, 3, 1);
+      };
+
+      drawCaimanLeg(leg1X, leg1Y);
+      drawCaimanLeg(leg2X, leg2Y);
+      drawCaimanLeg(leg3X, leg3Y);
+      drawCaimanLeg(leg4X, leg4Y);
+
+      // Dorsal osteoderm scutes along spine
+      ctx.fillStyle = '#145a32';
+      for (let x = 3; x <= 14; x += 3) {
+        ctx.fillRect(ox + x, 7 + bob + ((x + walkStep) % 2), 2, 2);
+      }
     }
 
     scene.textures.addSpriteSheet(key, canvas as unknown as HTMLImageElement, {
-      frameWidth: 24,
-      frameHeight: 24
+      frameWidth: frameW,
+      frameHeight: frameH
     });
   }
 
   /**
    * 4-Frame High-Detail Fer-de-Lance / Talla Equis Pit Viper (Bothrops atrox)
-   * Features unmistakable S-curved serpent coils, dark brown/gold diamond "X" dorsal markings,
-   * pale cream ventral belly scales, raised lance-shaped triangular viper head, slit yellow eye,
-   * and an animated flickering crimson forked tongue.
    */
   private static createSnakeSpritesheet(scene: Phaser.Scene, key: string): void {
     if (scene.textures.exists(key)) return;
@@ -1652,61 +2071,56 @@ export class ProceduralAtlasGenerator {
       ctx.fillStyle = '#8d6e63';
       ctx.fillRect(ox + 2, 15 + (f % 2), 2, 1);
 
-      // Lower Base Coil (Bottom loop of the S-curve: x = 4..18, y = 15..20)
-      ctx.fillStyle = '#17120c'; // Dark outline
+      // Lower Base Coil
+      ctx.fillStyle = '#17120c';
       ctx.fillRect(ox + 4, 15, 15, 5);
-      ctx.fillStyle = '#c29b61'; // Warm ochre-tan viper scales
+      ctx.fillStyle = '#c29b61';
       ctx.fillRect(ox + 5, 16, 13, 3);
-      ctx.fillStyle = '#f5cba7'; // Pale cream ventral belly scales along bottom edge
+      ctx.fillStyle = '#f5cba7';
       ctx.fillRect(ox + 6, 18, 11, 1);
-      // Iconic "Talla Equis" dark brown diamond/chevron markings along lower coil
       ctx.fillStyle = '#2c1810';
       ctx.fillRect(ox + 6 + sway, 16, 2, 2);
       ctx.fillRect(ox + 10 + sway, 16, 3, 2);
       ctx.fillRect(ox + 15, 16, 2, 2);
-      ctx.fillStyle = '#f9e79f'; // Gold scale edge highlights
+      ctx.fillStyle = '#f9e79f';
       ctx.fillRect(ox + 9 + sway, 16, 1, 1);
       ctx.fillRect(ox + 14, 16, 1, 1);
 
-      // Middle S-Curve Neck Loop curving back left and rising (x = 6..15, y = 10..15)
+      // Middle S-Curve Neck Loop
       ctx.fillStyle = '#17120c';
       ctx.fillRect(ox + 6, 10 + sway, 10, 6);
       ctx.fillStyle = '#b9935a';
       ctx.fillRect(ox + 7, 11 + sway, 8, 4);
       ctx.fillStyle = '#f5cba7';
       ctx.fillRect(ox + 8, 14 + sway, 6, 1);
-      // Diamond "X" dorsal pattern on middle coil
       ctx.fillStyle = '#2c1810';
       ctx.fillRect(ox + 8, 11 + sway, 2, 3);
       ctx.fillRect(ox + 12, 11 + sway, 2, 3);
       ctx.fillStyle = '#f9e79f';
       ctx.fillRect(ox + 10, 12 + sway, 2, 1);
 
-      // Raised Triangular Pit-Viper Head (Lancehead) poised to strike (x = 11..19, y = 5..10)
+      // Raised Triangular Pit-Viper Head
       const hx = ox + 11 + strikeShift;
       const hy = 5 + sway;
-      ctx.fillStyle = '#17120c'; // Head outline
+      ctx.fillStyle = '#17120c';
       ctx.fillRect(hx, hy, 8, 5);
-      ctx.fillRect(hx - 1, hy + 1, 2, 3); // Broad triangular temporal venom glands
-      ctx.fillStyle = '#9c7844'; // Dorsal head scales
+      ctx.fillRect(hx - 1, hy + 1, 2, 3);
+      ctx.fillStyle = '#9c7844';
       ctx.fillRect(hx, hy + 1, 7, 3);
-      ctx.fillStyle = '#2c1810'; // Dark post-ocular stripe behind eye
+      ctx.fillStyle = '#2c1810';
       ctx.fillRect(hx + 1, hy + 2, 3, 1);
-      // Menacing glowing vertical-slit yellow viper eye
       ctx.fillStyle = '#f1c40f';
       ctx.fillRect(hx + 4, hy + 1, 2, 2);
       ctx.fillStyle = '#111111';
       ctx.fillRect(hx + 5, hy + 1, 1, 2);
 
-      // White venom fang glimpse & flickering crimson forked tongue
       if (f === 1 || f === 2) {
         ctx.fillStyle = '#ffffff';
-        ctx.fillRect(hx + 6, hy + 4, 1, 1); // Fang tip
-        // Crimson forked tongue with split upper/lower tips
+        ctx.fillRect(hx + 6, hy + 4, 1, 1);
         ctx.fillStyle = '#e74c3c';
-        ctx.fillRect(hx + 8, hy + 2, 3, 1); // Tongue stem
-        ctx.fillRect(hx + 11, hy + 1, 1, 1); // Upper fork prong
-        ctx.fillRect(hx + 11, hy + 3, 1, 1); // Lower fork prong
+        ctx.fillRect(hx + 8, hy + 2, 3, 1);
+        ctx.fillRect(hx + 11, hy + 1, 1, 1);
+        ctx.fillRect(hx + 11, hy + 3, 1, 1);
       } else if (f === 3) {
         ctx.fillStyle = '#e74c3c';
         ctx.fillRect(hx + 8, hy + 2, 2, 1);
@@ -1720,15 +2134,15 @@ export class ProceduralAtlasGenerator {
   }
 
   /**
-   * 4-Frame High-Detail Green Anaconda (Eunectes murinus)
-   * Massive olive-green constrictor with black-rimmed gold oval ocelli spots, wet specular highlights,
-   * thick undulating coils, and flickering forked tongue.
+   * Green Anaconda (Eunectes murinus):
+   * Frames 0..3: Land Slither (terrestrial creeping along forest floor)
+   * Frames 4..7: Water Swimming (undulating coils surrounded by river water wakes)
    */
   private static createAnacondaSpritesheet(scene: Phaser.Scene, key: string): void {
     if (scene.textures.exists(key)) return;
     const frameW = 24;
     const frameH = 24;
-    const frames = 4;
+    const frames = 8;
     const canvas = document.createElement('canvas');
     canvas.width = frameW * frames;
     canvas.height = frameH;
@@ -1737,23 +2151,34 @@ export class ProceduralAtlasGenerator {
 
     for (let f = 0; f < frames; f++) {
       const ox = f * frameW;
+      const isWater = f >= 4;
       const wave = f % 2;
 
-      // Water / mud shadow beneath massive coils
-      ctx.fillStyle = 'rgba(14, 47, 68, 0.42)';
-      ctx.fillRect(ox + 2, 18, 20, 4);
+      if (isWater) {
+        // River water wake ripples around swimming coils
+        ctx.fillStyle = 'rgba(21, 101, 192, 0.45)';
+        ctx.fillRect(ox + 1, 15, 22, 6);
+        ctx.fillStyle = '#5dade2';
+        ctx.fillRect(ox + 2, 16 + wave, 20, 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(ox + (wave === 0 ? 3 : 15), 15, 4, 1);
+      } else {
+        // Ground shadow
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.38)';
+        ctx.fillRect(ox + 2, 18, 20, 4);
+      }
 
-      // Thick muscular lower coil (x = 2..20, y = 13..19)
+      // Thick muscular coils
       ctx.fillStyle = '#0d1f12';
       ctx.fillRect(ox + 2, 13, 19, 6);
-      ctx.fillStyle = '#1e8449'; // Deep olive-emerald hide
+      ctx.fillStyle = '#1e8449';
       ctx.fillRect(ox + 3, 14, 17, 4);
-      ctx.fillStyle = '#52be80'; // Wet dorsal sheen
+      ctx.fillStyle = '#52be80';
       ctx.fillRect(ox + 4, 14, 15, 1);
-      ctx.fillStyle = '#f7dc6f'; // Yellow-checked ventral belly scales
+      ctx.fillStyle = '#f7dc6f';
       ctx.fillRect(ox + 4, 17, 15, 1);
 
-      // Iconic black-rimmed ochre ocelli (oval spots) along body
+      // Black-rimmed ochre ocelli
       for (const sx of [5, 10, 15]) {
         ctx.fillStyle = '#111712';
         ctx.fillRect(ox + sx + wave, 14, 3, 3);
@@ -1761,7 +2186,7 @@ export class ProceduralAtlasGenerator {
         ctx.fillRect(ox + sx + 1 + wave, 15, 1, 1);
       }
 
-      // Upper undulating coil & raised constrictor head (x = 5..20, y = 6..13)
+      // Upper undulating coil
       ctx.fillStyle = '#0d1f12';
       ctx.fillRect(ox + 5, 9 + wave, 11, 5);
       ctx.fillStyle = '#229954';
@@ -1769,21 +2194,19 @@ export class ProceduralAtlasGenerator {
       ctx.fillStyle = '#111712';
       ctx.fillRect(ox + 8, 10 + wave, 3, 2);
 
-      // Raised Anaconda Head with dorsal eyes & orange stripe
+      // Anaconda Head with dorsal eyes
       ctx.fillStyle = '#0d1f12';
       ctx.fillRect(ox + 13, 5 + wave, 8, 5);
       ctx.fillStyle = '#196f3d';
       ctx.fillRect(ox + 14, 6 + wave, 6, 3);
-      ctx.fillStyle = '#e67e22'; // Post-orbital orange-gold stripe
+      ctx.fillStyle = '#e67e22';
       ctx.fillRect(ox + 14, 7 + wave, 3, 1);
       ctx.fillStyle = '#f1c40f';
       ctx.fillRect(ox + 17, 6 + wave, 2, 1);
 
-      if (f === 1 || f === 2) {
+      if (f % 2 === 1) {
         ctx.fillStyle = '#e74c3c';
         ctx.fillRect(ox + 21, 7 + wave, 2, 1);
-        ctx.fillRect(ox + 22, 6 + wave, 1, 1);
-        ctx.fillRect(ox + 22, 8 + wave, 1, 1);
       }
     }
 
@@ -1793,25 +2216,52 @@ export class ProceduralAtlasGenerator {
     });
   }
 
+  /**
+   * Pirarucú (Arapaima gigas):
+   * Frames 0..1: Water Swimming
+   * Frames 2..3: Land Flopping / Thrashing (if stranded out of water)
+   */
   private static createFishSpritesheet(scene: Phaser.Scene, key: string): void {
     if (scene.textures.exists(key)) return;
     const canvas = document.createElement('canvas');
-    canvas.width = 48;
+    canvas.width = 96; // 4 frames * 24
     canvas.height = 24;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    for (let f = 0; f < 2; f++) {
+    for (let f = 0; f < 4; f++) {
       const ox = f * 24;
-      ctx.fillStyle = 'rgba(93, 173, 226, 0.45)';
-      ctx.fillRect(ox + 3, 14, 18, 4);
-      ctx.fillStyle = '#2c3e50';
-      ctx.fillRect(ox + 4, 9 + f, 16, 6);
-      ctx.fillStyle = '#95a5a6';
-      ctx.fillRect(ox + 5, 10 + f, 13, 3);
-      ctx.fillStyle = '#e74c3c';
-      ctx.fillRect(ox + 5, 12 + f, 12, 2);
-      ctx.fillRect(ox + 2, 9 + f, 3, 5);
+      if (f < 2) {
+        // Water Swimming
+        ctx.fillStyle = 'rgba(93, 173, 226, 0.45)';
+        ctx.fillRect(ox + 3, 14, 18, 4);
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillRect(ox + 4, 9 + f, 16, 6);
+        ctx.fillStyle = '#95a5a6';
+        ctx.fillRect(ox + 5, 10 + f, 13, 3);
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(ox + 5, 12 + f, 12, 2);
+        ctx.fillRect(ox + 2, 9 + f, 3, 5);
+      } else {
+        // Land Flopping / Thrashing
+        const flop = f === 2 ? 0 : 2;
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.35)';
+        ctx.fillRect(ox + 4, 18, 16, 3);
+        // Arched body flopping on soil
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillRect(ox + 4, 12 - flop, 15, 6);
+        ctx.fillStyle = '#95a5a6';
+        ctx.fillRect(ox + 5, 13 - flop, 12, 3);
+        ctx.fillStyle = '#e74c3c';
+        ctx.fillRect(ox + 6, 14 - flop, 10, 2);
+        // Thrashing tail fin upward
+        ctx.fillStyle = '#c0392b';
+        ctx.fillRect(ox + 2, 9 - flop, 3, 6);
+        // Dust flecks
+        ctx.fillStyle = '#d5bdaf';
+        ctx.fillRect(ox + 2, 17, 2, 2);
+        ctx.fillRect(ox + 18, 17, 2, 2);
+      }
     }
 
     scene.textures.addSpriteSheet(key, canvas as unknown as HTMLImageElement, {
@@ -1877,12 +2327,30 @@ export class ProceduralAtlasGenerator {
         frameRate: 9,
         repeat: -1
       });
+      scene.anims.create({
+        key: 'jaguar_swim',
+        frames: scene.anims.generateFrameNumbers('creature_jaguar', { frames: [4, 5] }),
+        frameRate: 5,
+        repeat: -1
+      });
     }
-    if (!scene.anims.exists('caiman_move')) {
+    if (!scene.anims.exists('caiman_swim')) {
+      scene.anims.create({
+        key: 'caiman_swim',
+        frames: scene.anims.generateFrameNumbers('creature_caiman', { frames: [0, 1] }),
+        frameRate: 3,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: 'caiman_walk',
+        frames: scene.anims.generateFrameNumbers('creature_caiman', { frames: [2, 3, 4, 5] }),
+        frameRate: 5,
+        repeat: -1
+      });
       scene.anims.create({
         key: 'caiman_move',
-        frames: scene.anims.generateFrameNumbers('creature_caiman', { start: 0, end: 1 }),
-        frameRate: 3,
+        frames: scene.anims.generateFrameNumbers('creature_caiman', { frames: [2, 3, 4, 5] }),
+        frameRate: 5,
         repeat: -1
       });
     }
@@ -1897,16 +2365,28 @@ export class ProceduralAtlasGenerator {
     if (!scene.anims.exists('anaconda_slither')) {
       scene.anims.create({
         key: 'anaconda_slither',
-        frames: scene.anims.generateFrameNumbers('creature_anaconda', { start: 0, end: 3 }),
+        frames: scene.anims.generateFrameNumbers('creature_anaconda', { frames: [0, 1, 2, 3] }),
         frameRate: 4,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: 'anaconda_swim',
+        frames: scene.anims.generateFrameNumbers('creature_anaconda', { frames: [4, 5, 6, 7] }),
+        frameRate: 5,
         repeat: -1
       });
     }
     if (!scene.anims.exists('fish_swim')) {
       scene.anims.create({
         key: 'fish_swim',
-        frames: scene.anims.generateFrameNumbers('creature_fish', { start: 0, end: 1 }),
+        frames: scene.anims.generateFrameNumbers('creature_fish', { frames: [0, 1] }),
         frameRate: 4,
+        repeat: -1
+      });
+      scene.anims.create({
+        key: 'fish_flop',
+        frames: scene.anims.generateFrameNumbers('creature_fish', { frames: [2, 3] }),
+        frameRate: 7,
         repeat: -1
       });
     }
