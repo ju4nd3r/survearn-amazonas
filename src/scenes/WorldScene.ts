@@ -753,8 +753,7 @@ export class WorldScene extends Phaser.Scene {
             onComplete: () => dmgText.destroy()
           });
 
-          // 5. Impact camera shake & audio chime
-          this.cameras.main.shake(160, 0.007);
+          // 5. Audio chime & threat warning toast
           AudioSynth.playChime('warning');
           EventBus.emit('TOAST_MESSAGE', {
             text: i18n.t('messages.jaguarWarning'),
