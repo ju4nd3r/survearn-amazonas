@@ -32,7 +32,7 @@ export interface GameEventMap {
     discoveredAll: Record<string, DiscoveryLevel>;
   };
   TOAST_MESSAGE: { text: string; type: 'info' | 'warning' | 'success' | 'danger' };
-  OPEN_MODAL: { modal: 'bitacora' | 'crafting' | 'settings' | 'saves' | 'creator' | 'dialogue' };
+  OPEN_MODAL: { modal: 'bitacora' | 'crafting' | 'settings' | 'saves' | 'creator' | 'dialogue' | 'bag' };
   OPEN_NPC_DIALOGUE: { npcId: string };
   CRAFT_RECIPE: { recipeId: string };
   CONSUME_INVENTORY_ITEM: { itemId: string };

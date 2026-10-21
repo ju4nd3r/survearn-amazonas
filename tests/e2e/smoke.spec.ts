@@ -51,5 +51,13 @@ test.describe('survearn — Edition: Amazonas Colombia (Selva Viva) E2E Smoke Su
     await expect(craftingDialog).toBeVisible();
     await page.locator('#close-crafting').click();
     await expect(craftingDialog).not.toBeVisible();
+
+    // 9. Open Backpack / Bag modal, verify collected items view and close
+    await page.getByTestId('btn-open-bag').click();
+    const bagDialog = page.locator('#modal-bag');
+    await expect(bagDialog).toBeVisible();
+    await expect(page.getByTestId('bag-cards-grid')).toBeVisible();
+    await page.getByTestId('btn-close-bag').click();
+    await expect(bagDialog).not.toBeVisible();
   });
 });

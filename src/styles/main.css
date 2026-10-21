@@ -886,3 +886,286 @@ dialog::backdrop {
   font-size: 0.9rem;
 }
 
+/* 🎒 Bag (Mochila) Modal Styles */
+.bag-modal-card {
+  max-width: min(95vw, 880px);
+}
+
+.modal-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.modal-subtitle {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.bag-controls-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bag-search-field {
+  background: rgba(14, 38, 26, 0.9);
+  border: 1px solid var(--border-canopy);
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bag-search-field:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.bag-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 10px;
+  max-height: 56dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+
+.bag-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-canopy);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.bag-card:hover {
+  border-color: #3e7b56;
+  transform: translateY(-1px);
+}
+
+.bag-card-header {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.bag-thumb-container {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: rgba(7, 24, 15, 0.9);
+  border: 1px solid var(--border-canopy);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-count {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: var(--color-accent);
+  color: #0b1d12;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 999px;
+  line-height: 1.1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.bag-card-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.bag-item-name {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bag-item-latin {
+  margin: 0;
+  font-size: 0.76rem;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.bag-tags-row {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 3px;
+}
+
+.bag-biome-tag {
+  font-size: 0.72rem;
+  color: #a3e4d7;
+  background: rgba(22, 58, 42, 0.85);
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+.bag-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8rem;
+}
+
+.bag-item-desc {
+  margin: 0;
+  color: #d5dbdb;
+  line-height: 1.35;
+}
+
+.bag-nutrition-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: rgba(11, 30, 20, 0.7);
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(46, 117, 89, 0.3);
+}
+
+.nutrition-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.nutrition-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.stat-mini-pill {
+  background: rgba(30, 70, 47, 0.95);
+  border: 1px solid #27ae60;
+  color: #f1f8e9;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.bag-craft-utility {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: #f9e79f;
+  background: rgba(50, 40, 15, 0.5);
+  border: 1px dashed rgba(241, 196, 15, 0.5);
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+
+.bag-card-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding-top: 4px;
+  border-top: 1px solid rgba(46, 117, 89, 0.25);
+}
+
+.bag-card-actions .btn {
+  flex: 1;
+  text-align: center;
+  justify-content: center;
+}
+
+.badge-edible {
+  background: #196f3d;
+  color: #e8f8f5;
+}
+
+.badge-needs-cook {
+  background: #b9770e;
+  color: #fef9e7;
+}
+
+.badge-medicinal {
+  background: #117864;
+  color: #e8f8f5;
+}
+
+.badge-toxic {
+  background: #922b21;
+  color: #fdedec;
+}
+
+.bag-empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 36px 20px;
+  background: rgba(14, 38, 26, 0.6);
+  border: 2px dashed var(--border-canopy);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bag-empty-icon {
+  font-size: 2.4rem;
+}
+
+.bag-empty-state h3 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.bag-empty-state p {
+  margin: 0;
+  color: var(--text-muted);
+  max-width: 480px;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.inv-bag-btn {
+  background: var(--color-primary);
+  border-color: #27ae60;
+  font-weight: 700;
+}
+
+.inv-bag-btn:hover {
+  background: #229954;
+}
+
+.inv-empty-btn {
+  background: rgba(18, 46, 31, 0.7);
+  border: 1px dashed var(--border-canopy);
+}
+
+.inv-empty-btn:hover {
+  background: rgba(30, 70, 47, 0.9);
+  border-color: var(--color-accent);
+}
+
+

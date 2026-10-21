@@ -47,6 +47,15 @@ export class InputController {
         if (this.isModalOpen()) return;
         EventBus.emit('OPEN_MODAL', { modal: 'bitacora' });
       });
+      scene.input.keyboard.on('keydown-M', () => {
+        if (this.isModalOpen()) return;
+        EventBus.emit('OPEN_MODAL', { modal: 'bag' });
+      });
+      scene.input.keyboard.on('keydown-TAB', (event?: KeyboardEvent) => {
+        event?.preventDefault();
+        if (this.isModalOpen()) return;
+        EventBus.emit('OPEN_MODAL', { modal: 'bag' });
+      });
       scene.input.keyboard.on('keydown-C', () => {
         if (this.isModalOpen()) return;
         EventBus.emit('OPEN_MODAL', { modal: 'crafting' });

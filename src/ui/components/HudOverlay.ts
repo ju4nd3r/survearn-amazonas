@@ -164,6 +164,9 @@ export class HudOverlay {
         </div>
 
         <div class="quick-modals-bar">
+          <button type="button" id="hud-btn-bag" data-testid="btn-open-bag" class="btn btn-primary">
+            🎒 ${i18n.t('hud.btnBag')}
+          </button>
           <button type="button" id="hud-btn-bitacora" data-testid="btn-open-bitacora" class="btn btn-accent">
             📖 ${i18n.t('hud.btnBitacora')}
           </button>
@@ -183,6 +186,9 @@ export class HudOverlay {
       <div class="hud-inventory-strip" id="hud-inventory-strip" data-testid="inventory-strip"></div>
     `;
 
+    this.root.querySelector('#hud-btn-bag')?.addEventListener('click', () => {
+      EventBus.emit('OPEN_MODAL', { modal: 'bag' });
+    });
     this.root.querySelector('#hud-btn-bitacora')?.addEventListener('click', () => {
       EventBus.emit('OPEN_MODAL', { modal: 'bitacora' });
     });
@@ -229,11 +235,25 @@ export class HudOverlay {
     const lang = i18n.getLanguage();
 
     if (this.inventory.length === 0) {
-      container.innerHTML = `<span class="inv-empty">🎒 —</span>`;
+      container.innerHTML = `
+        <button type="button" class="inv-chip inv-empty-btn" id="btn-strip-open-bag" title="${i18n.t('hud.btnBag')}">
+          <span>🎒 — ${i18n.t('bag.emptyTitle')}</span>
+        </button>
+      `;
+      container.querySelector('#btn-strip-open-bag')?.addEventListener('click', () => {
+        EventBus.emit('OPEN_MODAL', { modal: 'bag' });
+      });
       return;
     }
 
-    container.innerHTML = this.inventory
+    const totalCount = this.inventory.reduce((sum, s) => sum + s.count, 0);
+    const bagLauncherHtml = `
+      <button type="button" class="inv-chip inv-bag-btn" id="btn-strip-open-bag" title="${i18n.t('hud.btnBag')}">
+        <span>🎒 <strong>${totalCount}</strong></span>
+      </button>
+    `;
+
+    const itemChipsHtml = this.inventory
       .map((slot) => {
         const name = ContentRegistry.getItemDisplayName(slot.itemId, lang);
         const plant = ContentRegistry.getPlant(slot.itemId);
@@ -253,6 +273,12 @@ export class HudOverlay {
         `;
       })
       .join('');
+
+    container.innerHTML = bagLauncherHtml + itemChipsHtml;
+
+    container.querySelector('#btn-strip-open-bag')?.addEventListener('click', () => {
+      EventBus.emit('OPEN_MODAL', { modal: 'bag' });
+    });
 
     container.querySelectorAll<HTMLButtonElement>('.inv-chip.consumable').forEach((btn) => {
       btn.addEventListener('click', () => {

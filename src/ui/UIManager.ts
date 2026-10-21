@@ -1,4 +1,5 @@
 import { EventBus } from '../core/events/EventBus';
+import { BagModal } from './components/BagModal';
 import { BitacoraModal } from './components/BitacoraModal';
 import { CharacterCreatorModal } from './components/CharacterCreatorModal';
 import { CraftingModal } from './components/CraftingModal';
@@ -19,6 +20,7 @@ export class UIManager {
   public readonly dialogueModal: DialogueModal;
   public readonly settingsModal: SettingsModal;
   public readonly saveSlotsModal: SaveSlotsModal;
+  public readonly bagModal: BagModal;
 
   constructor(uiRoot: HTMLElement) {
     this.titleOverlay = new TitleOverlay(uiRoot);
@@ -30,10 +32,12 @@ export class UIManager {
     this.dialogueModal = new DialogueModal(uiRoot);
     this.settingsModal = new SettingsModal(uiRoot);
     this.saveSlotsModal = new SaveSlotsModal(uiRoot);
+    this.bagModal = new BagModal(uiRoot);
 
     EventBus.on('OPEN_MODAL', ({ modal }) => {
       if (modal === 'bitacora') this.bitacoraModal.open();
       else if (modal === 'crafting') this.craftingModal.open();
+      else if (modal === 'bag') this.bagModal.open();
       else if (modal === 'settings') this.settingsModal.open();
       else if (modal === 'saves') void this.saveSlotsModal.open();
       else if (modal === 'creator') this.creatorModal.open();
